@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.32916.344
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibSm64Sharp", "LibSm64Sharp\LibSm64Sharp.csproj", "{F5DC030A-EE6E-466C-A37B-87DD0E19CB9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibSm64SharpTests", "LibSm64SharpTests\LibSm64SharpTests.csproj", "{E3A930D6-1DB2-4927-90F5-7C8A34124EAF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F5DC030A-EE6E-466C-A37B-87DD0E19CB9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5DC030A-EE6E-466C-A37B-87DD0E19CB9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5DC030A-EE6E-466C-A37B-87DD0E19CB9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5DC030A-EE6E-466C-A37B-87DD0E19CB9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3A930D6-1DB2-4927-90F5-7C8A34124EAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3A930D6-1DB2-4927-90F5-7C8A34124EAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3A930D6-1DB2-4927-90F5-7C8A34124EAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3A930D6-1DB2-4927-90F5-7C8A34124EAF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {49F0293E-4444-4266-B1B0-0D65DE274654}
+	EndGlobalSection
+EndGlobal
