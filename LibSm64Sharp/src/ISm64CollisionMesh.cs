@@ -7,7 +7,7 @@
     TSelf AddTriangle(
         Sm64SurfaceType surfaceType,
         Sm64TerrainType terrainType,
-        IReadOnlyList<(float x, float y, float z)> vertices);
+        IReadOnlyList<(short x, short y, short z)> vertices);
   }
 
   public interface ISm64CollisionMesh {

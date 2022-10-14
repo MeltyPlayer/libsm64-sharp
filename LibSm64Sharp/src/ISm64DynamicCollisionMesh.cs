@@ -22,11 +22,7 @@
       : ISm64CollisionMesh,
           IMutablePositionAndRotation<ISm64DynamicCollisionMesh>,
           IDisposable {
-    ISm64ObjectTransform Transform { get; }
-  }
-
-  public interface ISm64ObjectTransform {
-    IVector3<float> Position { get; }
-    IVector3<float> EulerRotation { get; }
+    ISm64Vector3<float> Position { get; }
+    ISm64Vector3<float> EulerRotation { get; }
   }
 }

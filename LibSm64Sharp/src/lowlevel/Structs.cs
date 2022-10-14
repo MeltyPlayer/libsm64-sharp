@@ -43,10 +43,10 @@ namespace libsm64sharp.lowlevel {
   [StructLayout(LayoutKind.Sequential)]
   public struct LowLevelSm64ObjectTransform {
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-    float[] position;
+    public float[] position;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-    float[] eulerRotation;
+    public float[] eulerRotation;
   };
 
   [StructLayout(LayoutKind.Sequential)]
