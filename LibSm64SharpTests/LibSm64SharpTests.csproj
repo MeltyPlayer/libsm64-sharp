@@ -6,6 +6,8 @@
     <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>
+
+    <Platforms>x86;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
