@@ -13,7 +13,7 @@ public class DemoWindow : GameWindow {
   public DemoWindow(GameWindowSettings gameWindowSettings,
                     NativeWindowSettings nativeWindowSettings) : base(
       gameWindowSettings, nativeWindowSettings) {
-    var sm64RomBytes = File.ReadAllBytes("sm64.z64");
+    var sm64RomBytes = File.ReadAllBytes("rom\\sm64.z64");
 
     this.sm64Context_ = new Sm64Context(sm64RomBytes);
     this.sm64Mario_ = this.sm64Context_.CreateMario(0, 0, 0);

@@ -22,7 +22,7 @@ namespace libsm64sharp.lowlevel {
   [StructLayout(LayoutKind.Sequential)]
   public struct LowLevelSm64MarioOutState {
     public LowLevelSm64Vector3f position;
-    public LowLevelSm64Vector3f vosition;
+    public LowLevelSm64Vector3f velocity;
     public float faceAngle;
     public short health;
   };

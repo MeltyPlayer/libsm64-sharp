@@ -29,7 +29,7 @@ namespace libsm64sharp.lowlevel {
     public static extern void sm64_mario_tick(
         uint marioId,
         ref LowLevelSm64MarioInputs inputs,
-        ref LowLevelSm64MarioState outState,
+        ref LowLevelSm64MarioOutState outState,
         ref LowLevelSm64MarioGeometryBuffers outBuffers);
 
     [DllImport(SM64_X86_DLL)]
