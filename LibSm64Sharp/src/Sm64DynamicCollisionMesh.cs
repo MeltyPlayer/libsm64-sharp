@@ -103,7 +103,7 @@ namespace libsm64sharp {
                     this.eulerRotation_.Z
                 },
             },
-            surfaceCount = (uint) triangles.Count,
+            surfaceCount = (uint) surfaces.Length,
             surfaces = surfacesHandle.AddrOfPinnedObject(),
         };
         this.id_ = LibSm64Interop.sm64_surface_object_create(ref surfaceObject);
