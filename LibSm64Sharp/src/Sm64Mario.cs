@@ -12,7 +12,7 @@ namespace libsm64sharp {
       => new Sm64Mario(this.marioTextureImage_, x, y, z);
 
     private class Sm64Mario : ISm64Mario {
-      private readonly uint id_;
+      private readonly int id_;
       private LowLevelSm64MarioOutState outState_;
       private readonly Sm64MarioMesh mesh_;
 
@@ -21,6 +21,12 @@ namespace libsm64sharp {
                        short y,
                        short z) {
         this.id_ = LibSm64Interop.sm64_mario_create(x, y, z);
+        if (this.id_ == -1) {
+          throw new NullReferenceException(
+              "Failed to create Mario. " +
+              "Have you created a floor for him to stand on yet?");
+        }
+
         this.mesh_ = new Sm64MarioMesh(marioTextureImage);
       }
 

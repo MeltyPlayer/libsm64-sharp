@@ -24,20 +24,20 @@ namespace libsm64sharp.lowlevel {
         ulong numSurfaces);
 
     [DllImport(SM64_DLL)]
-    public static extern uint sm64_mario_create(
+    public static extern int sm64_mario_create(
         short marioX,
         short marioY,
         short marioZ);
 
     [DllImport(SM64_DLL)]
     public static extern void sm64_mario_tick(
-        uint marioId,
+        int marioId,
         ref LowLevelSm64MarioInputs inputs,
         ref LowLevelSm64MarioOutState outState,
         ref LowLevelSm64MarioGeometryBuffers outBuffers);
 
     [DllImport(SM64_DLL)]
-    public static extern void sm64_mario_delete(uint marioId);
+    public static extern void sm64_mario_delete(int marioId);
 
     [DllImport(SM64_DLL)]
     public static extern uint sm64_surface_object_create(
