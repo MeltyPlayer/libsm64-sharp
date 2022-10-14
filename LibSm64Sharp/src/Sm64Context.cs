@@ -10,9 +10,9 @@ namespace libsm64sharp {
   public sealed partial class Sm64Context : ISm64Context {
     private const int SM64_TEXTURE_WIDTH = 64 * 11;
     private const int SM64_TEXTURE_HEIGHT = 64;
+    private Image<Rgba32> marioTextureImage_;
 
     public Sm64Context(byte[] romBytes,
-                       out Image<Rgba32> image,
                        Action<string> debugPrintCallback) {
       var callbackDelegate = new DebugPrintFuncDelegate(debugPrintCallback);
       var romHandle = GCHandle.Alloc(romBytes, GCHandleType.Pinned);
@@ -24,9 +24,10 @@ namespace libsm64sharp {
                                       Marshal.GetFunctionPointerForDelegate(
                                           callbackDelegate));
 
-      image = new Image<Rgba32>(SM64_TEXTURE_WIDTH, SM64_TEXTURE_HEIGHT);
+      this.marioTextureImage_ =
+          new Image<Rgba32>(SM64_TEXTURE_WIDTH, SM64_TEXTURE_HEIGHT);
       {
-        var frame = image.Frames[0];
+        var frame = this.marioTextureImage_.Frames[0];
         for (var ix = 0; ix < SM64_TEXTURE_WIDTH; ix++) {
           for (var iy = 0; iy < SM64_TEXTURE_HEIGHT; iy++) {
             var pixel = frame[ix, iy];
