@@ -7,4 +7,8 @@
     <RootNamespace>libsm64sharp</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="SixLabors.ImageSharp" Version="2.1.3" />
+  </ItemGroup>
+
 </Project>
