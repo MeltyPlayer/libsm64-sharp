@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 
 using libsm64sharp.lowlevel;
 
@@ -18,7 +19,30 @@ namespace libsm64sharp {
     }
 
     public Sm64Context(byte[] romBytes) {
-      // TODO: Verify checksum!
+      var expectedUsaHash = new byte[] {
+          0x20,
+          0xb8,
+          0x54,
+          0xb2,
+          0x39,
+          0x20,
+          0x3b,
+          0xaf,
+          0x6c,
+          0x96,
+          0x1b,
+          0x85,
+          0x0a,
+          0x4a,
+          0x51,
+          0xa2,
+      };
+      var actualUsaHash = new MD5CryptoServiceProvider().ComputeHash(romBytes);
+      if (!expectedUsaHash.SequenceEqual(actualUsaHash)) {
+        throw new InvalidDataException(
+            "MD5 checksum did not match the expected value--" +
+            "please use the .z64 (big-endian) version of the USA ROM.");
+      }
 
       var callbackDelegate = new DebugPrintFuncDelegate(debugPrintCallback);
       var romHandle = GCHandle.Alloc(romBytes, GCHandleType.Pinned);
