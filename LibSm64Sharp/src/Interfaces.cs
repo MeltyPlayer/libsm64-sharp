@@ -1,4 +1,10 @@
 ﻿namespace libsm64sharp {
+  public interface ISm64Context : IDisposable {
+    ISm64Mario CreateMario(short x, short y, short z);
+  }
+
+  public interface ISm64Mario : IDisposable { }
+
   /// <summary>
   ///   The surface types from libsm64's decomp:
   ///   https://github.com/libsm64/libsm64/blob/fcb6b5b431b5776a55d0ca6b60dbd937ed1f4562/src/decomp/include/surface_terrains.h#L4-L151
