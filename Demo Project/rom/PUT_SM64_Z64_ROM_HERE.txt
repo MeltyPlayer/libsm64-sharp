@@ -1,0 +1,3 @@
+﻿In order to run this demo, you must put a .z64 (big-endian) Super Mario 64 
+(USA) ROM in this directory. The name is important: it should be called 
+"sm64.z64".
