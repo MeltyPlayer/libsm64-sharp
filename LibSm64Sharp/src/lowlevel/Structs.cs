@@ -59,21 +59,18 @@ namespace libsm64sharp.lowlevel {
 
   [StructLayout(LayoutKind.Sequential)]
   public struct LowLevelSm64Vector2f : ISm64Vector2<float> {
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-    float[] values;
+    public float X { get; }
 
-    public float X => this.values[0];
-    public float Y => this.values[1];
+    public float Y { get; }
   }
 
   [StructLayout(LayoutKind.Sequential)]
   public struct LowLevelSm64Vector3f : ISm64Vector3<float> {
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-    float[] values;
+    public float X { get; }
 
-    public float X => this.values[0];
-    public float Y => this.values[1];
-    public float Z => this.values[2];
+    public float Y { get; }
+
+    public float Z { get; }
   }
 
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
