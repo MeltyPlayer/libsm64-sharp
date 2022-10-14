@@ -1,25 +1,9 @@
 ﻿namespace libsm64sharp {
-  public interface ISm64CollisionMesh {
-    IReadOnlyList<ISm64Triangle> Triangles { get; }
-  }
-
-  public interface ISm64StaticCollisionMesh : ISm64CollisionMesh { }
-
-  public interface ISm64DynamicMesh : ISm64CollisionMesh, IDisposable {
-    ISm64ObjectTransform Transform { get; }
-  }
-
-
   public interface ISm64Triangle {
     Sm64SurfaceType SurfaceType { get; }
     Sm64TerrainType TerrainType { get; }
 
     IReadOnlyList<IVector3<short>> Vertices { get; }
-  }
-
-  public interface ISm64ObjectTransform {
-    IVector3<float> Position { get; }
-    IVector3<float> EulerRotation { get; }
   }
 
   /// <summary>
