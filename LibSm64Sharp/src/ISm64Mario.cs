@@ -12,16 +12,9 @@
     ISm64MarioMesh Mesh { get; }
 
     ISm64Vector3<float> Position { get; }
-    void SchedulePosition(float x, float y, float z);
-
     float FaceAngle { get; }
-    void ScheduleFaceAngle(float faceAngle);
-
     ISm64Vector3<float> Velocity { get; }
-    void ScheduleVelocity(float xVel, float yVel, float zVel);
-    
     short Health { get; }
-    void ScheduleHealth(short health);
 
     void Tick();
   }

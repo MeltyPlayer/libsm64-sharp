@@ -20,13 +20,9 @@ namespace libsm64sharp.lowlevel {
   };
 
   [StructLayout(LayoutKind.Sequential)]
-  public struct LowLevelSm64MarioState {
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-    public float[] position;
-
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-    public float[] velocity;
-
+  public struct LowLevelSm64MarioOutState {
+    public LowLevelSm64Vector3f position;
+    public LowLevelSm64Vector3f vosition;
     public float faceAngle;
     public short health;
   };
