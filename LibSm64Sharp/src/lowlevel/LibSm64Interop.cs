@@ -3,7 +3,7 @@
 
 namespace libsm64sharp.lowlevel {
   public static class LibSm64Interop {
-    private const string SM64_X86_DLL = "sm64-x86.dll";
+    private const string SM64_X86_DLL = "lib\\sm64-x86.dll";
 
     [DllImport(SM64_X86_DLL)]
     public static extern void sm64_global_init(

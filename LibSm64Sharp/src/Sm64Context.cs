@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 using libsm64sharp.lowlevel;
 
@@ -12,8 +13,13 @@ namespace libsm64sharp {
     private const int SM64_TEXTURE_HEIGHT = 64;
     private Image<Rgba32> marioTextureImage_;
 
-    public Sm64Context(byte[] romBytes,
-                       Action<string> debugPrintCallback) {
+    static void debugPrintCallback(string str) {
+      Debug.WriteLine(str);
+    }
+
+    public Sm64Context(byte[] romBytes) {
+      // TODO: Verify checksum!
+
       var callbackDelegate = new DebugPrintFuncDelegate(debugPrintCallback);
       var romHandle = GCHandle.Alloc(romBytes, GCHandleType.Pinned);
       var textureData = new byte[4 * SM64_TEXTURE_WIDTH * SM64_TEXTURE_HEIGHT];
