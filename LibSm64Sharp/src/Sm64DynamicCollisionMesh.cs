@@ -22,19 +22,42 @@ namespace libsm64sharp {
       public ISm64DynamicCollisionMeshBuilder AddTriangle(
           Sm64SurfaceType surfaceType,
           Sm64TerrainType terrainType,
-          IReadOnlyList<(short x, short y, short z)> vertices) {
+          (short x, short y, short z) vertex1,
+          (short x, short y, short z) vertex2,
+          (short x, short y, short z) vertex3) {
         this.triangles_.Add(new Sm64Triangle {
             SurfaceType = surfaceType,
             TerrainType = terrainType,
-            Vertices = vertices.Select(xyz => new Sm64Vector3<short> {
-                                   X = xyz.x,
-                                   Y = xyz.y,
-                                   Z = xyz.z,
-                               })
-                               .ToArray(),
+            Vertices = new[] {vertex1, vertex2, vertex3}.Select(
+                    xyz => new Sm64Vector3<short> {
+                        X = xyz.x,
+                        Y = xyz.y,
+                        Z = xyz.z,
+                    })
+                .ToArray(),
         });
         return this;
       }
+
+      public ISm64DynamicCollisionMeshBuilder AddQuad(
+          Sm64SurfaceType surfaceType,
+          Sm64TerrainType terrainType,
+          (short x, short y, short z) vertex1,
+          (short x, short y, short z) vertex2,
+          (short x, short y, short z) vertex3,
+          (short x, short y, short z) vertex4)
+        => this.AddTriangle(
+                   surfaceType,
+                   terrainType,
+                   vertex1,
+                   vertex2,
+                   vertex3)
+               .AddTriangle(
+                   surfaceType,
+                   terrainType,
+                   vertex4,
+                   vertex3,
+                   vertex2);
 
       public ISm64DynamicCollisionMeshBuilder SetPosition(
           float x,
