@@ -19,6 +19,12 @@ namespace demo.gl {
       {
         this.LoadImageIntoTexture_(image);
       }
+
+      GL.TexParameter(target, TextureParameterName.TextureMinFilter,
+                      (int)TextureMinFilter.Nearest);
+      GL.TexParameter(target, TextureParameterName.TextureMagFilter,
+                      (int)TextureMagFilter.Linear);
+
       GL.BindTexture(target, UNDEFINED_ID);
     }
 

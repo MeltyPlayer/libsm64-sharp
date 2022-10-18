@@ -57,6 +57,8 @@ namespace libsm64sharp.lowlevel {
   public struct LowLevelSm64Vector2f : ISm64Vector2<float> {
     public float X { get; }
     public float Y { get; }
+
+    public override string ToString() => $"({X}, {Y})";
   }
 
   [StructLayout(LayoutKind.Sequential)]
@@ -64,6 +66,8 @@ namespace libsm64sharp.lowlevel {
     public float X { get; }
     public float Y { get; }
     public float Z { get; }
+
+    public override string ToString() => $"({X}, {Y}, {Z})";
   }
 
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
