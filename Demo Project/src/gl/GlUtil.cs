@@ -1,4 +1,6 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using demo.camera;
+
+using OpenTK.Graphics.OpenGL;
 
 
 namespace demo.gl {
@@ -36,6 +38,12 @@ namespace demo.gl {
 
     public static void Ortho2d(int left, int right, int bottom, int top)
       => GL.Ortho(left, right, bottom, top, -1, 1);
+
+    public static void LookAt(ICamera camera)
+      => GlUtil.LookAt(
+          camera.EyeX, camera.EyeY, camera.EyeZ,
+          camera.FocusX, camera.FocusY, camera.FocusZ,
+          camera.UpX, camera.UpY, camera.UpZ);
 
     public static void LookAt(
         double eyeX,
