@@ -1,8 +1,4 @@
 ﻿using demo;
 
-using OpenTK.Windowing.Desktop;
-
-
-var gameWindow =
-    new DemoWindow(GameWindowSettings.Default, NativeWindowSettings.Default);
-gameWindow.Run();
+var gameWindow = new DemoWindow();
+gameWindow.Run(30);
