@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AssimpNet" Version="5.0.0-beta1" />
     <PackageReference Include="Microsoft.Win32.SystemEvents" Version="7.0.0-rc.2.22472.3" />
     <PackageReference Include="Microsoft.Windows.Compatibility.Shims" Version="2.1.0-preview3.19128.7" />
     <PackageReference Include="OpenTK" Version="3.3.2" />
@@ -32,12 +33,67 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="resources\mesh\Bob-omb Battlefield.mtl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\mesh\Bob-omb Battlefield.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\mesh\Textures\10E99677_c.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\mesh\Textures\12436720_c.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\mesh\Textures\1B46C8C_c.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\mesh\Textures\1FAAE88D_c.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\mesh\Textures\275F399C_c.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\mesh\Textures\359289F2_c.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\mesh\Textures\3D49A9D5_c.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\mesh\Textures\3F485258_c.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\mesh\Textures\4020CDFE_c.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\mesh\Textures\41A41EE3_c.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\mesh\Textures\574B138E_c.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\mesh\Textures\6B1A233B_c.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\mesh\Textures\6B2D96F_c.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\mesh\Textures\6C631877_c.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\mesh\Textures\6E3A21B_c.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\mesh\Textures\C1DF883_c.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="rom\sm64.z64">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="resources\mesh\" />
     <Folder Include="src\gl\" />
   </ItemGroup>
 
