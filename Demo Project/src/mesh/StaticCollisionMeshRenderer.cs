@@ -39,17 +39,12 @@ namespace demo.mesh {
 
       var vertexShaderSrc = @"
 # version 120
-in vec2 in_uv0;
 varying vec3 vertexPosition;
 varying vec4 vertexColor;
-varying vec3 vertexNormal;
-varying vec2 uv0;
 void main() {
     gl_Position = gl_ProjectionMatrix * gl_ModelViewMatrix * gl_Vertex; 
     vertexPosition = gl_Vertex.xyz;
-    vertexNormal = normalize(gl_ModelViewMatrix * vec4(gl_Normal, 0)).xyz;
     vertexColor = gl_Color;
-    uv0 = gl_MultiTexCoord0.st;
 }";
 
       var fragmentShaderSrc = @$"
@@ -59,8 +54,6 @@ uniform float maxY;
 out vec4 fragColor;
 in vec3 vertexPosition;
 in vec4 vertexColor;
-in vec3 vertexNormal;
-in vec2 uv0;
 void main() {{
     fragColor = vertexColor;
     fragColor.rgb *= (vertexPosition.y - minY) / (maxY - minY);
@@ -82,7 +75,7 @@ void main() {{
 
       GL.Begin(PrimitiveType.Triangles);
 
-      GL.Color3(0, 1, 0);
+      GL.Color3(0, 1f, 0);
       foreach (var triangle in this.collisionMesh_.Triangles) {
         foreach (var vertex in triangle.Vertices) {
           GL.Vertex3(vertex.X, vertex.Y, vertex.Z);
