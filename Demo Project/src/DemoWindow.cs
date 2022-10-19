@@ -21,8 +21,8 @@ public class DemoWindow : GameWindow {
   private readonly StaticAssimpSceneRenderer staticAssimpSceneRenderer_;
   private readonly StaticCollisionMeshRenderer staticCollisionMeshRenderer_;
 
-  private FlyingCamera camera_ = new();
-  private FlyingCameraController flyingCameraController_;
+  private MarioOrbitingCamera camera_;
+  private MarioOrbitingCameraController cameraController_;
 
   public DemoWindow() {
     var sm64RomBytes = File.ReadAllBytes("rom\\sm64.z64");
@@ -39,8 +39,9 @@ public class DemoWindow : GameWindow {
     this.sm64Mario_ = this.sm64Context_.CreateMario(0, 900, 0);
     this.marioMeshRenderer_ = new MarioMeshRenderer(this.sm64Mario_.Mesh);
 
-    this.flyingCameraController_ =
-        new FlyingCameraController(this.camera_, this);
+    this.camera_ = new MarioOrbitingCamera(this.sm64Mario_);
+    this.cameraController_ =
+        new MarioOrbitingCameraController(this.camera_, this);
   }
 
   private void InitGL_() {
@@ -80,7 +81,6 @@ public class DemoWindow : GameWindow {
     base.OnUpdateFrame(args);
 
     this.sm64Mario_.Tick();
-    this.flyingCameraController_.Tick();
   }
 
   protected override void OnRenderFrame(FrameEventArgs args) {
