@@ -24,14 +24,6 @@ public class DemoWindow : GameWindow {
   private FlyingCamera camera_ = new();
   private FlyingCameraController flyingCameraController_;
 
-  private bool isMouseDown_ = false;
-  private (int, int)? prevMousePosition_ = null;
-
-  private bool isForwardDown_ = false;
-  private bool isBackwardDown_ = false;
-  private bool isLeftwardDown_ = false;
-  private bool isRightwardDown_ = false;
-
   public DemoWindow() {
     var sm64RomBytes = File.ReadAllBytes("rom\\sm64.z64");
 
@@ -110,21 +102,6 @@ public class DemoWindow : GameWindow {
   private void RenderPerspective_() {
     var width = this.Width;
     var height = this.Height;
-
-    /*var cameraXNormal = 1;
-    var cameraYNormal = -.2f;
-    var cameraZNormal = 0;
-
-    var cameraDistance = 500f;
-
-    var marioPos = this.sm64Mario_.Position;
-    var centerX = marioPos.X;
-    var centerY = marioPos.Y;
-    var centerZ = marioPos.Z;
-
-    var cameraX = centerX - cameraDistance * cameraXNormal;
-    var cameraY = centerY - cameraDistance * cameraYNormal;
-    var cameraZ = centerZ - cameraDistance * cameraZNormal;*/
 
     {
       GL.MatrixMode(MatrixMode.Projection);
