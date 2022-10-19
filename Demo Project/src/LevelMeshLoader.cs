@@ -15,7 +15,7 @@ public class LevelMeshLoader {
     var sm64StaticCollisionMeshBuilder =
         sm64Context.CreateStaticCollisionMesh();
 
-    var scale = 400;
+    var scale = Constants.LEVEL_SCALE;
 
     foreach (var assimpMesh in assimpScene.Meshes) {
       foreach (var assimpFace in assimpMesh.Faces) {
