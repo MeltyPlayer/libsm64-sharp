@@ -28,7 +28,7 @@ namespace demo.controller {
       gameWindow.MouseDown += (_, args) => {
         switch (args.Button) {
           case MouseButton.Left: {
-            gamepad.ScheduleBButton(true);
+            gamepad.IsBButtonDown = true;
             break;
           }
         }
@@ -36,7 +36,7 @@ namespace demo.controller {
       gameWindow.MouseUp += (_, args) => {
         switch (args.Button) {
           case MouseButton.Left: {
-            gamepad.ScheduleBButton(false);
+            gamepad.IsBButtonDown = false;
             break;
           }
         }
@@ -61,11 +61,11 @@ namespace demo.controller {
             break;
           }
           case Key.Space: {
-            gamepad.ScheduleAButton(true);
+            gamepad.IsAButtonDown = true;
             break;
           }
           case Key.ControlLeft: {
-            gamepad.ScheduleZButton(true);
+            gamepad.IsZButtonDown = true;
             break;
           }
         }
@@ -89,11 +89,11 @@ namespace demo.controller {
             break;
           }
           case Key.Space: {
-            gamepad.ScheduleAButton(false);
+            gamepad.IsAButtonDown = false;
             break;
           }
           case Key.ControlLeft: {
-            gamepad.ScheduleZButton(false);
+            gamepad.IsZButtonDown = false;
             break;
           }
         }

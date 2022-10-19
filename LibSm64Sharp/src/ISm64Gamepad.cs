@@ -6,14 +6,9 @@
     IReadOnlySm64Vector2<float> CamLook { get; }
     void ScheduleCamLook(float x, float y);
 
-    bool IsAButtonDown { get; }
-    void ScheduleAButton(bool isAButtonDown);
-
-    bool IsBButtonDown { get; }
-    void ScheduleBButton(bool isBButtonDown);
-
-    bool IsZButtonDown { get; }
-    void ScheduleZButton(bool isZButtonDown);
+    bool IsAButtonDown { get; set; }
+    bool IsBButtonDown { get; set; }
+    bool IsZButtonDown { get; set; }
    
     void Tick();
   }
