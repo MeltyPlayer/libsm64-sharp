@@ -51,15 +51,14 @@ namespace libsm64sharp {
       public short Health => this.outState_.health;
 
       public void Tick() {
-        this.Gamepad.Tick();
         var inputs = new LowLevelSm64MarioInputs {
             buttonA = (byte) (this.Gamepad.IsAButtonDown ? 1 : 0),
             buttonB = (byte) (this.Gamepad.IsBButtonDown ? 1 : 0),
             buttonZ = (byte) (this.Gamepad.IsZButtonDown ? 1 : 0),
             stickX = this.Gamepad.AnalogStick.X,
             stickY = this.Gamepad.AnalogStick.Y,
-            camLookX = this.Gamepad.CamLook.X,
-            camLookZ = this.Gamepad.CamLook.Y,
+            camLookX = this.Gamepad.CameraNormal.X,
+            camLookZ = this.Gamepad.CameraNormal.Y,
         };
 
         var outState = this.outState_;

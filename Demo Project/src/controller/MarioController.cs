@@ -107,15 +107,17 @@ namespace demo.controller {
           (this.isRightwardDown_ ? 1f : 0) - (this.isLeftwardDown_ ? 1 : 0);
 
       var length = MathF.Sqrt(forwardVector * forwardVector +
-                                  rightwardVector * rightwardVector);
-
+                              rightwardVector * rightwardVector);
       forwardVector /= length;
       rightwardVector /= length;
 
-      this.mario_.Gamepad.ScheduleCamLook(-this.camera_.ZNormal,
-                                          this.camera_.XNormal);
-      this.mario_.Gamepad.ScheduleAnalogStick(-forwardVector,
-                                              -rightwardVector);
+      var cameraNormal = this.mario_.Gamepad.CameraNormal;
+      cameraNormal.X = -this.camera_.ZNormal;
+      cameraNormal.Y = this.camera_.XNormal;
+
+      var analogStick = this.mario_.Gamepad.AnalogStick;
+      analogStick.X = -forwardVector;
+      analogStick.Y = -rightwardVector;
     }
   }
 }
