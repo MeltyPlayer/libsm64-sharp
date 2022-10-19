@@ -3,6 +3,8 @@
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
+using Color = System.Drawing.Color;
+
 
 namespace demo.gl {
   public class GlTexture : IDisposable {
@@ -10,7 +12,23 @@ namespace demo.gl {
 
     private int id_ = UNDEFINED_ID;
 
-    public GlTexture(Image<Rgba32> image) {
+    public static GlTexture FromColor(Color color) {
+      var image = new Image<Rgba32>(1, 1);
+      var frame = image.Frames[0];
+
+      var pixel = frame[0, 0];
+      pixel.R = color.R;
+      pixel.G = color.G;
+      pixel.B = color.B;
+      pixel.A = color.A;
+      frame[0, 0] = pixel;
+
+      return FromImage(image);
+    }
+
+    public static GlTexture FromImage(Image<Rgba32> image) => new(image);
+
+    private GlTexture(Image<Rgba32> image) {
       GL.GenTextures(1, out int id);
       this.id_ = id;
 
@@ -21,9 +39,9 @@ namespace demo.gl {
       }
 
       GL.TexParameter(target, TextureParameterName.TextureMinFilter,
-                      (int)TextureMinFilter.Nearest);
+                      (int) TextureMinFilter.Nearest);
       GL.TexParameter(target, TextureParameterName.TextureMagFilter,
-                      (int)TextureMagFilter.Linear);
+                      (int) TextureMagFilter.Linear);
 
       GL.BindTexture(target, UNDEFINED_ID);
     }
