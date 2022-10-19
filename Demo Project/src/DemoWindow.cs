@@ -1,4 +1,5 @@
 ﻿using demo.camera;
+using demo.controller;
 using demo.gl;
 using demo.mesh;
 
@@ -6,7 +7,6 @@ using libsm64sharp;
 
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Input;
 
 
 namespace demo;
@@ -22,7 +22,7 @@ public class DemoWindow : GameWindow {
   private readonly StaticCollisionMeshRenderer staticCollisionMeshRenderer_;
 
   private FlyingCamera camera_ = new();
-  private readonly float fovY_ = 30;
+  private FlyingCameraController flyingCameraController_;
 
   private bool isMouseDown_ = false;
   private (int, int)? prevMousePosition_ = null;
@@ -47,94 +47,8 @@ public class DemoWindow : GameWindow {
     this.sm64Mario_ = this.sm64Context_.CreateMario(0, 900, 0);
     this.marioMeshRenderer_ = new MarioMeshRenderer(this.sm64Mario_.Mesh);
 
-    this.MouseDown += (_, args) => {
-      if (args.Button == MouseButton.Left) {
-        isMouseDown_ = true;
-        this.prevMousePosition_ = null;
-      }
-    };
-    this.MouseUp += (_, args) => {
-      if (args.Button == MouseButton.Left) {
-        isMouseDown_ = false;
-      }
-    };
-    this.MouseMove += (_, args) => {
-      if (this.isMouseDown_) {
-        var mouseLocation = (args.X, args.Y);
-
-        if (this.prevMousePosition_ != null) {
-          var (prevMouseX, prevMouseY) = this.prevMousePosition_.Value;
-          var (mouseX, mouseY) = mouseLocation;
-
-          var deltaMouseX = mouseX - prevMouseX;
-          var deltaMouseY = mouseY - prevMouseY;
-
-          var fovY = this.fovY_;
-          var fovX = fovY / this.Height * this.Width;
-
-          var deltaXFrac = 1f * deltaMouseX / this.Width;
-          var deltaYFrac = 1f * deltaMouseY / this.Height;
-
-          var mouseSpeedX = 1;
-          var mouseSpeedY = 1;
-
-          this.camera_.Pitch += deltaYFrac * fovY * mouseSpeedY;
-          this.camera_.Yaw -= deltaXFrac * fovX * mouseSpeedX;
-        }
-
-        this.prevMousePosition_ = mouseLocation;
-      }
-    };
-
-    this.KeyDown += (_, args) => {
-      switch (args.Key) {
-        case Key.W: {
-          this.isForwardDown_ = true;
-          break;
-        }
-        case Key.S: {
-          this.isBackwardDown_ = true;
-          break;
-        }
-        case Key.A: {
-          this.isLeftwardDown_ = true;
-          break;
-        }
-        case Key.D: {
-          this.isRightwardDown_ = true;
-          break;
-        }
-        case Key.Space: {
-          this.sm64Mario_.Gamepad.ScheduleAButton(true);
-          break;
-        }
-      }
-    };
-
-    this.KeyUp += (_, args) => {
-      switch (args.Key) {
-        case Key.W: {
-          this.isForwardDown_ = false;
-          break;
-        }
-        case Key.S: {
-          this.isBackwardDown_ = false;
-          break;
-        }
-        case Key.A: {
-          this.isLeftwardDown_ = false;
-          break;
-        }
-        case Key.D: {
-          this.isRightwardDown_ = false;
-          break;
-        }
-        case Key.Space: {
-          this.sm64Mario_.Gamepad.ScheduleAButton(false);
-          break;
-        }
-      }
-    };
+    this.flyingCameraController_ =
+        new FlyingCameraController(this.camera_, this);
   }
 
   private void InitGL_() {
@@ -174,12 +88,7 @@ public class DemoWindow : GameWindow {
     base.OnUpdateFrame(args);
 
     this.sm64Mario_.Tick();
-
-    var forwardVector =
-        (this.isForwardDown_ ? 1 : 0) - (this.isBackwardDown_ ? 1 : 0);
-    var rightwardVector =
-        (this.isRightwardDown_ ? 1 : 0) - (this.isLeftwardDown_ ? 1 : 0);
-    this.camera_.Move(forwardVector, rightwardVector, 15);
+    this.flyingCameraController_.Tick();
   }
 
   protected override void OnRenderFrame(FrameEventArgs args) {
@@ -220,7 +129,7 @@ public class DemoWindow : GameWindow {
     {
       GL.MatrixMode(MatrixMode.Projection);
       GL.LoadIdentity();
-      GlUtil.Perspective(this.fovY_, 1.0 * width / height, 1, 10000);
+      GlUtil.Perspective(this.camera_.FovY, 1.0 * width / height, 1, 10000);
       GlUtil.LookAt(this.camera_);
 
       GL.MatrixMode(MatrixMode.Modelview);

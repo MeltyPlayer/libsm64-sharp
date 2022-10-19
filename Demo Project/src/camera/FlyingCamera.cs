@@ -12,6 +12,8 @@
     public float UpY => 1;
     public float UpZ => 0;
 
+    public float FovY => 30;
+
 
     /// <summary>
     ///   The left-right angle of the camera, in degrees.

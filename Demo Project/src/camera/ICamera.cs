@@ -11,5 +11,7 @@
     float UpX { get; }
     float UpY { get; }
     float UpZ { get; }
+
+    float FovY { get; }
   }
 }
