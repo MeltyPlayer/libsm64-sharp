@@ -76,7 +76,7 @@ void main() {{
     vec4 texColor = texture(texture0, uv0);
     fragColor = vertexColor * texColor;
 
-    vec3 diffuseLightNormal = normalize(vec3(.5, .5, -1));
+    vec3 diffuseLightNormal = normalize(vec3(.5, -1, .5));
     float diffuseLightAmount = max(-dot(vertexNormal, diffuseLightNormal), 0);
     float ambientLightAmount = .3;
     float lightAmount = min(ambientLightAmount + diffuseLightAmount, 1);
@@ -119,7 +119,7 @@ void main() {{
             var vertexIndex = face.Indices[i];
 
             var normal = mesh.Normals[vertexIndex];
-            GL.Normal3(normal.X, normal.Y, normal.Z);
+            GL.Normal3(-normal.X, -normal.Y, -normal.Z);
 
             var uv = uvs[vertexIndex];
             GL.TexCoord2(uv.X, uv.Y);

@@ -60,7 +60,7 @@ void main() {{
       fragColor.rgb = texColor.rgb;
     }}
 
-    vec3 diffuseLightNormal = normalize(vec3(.5, .5, -1));
+    vec3 diffuseLightNormal = normalize(vec3(.5, -1, .5));
     float diffuseLightAmount = max(-dot(vertexNormal, diffuseLightNormal), 0);
     float ambientLightAmount = .3;
     float lightAmount = min(ambientLightAmount + diffuseLightAmount, 1);
