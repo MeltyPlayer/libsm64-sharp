@@ -81,7 +81,7 @@ void main() {{
         return;
       }
 
-      this.marioTexture_ = new GlTexture(this.mesh_.Texture);
+      this.marioTexture_ = GlTexture.FromImage(this.mesh_.Texture);
     }
 
     private void RenderMario_() {
