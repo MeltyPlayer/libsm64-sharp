@@ -18,6 +18,7 @@ public class DemoWindow : GameWindow {
   private bool isGlInit_;
 
   private readonly MarioMeshRenderer marioMeshRenderer_;
+  private readonly StaticAssimpSceneRenderer staticAssimpSceneRenderer_;
   private readonly StaticCollisionMeshRenderer staticCollisionMeshRenderer_;
 
   private FlyingCamera camera_ = new();
@@ -36,21 +37,14 @@ public class DemoWindow : GameWindow {
 
     this.sm64Context_ = new Sm64Context(sm64RomBytes);
 
-    short floorZ = 0;
-    var staticCollisionMesh =
-        this.sm64Context_.CreateStaticCollisionMesh()
-            .AddTriangle(
-                Sm64SurfaceType.SURFACE_DEFAULT,
-                Sm64TerrainType.TERRAIN_GRASS,
-                (2000, floorZ, 0),
-                (-2000, floorZ, 0),
-                (0, floorZ, 2000)
-            )
-            .Build();
+    var (assimpScene, staticCollisionMesh) =
+        new LevelMeshLoader().LoadAndCreateCollisionMesh(this.sm64Context_);
+    this.staticAssimpSceneRenderer_ =
+        new StaticAssimpSceneRenderer(assimpScene);
     this.staticCollisionMeshRenderer_ =
         new StaticCollisionMeshRenderer(staticCollisionMesh);
 
-    this.sm64Mario_ = this.sm64Context_.CreateMario(0, 0, 0);
+    this.sm64Mario_ = this.sm64Context_.CreateMario(0, 900, 0);
     this.marioMeshRenderer_ = new MarioMeshRenderer(this.sm64Mario_.Mesh);
 
     this.MouseDown += (_, args) => {
@@ -234,6 +228,7 @@ public class DemoWindow : GameWindow {
     }
 
     this.marioMeshRenderer_.Render();
-    this.staticCollisionMeshRenderer_.Render();
+    this.staticAssimpSceneRenderer_.Render();
+    //this.staticCollisionMeshRenderer_.Render();
   }
 }
