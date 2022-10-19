@@ -18,14 +18,9 @@ public class DemoWindow : GameWindow {
   private bool isGlInit_;
 
   private readonly MarioMeshRenderer marioMeshRenderer_;
+  private readonly StaticCollisionMeshRenderer staticCollisionMeshRenderer_;
 
-  private GlShaderProgram texturedShaderProgram_;
-  private int texture0Location_;
-  private int useLightingLocation_;
-
-  private GlShaderProgram texturelessShaderProgram_;
-
-  private  FlyingCamera camera_ = new();
+  private FlyingCamera camera_ = new();
   private readonly float fovY_ = 30;
 
   private bool isMouseDown_ = false;
@@ -42,15 +37,18 @@ public class DemoWindow : GameWindow {
     this.sm64Context_ = new Sm64Context(sm64RomBytes);
 
     short floorZ = 0;
-    this.sm64Context_.CreateStaticCollisionMesh()
-        .AddTriangle(
-            Sm64SurfaceType.SURFACE_DEFAULT,
-            Sm64TerrainType.TERRAIN_GRASS,
-            (2000, floorZ, 0),
-            (-2000, floorZ, 0),
-            (0, floorZ, 2000)
-        )
-        .Build();
+    var staticCollisionMesh =
+        this.sm64Context_.CreateStaticCollisionMesh()
+            .AddTriangle(
+                Sm64SurfaceType.SURFACE_DEFAULT,
+                Sm64TerrainType.TERRAIN_GRASS,
+                (2000, floorZ, 0),
+                (-2000, floorZ, 0),
+                (0, floorZ, 2000)
+            )
+            .Build();
+    this.staticCollisionMeshRenderer_ =
+        new StaticCollisionMeshRenderer(staticCollisionMesh);
 
     this.sm64Mario_ = this.sm64Context_.CreateMario(0, 0, 0);
     this.marioMeshRenderer_ = new MarioMeshRenderer(this.sm64Mario_.Mesh);
@@ -176,70 +174,6 @@ public class DemoWindow : GameWindow {
     GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
     GL.ClearColor(.5f, .5f, .5f, 1);
-
-    var vertexShaderSrc = @"
-# version 120
-in vec2 in_uv0;
-varying vec4 vertexColor;
-varying vec3 vertexNormal;
-varying vec2 uv0;
-void main() {
-    gl_Position = gl_ProjectionMatrix * gl_ModelViewMatrix * gl_Vertex; 
-    vertexNormal = normalize(gl_ModelViewMatrix * vec4(gl_Normal, 0)).xyz;
-    vertexColor = gl_Color;
-    uv0 = gl_MultiTexCoord0.st;
-}";
-
-    var fragmentShaderSrc = @$"
-# version 130 
-uniform sampler2D texture0;
-uniform float useLighting;
-out vec4 fragColor;
-in vec4 vertexColor;
-in vec3 vertexNormal;
-in vec2 uv0;
-void main() {{
-    vec4 texColor = texture(texture0, uv0);
-    fragColor = vertexColor;
-
-    if (texColor.a > .95) {{
-      fragColor.rgb = texColor.rgb;
-    }}
-
-    vec3 diffuseLightNormal = normalize(vec3(.5, .5, -1));
-    float diffuseLightAmount = max(-dot(vertexNormal, diffuseLightNormal), 0);
-    float ambientLightAmount = .3;
-    float lightAmount = min(ambientLightAmount + diffuseLightAmount, 1);
-    fragColor.rgb = mix(fragColor.rgb, fragColor.rgb * lightAmount, useLighting);
-}}";
-
-    this.texturedShaderProgram_ =
-        GlShaderProgram.FromShaders(vertexShaderSrc, fragmentShaderSrc);
-
-    this.texture0Location_ =
-        this.texturedShaderProgram_.GetUniformLocation("texture0");
-    this.useLightingLocation_ =
-        this.texturedShaderProgram_.GetUniformLocation("useLighting");
-
-    this.texturelessShaderProgram_ =
-        GlShaderProgram.FromShaders(@"
-# version 120
-
-varying vec4 vertexColor;
-
-void main() {
-    gl_Position = gl_ProjectionMatrix * gl_ModelViewMatrix * gl_Vertex; 
-    vertexColor = gl_Color;
-}", @"
-# version 130 
-
-out vec4 fragColor;
-
-in vec4 vertexColor;
-
-void main() {
-    fragColor = vertexColor;
-}");
   }
 
   protected override void OnUpdateFrame(FrameEventArgs args) {
@@ -300,18 +234,6 @@ void main() {
     }
 
     this.marioMeshRenderer_.Render();
-
-    {
-      this.texturelessShaderProgram_.Use();
-
-      GL.Color3(1f, 1f, 1f);
-
-      var floorZ = .5f;
-      GL.Begin(PrimitiveType.Triangles);
-      GL.Vertex3(2000, floorZ, 0);
-      GL.Vertex3(-2000, floorZ, 0);
-      GL.Vertex3(0, floorZ, 2000);
-      GL.End();
-    }
+    this.staticCollisionMeshRenderer_.Render();
   }
 }
