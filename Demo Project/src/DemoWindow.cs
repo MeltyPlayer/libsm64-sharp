@@ -1,5 +1,6 @@
 ﻿using demo.camera;
 using demo.gl;
+using demo.mesh;
 
 using libsm64sharp;
 
@@ -16,13 +17,13 @@ public class DemoWindow : GameWindow {
 
   private bool isGlInit_;
 
+  private readonly MarioMeshRenderer marioMeshRenderer_;
+
   private GlShaderProgram texturedShaderProgram_;
   private int texture0Location_;
   private int useLightingLocation_;
 
   private GlShaderProgram texturelessShaderProgram_;
-
-  private GlTexture marioTexture_;
 
   private  FlyingCamera camera_ = new();
   private readonly float fovY_ = 30;
@@ -52,6 +53,7 @@ public class DemoWindow : GameWindow {
         .Build();
 
     this.sm64Mario_ = this.sm64Context_.CreateMario(0, 0, 0);
+    this.marioMeshRenderer_ = new MarioMeshRenderer(this.sm64Mario_.Mesh);
 
     this.MouseDown += (_, args) => {
       if (args.Button == MouseButton.Left) {
@@ -110,6 +112,10 @@ public class DemoWindow : GameWindow {
           this.isRightwardDown_ = true;
           break;
         }
+        case Key.Space: {
+          this.sm64Mario_.Gamepad.ScheduleAButton(true);
+          break;
+        }
       }
     };
 
@@ -129,6 +135,10 @@ public class DemoWindow : GameWindow {
         }
         case Key.D: {
           this.isRightwardDown_ = false;
+          break;
+        }
+        case Key.Space: {
+          this.sm64Mario_.Gamepad.ScheduleAButton(false);
           break;
         }
       }
@@ -230,8 +240,6 @@ in vec4 vertexColor;
 void main() {
     fragColor = vertexColor;
 }");
-
-    this.marioTexture_ = new GlTexture(this.sm64Mario_.Mesh.Texture);
   }
 
   protected override void OnUpdateFrame(FrameEventArgs args) {
@@ -291,38 +299,7 @@ void main() {
       GL.LoadIdentity();
     }
 
-    var marioMesh = this.sm64Mario_.Mesh;
-    var marioMeshTriangleData = marioMesh.TriangleData;
-    if (marioMeshTriangleData != null) {
-      this.texturedShaderProgram_.Use();
-      GL.Uniform1(this.texture0Location_, 0);
-      GL.Uniform1(this.useLightingLocation_, 1f);
-
-      this.marioTexture_.Bind();
-      GL.Begin(PrimitiveType.Triangles);
-
-      for (var i = 0; i < marioMeshTriangleData.TriangleCount; ++i) {
-        for (var v = 0; v < 3; ++v) {
-          var offset = 3 * i + v;
-
-          var vertexNormal = marioMeshTriangleData.Normals[offset];
-          GL.Normal3(vertexNormal.X, vertexNormal.Y, vertexNormal.Z);
-
-          var vertexColor = marioMeshTriangleData.Colors[offset];
-          var sc = 1;
-          GL.Color3(sc * vertexColor.X, sc * vertexColor.Y, sc * vertexColor.Z);
-
-          var vertexUv = marioMeshTriangleData.Uvs[offset];
-          GL.TexCoord2(vertexUv.X, vertexUv.Y);
-
-          var vertexPosition = marioMeshTriangleData.Positions[offset];
-          GL.Vertex3(vertexPosition.X, vertexPosition.Y, vertexPosition.Z);
-        }
-      }
-
-      GL.End();
-      this.marioTexture_.Unbind();
-    }
+    this.marioMeshRenderer_.Render();
 
     {
       this.texturelessShaderProgram_.Use();
