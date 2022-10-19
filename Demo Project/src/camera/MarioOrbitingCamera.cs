@@ -5,7 +5,7 @@ namespace demo.camera {
   public class MarioOrbitingCamera : ICamera {
     private readonly ISm64Mario mario_;
 
-    private const float MARIO_HEIGHT_ = 100f;
+    private const float MARIO_HEIGHT_ = 150f;
 
     public MarioOrbitingCamera(ISm64Mario mario) {
       this.mario_ = mario;
@@ -23,7 +23,7 @@ namespace demo.camera {
     public float UpY => 1;
     public float UpZ => 0;
 
-    public float FovY => 30;
+    public float FovY => Constants.FOV;
 
     public float Distance { get; set; } = 800;
 

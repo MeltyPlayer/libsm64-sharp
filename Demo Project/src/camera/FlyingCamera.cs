@@ -12,7 +12,7 @@
     public float UpY => 1;
     public float UpZ => 0;
 
-    public float FovY => 30;
+    public float FovY => Constants.FOV;
 
 
     /// <summary>

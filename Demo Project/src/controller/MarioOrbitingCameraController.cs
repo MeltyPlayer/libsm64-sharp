@@ -13,13 +13,13 @@ namespace demo.controller {
         MarioOrbitingCamera marioOrbitingCamera,
         IGameWindow gameWindow) {
       gameWindow.MouseDown += (_, args) => {
-        if (args.Button == MouseButton.Left) {
+        if (args.Button == MouseButton.Right) {
           isMouseDown_ = true;
           this.prevMousePosition_ = null;
         }
       };
       gameWindow.MouseUp += (_, args) => {
-        if (args.Button == MouseButton.Left) {
+        if (args.Button == MouseButton.Right) {
           isMouseDown_ = false;
         }
       };

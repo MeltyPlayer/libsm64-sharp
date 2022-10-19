@@ -12,6 +12,10 @@
     float UpY { get; }
     float UpZ { get; }
 
+    float XNormal { get; }
+    float YNormal { get; }
+    float ZNormal { get; }
+
     float FovY { get; }
   }
 }

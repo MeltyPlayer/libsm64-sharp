@@ -13,16 +13,18 @@ namespace demo;
 
 public class DemoWindow : GameWindow {
   private readonly ISm64Context sm64Context_;
+
   private readonly ISm64Mario sm64Mario_;
-
-  private bool isGlInit_;
-
+  private readonly MarioController marioController_;
   private readonly MarioMeshRenderer marioMeshRenderer_;
+
   private readonly StaticAssimpSceneRenderer staticAssimpSceneRenderer_;
   private readonly StaticCollisionMeshRenderer staticCollisionMeshRenderer_;
 
   private MarioOrbitingCamera camera_;
   private MarioOrbitingCameraController cameraController_;
+
+  private bool isGlInit_;
 
   public DemoWindow() {
     var sm64RomBytes = File.ReadAllBytes("rom\\sm64.z64");
@@ -37,9 +39,12 @@ public class DemoWindow : GameWindow {
         new StaticCollisionMeshRenderer(staticCollisionMesh);
 
     this.sm64Mario_ = this.sm64Context_.CreateMario(0, 900, 0);
+    this.camera_ = new MarioOrbitingCamera(this.sm64Mario_);
+
+    this.marioController_ =
+        new MarioController(this.sm64Mario_, this.camera_, this);
     this.marioMeshRenderer_ = new MarioMeshRenderer(this.sm64Mario_.Mesh);
 
-    this.camera_ = new MarioOrbitingCamera(this.sm64Mario_);
     this.cameraController_ =
         new MarioOrbitingCameraController(this.camera_, this);
   }
@@ -80,6 +85,7 @@ public class DemoWindow : GameWindow {
   protected override void OnUpdateFrame(FrameEventArgs args) {
     base.OnUpdateFrame(args);
 
+    this.marioController_.BeforeTick();
     this.sm64Mario_.Tick();
   }
 
@@ -106,7 +112,7 @@ public class DemoWindow : GameWindow {
     {
       GL.MatrixMode(MatrixMode.Projection);
       GL.LoadIdentity();
-      GlUtil.Perspective(this.camera_.FovY, 1.0 * width / height, 1, 10000);
+      GlUtil.Perspective(this.camera_.FovY, 1.0 * width / height, 1, 50000);
       GlUtil.LookAt(this.camera_);
 
       GL.MatrixMode(MatrixMode.Modelview);
