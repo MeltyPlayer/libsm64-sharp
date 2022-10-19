@@ -2,10 +2,11 @@
 
 using demo.gl;
 
-using libsm64sharp;
-
 using OpenTK.Graphics.OpenGL;
 
+using SixLabors.ImageSharp.PixelFormats;
+
+using Image = SixLabors.ImageSharp.Image;
 using PrimitiveType = OpenTK.Graphics.OpenGL.PrimitiveType;
 
 
@@ -17,11 +18,27 @@ namespace demo.mesh {
     private int texture0Location_;
     private int useLightingLocation_;
 
-    private GlDisplayList glDisplayList_;
+    private readonly GlDisplayList glDisplayList_;
+    private readonly GlTexture[] glTextures_;
 
     public StaticAssimpSceneRenderer(Scene assimpScene) {
       this.assimpScene_ = assimpScene;
       this.glDisplayList_ = new GlDisplayList(this.RenderAssimpScene_);
+      this.glTextures_ =
+          assimpScene.Materials.Select(assimpMaterial => {
+                       var filePath = assimpMaterial.TextureDiffuse.FilePath;
+
+                       if (filePath == null) {
+                         return GlTexture.FromColor(Color.White);
+                       }
+
+                       // TODO: Fix this so it's not hard-coded
+                       var texturePath = Path.Join("resources/mesh", filePath);
+                       var textureImage = Image.Load<Rgba32>(texturePath);
+
+                       return GlTexture.FromImage(textureImage);
+                     })
+                     .ToArray();
     }
 
     public void Render() {
@@ -64,6 +81,10 @@ void main() {{
     float ambientLightAmount = .3;
     float lightAmount = min(ambientLightAmount + diffuseLightAmount, 1);
     fragColor.rgb = mix(fragColor.rgb, fragColor.rgb * lightAmount, useLighting);
+
+    if (fragColor.a < .95) {{
+      discard;
+    }}
 }}";
 
       this.texturedShaderProgram_ =
@@ -80,12 +101,19 @@ void main() {{
       GL.Uniform1(this.texture0Location_, 0f);
       GL.Uniform1(this.useLightingLocation_, 1f);
 
-      GL.Begin(PrimitiveType.Triangles);
-
       var scale = Constants.LEVEL_SCALE;
+
+      GL.Color3(1f, 1f, 1f);
 
       var indexOrder = new[] {0, 2, 1};
       foreach (var mesh in this.assimpScene_.Meshes) {
+        var texture = this.glTextures_[mesh.MaterialIndex];
+        texture.Bind();
+
+        GL.Begin(PrimitiveType.Triangles);
+
+        var uvs = mesh.TextureCoordinateChannels[0];
+
         foreach (var face in mesh.Faces) {
           foreach (var i in indexOrder) {
             var vertexIndex = face.Indices[i];
@@ -93,13 +121,18 @@ void main() {{
             var normal = mesh.Normals[vertexIndex];
             GL.Normal3(normal.X, normal.Y, normal.Z);
 
+            var uv = uvs[vertexIndex];
+            GL.TexCoord2(uv.X, uv.Y);
+
             var vertex = mesh.Vertices[vertexIndex];
             GL.Vertex3(vertex.X * scale, vertex.Y * scale, vertex.Z * scale);
           }
         }
-      }
 
-      GL.End();
+        GL.End();
+
+        texture.Unbind();
+      }
     }
   }
 }
