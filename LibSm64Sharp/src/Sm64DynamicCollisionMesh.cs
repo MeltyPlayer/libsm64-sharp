@@ -148,7 +148,7 @@ namespace libsm64sharp {
 
       public IReadOnlyList<ISm64Triangle> Triangles { get; }
 
-      public ISm64Vector3<float> Position => this.position_;
+      public IReadOnlySm64Vector3<float> Position => this.position_;
 
       public ISm64DynamicCollisionMesh SetPosition(float x, float y, float z) {
         this.position_.X = x;
@@ -160,7 +160,7 @@ namespace libsm64sharp {
         return this;
       }
 
-      public ISm64Vector3<float> EulerRotation => this.eulerRotation_;
+      public IReadOnlySm64Vector3<float> EulerRotation => this.eulerRotation_;
 
       public ISm64DynamicCollisionMesh SetEulerRotation(
           float xDegrees,

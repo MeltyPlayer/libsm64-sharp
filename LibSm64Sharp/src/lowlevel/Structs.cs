@@ -54,7 +54,7 @@ namespace libsm64sharp.lowlevel {
 
 
   [StructLayout(LayoutKind.Sequential)]
-  public struct LowLevelSm64Vector2f : ISm64Vector2<float> {
+  public readonly struct LowLevelSm64Vector2f : IReadOnlySm64Vector2<float> {
     public float X { get; }
     public float Y { get; }
 
@@ -62,7 +62,7 @@ namespace libsm64sharp.lowlevel {
   }
 
   [StructLayout(LayoutKind.Sequential)]
-  public struct LowLevelSm64Vector3f : ISm64Vector3<float> {
+  public readonly struct LowLevelSm64Vector3f : IReadOnlySm64Vector3<float> {
     public float X { get; }
     public float Y { get; }
     public float Z { get; }

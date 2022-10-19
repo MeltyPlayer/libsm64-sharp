@@ -1,9 +1,9 @@
 ﻿namespace libsm64sharp {
   public interface ISm64Gamepad {
-    ISm64Vector2<float> AnalogStick { get; }
+    IReadOnlySm64Vector2<float> AnalogStick { get; }
     void ScheduleAnalogStick(float x, float y);
 
-    ISm64Vector2<float> CamLook { get; }
+    IReadOnlySm64Vector2<float> CamLook { get; }
     void ScheduleCamLook(float x, float y);
 
     bool IsAButtonDown { get; }

@@ -11,9 +11,9 @@
     ISm64Gamepad Gamepad { get; }
     ISm64MarioMesh Mesh { get; }
 
-    ISm64Vector3<float> Position { get; }
+    IReadOnlySm64Vector3<float> Position { get; }
     float FaceAngle { get; }
-    ISm64Vector3<float> Velocity { get; }
+    IReadOnlySm64Vector3<float> Velocity { get; }
     short Health { get; }
 
     void Tick();

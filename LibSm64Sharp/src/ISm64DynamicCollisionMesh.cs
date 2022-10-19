@@ -22,7 +22,7 @@
       : ISm64CollisionMesh,
           IMutablePositionAndRotation<ISm64DynamicCollisionMesh>,
           IDisposable {
-    ISm64Vector3<float> Position { get; }
-    ISm64Vector3<float> EulerRotation { get; }
+    IReadOnlySm64Vector3<float> Position { get; }
+    IReadOnlySm64Vector3<float> EulerRotation { get; }
   }
 }

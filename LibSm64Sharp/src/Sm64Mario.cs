@@ -45,8 +45,8 @@ namespace libsm64sharp {
       public ISm64Gamepad Gamepad { get; } = new Sm64Gamepad();
       public ISm64MarioMesh Mesh => this.mesh_;
 
-      public ISm64Vector3<float> Position => this.outState_.position;
-      public ISm64Vector3<float> Velocity => this.outState_.velocity;
+      public IReadOnlySm64Vector3<float> Position => this.outState_.position;
+      public IReadOnlySm64Vector3<float> Velocity => this.outState_.velocity;
       public float FaceAngle => this.outState_.faceAngle;
       public short Health => this.outState_.health;
 

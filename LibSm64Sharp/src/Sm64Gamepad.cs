@@ -11,12 +11,12 @@
       private bool? scheduledIsBButtonDown_;
       private bool? scheduledIsZButtonDown_;
 
-      public ISm64Vector2<float> AnalogStick => this.analogStick_;
+      public IReadOnlySm64Vector2<float> AnalogStick => this.analogStick_;
 
       public void ScheduleAnalogStick(float x, float y)
         => this.scheduledAnalogStick_ = new Sm64Vector2<float> {X = x, Y = y};
 
-      public ISm64Vector2<float> CamLook => this.camLook_;
+      public IReadOnlySm64Vector2<float> CamLook => this.camLook_;
 
       public void ScheduleCamLook(float x, float y)
         => this.scheduledCamLook_ = new Sm64Vector2<float> {X = x, Y = y};
