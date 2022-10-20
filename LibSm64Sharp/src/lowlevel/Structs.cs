@@ -72,4 +72,9 @@ namespace libsm64sharp.lowlevel {
 
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
   public delegate void DebugPrintFuncDelegate(string str);
+
+  [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+  public delegate void PlaySoundFuncDelegate(
+      uint soundBits,
+      ref LowLevelSm64Vector3f position);
 }

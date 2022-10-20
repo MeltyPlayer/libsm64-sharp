@@ -29,6 +29,11 @@ public class DemoWindow : GameWindow {
   private bool isGlInit_;
 
   public DemoWindow() {
+    Sm64Context.RegisterPlaySoundFunction(
+        args => {
+          // TODO: Play sounds
+        });
+
     var sm64RomBytes = File.ReadAllBytes("rom\\sm64.z64");
     this.sm64Context_ = Sm64Context.InitFromRom(sm64RomBytes);
 

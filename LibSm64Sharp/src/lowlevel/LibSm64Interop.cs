@@ -14,6 +14,10 @@ namespace libsm64sharp.lowlevel {
         IntPtr debugPrintFunctionPtr);
 
     [DllImport(SM64_DLL)]
+    public static extern void sm64_register_play_sound_function(
+        IntPtr playSoundFunctionPtr);
+
+    [DllImport(SM64_DLL)]
     public static extern void sm64_global_init(
         IntPtr rom,
         IntPtr outTexture);
