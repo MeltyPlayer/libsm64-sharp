@@ -14,11 +14,16 @@ namespace libsm64sharp {
     private const int SM64_TEXTURE_HEIGHT = 64;
     private Image<Rgba32> marioTextureImage_;
 
-    static void debugPrintCallback(string str) {
-      Debug.WriteLine(str);
+    public static void RegisterDebugPrintFunction(
+        DebugPrintFuncDelegate handler) {
+      LibSm64Interop.sm64_register_debug_print_function(
+          Marshal.GetFunctionPointerForDelegate(handler));
     }
 
-    public Sm64Context(byte[] romBytes) {
+    public static ISm64Context InitFromRom(byte[] romBytes)
+      => new Sm64Context(romBytes);
+
+    private Sm64Context(byte[] romBytes) {
       var expectedUsaHash = new byte[] {
           0x20,
           0xb8,
@@ -44,15 +49,13 @@ namespace libsm64sharp {
             "please use the .z64 (big-endian) version of the USA ROM.");
       }
 
-      var callbackDelegate = new DebugPrintFuncDelegate(debugPrintCallback);
       var romHandle = GCHandle.Alloc(romBytes, GCHandleType.Pinned);
       var textureData = new byte[4 * SM64_TEXTURE_WIDTH * SM64_TEXTURE_HEIGHT];
       var textureDataHandle = GCHandle.Alloc(textureData, GCHandleType.Pinned);
 
-      LibSm64Interop.sm64_global_init(romHandle.AddrOfPinnedObject(),
-                                      textureDataHandle.AddrOfPinnedObject(),
-                                      Marshal.GetFunctionPointerForDelegate(
-                                          callbackDelegate));
+      LibSm64Interop.sm64_global_init(
+          romHandle.AddrOfPinnedObject(),
+          textureDataHandle.AddrOfPinnedObject());
 
       this.marioTextureImage_ =
           new Image<Rgba32>(SM64_TEXTURE_WIDTH, SM64_TEXTURE_HEIGHT);

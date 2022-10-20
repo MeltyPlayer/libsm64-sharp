@@ -10,10 +10,13 @@ namespace libsm64sharp.lowlevel {
 #endif
 
     [DllImport(SM64_DLL)]
+    public static extern void sm64_register_debug_print_function(
+        IntPtr debugPrintFunctionPtr);
+
+    [DllImport(SM64_DLL)]
     public static extern void sm64_global_init(
         IntPtr rom,
-        IntPtr outTexture,
-        IntPtr debugPrintFunctionPtr);
+        IntPtr outTexture);
 
     [DllImport(SM64_DLL)]
     public static extern void sm64_global_terminate();

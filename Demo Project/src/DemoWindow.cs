@@ -1,4 +1,6 @@
-﻿using demo.camera;
+﻿using System.Diagnostics;
+
+using demo.camera;
 using demo.controller;
 using demo.gl;
 using demo.mesh;
@@ -28,8 +30,7 @@ public class DemoWindow : GameWindow {
 
   public DemoWindow() {
     var sm64RomBytes = File.ReadAllBytes("rom\\sm64.z64");
-
-    this.sm64Context_ = new Sm64Context(sm64RomBytes);
+    this.sm64Context_ = Sm64Context.InitFromRom(sm64RomBytes);
 
     var (assimpScene, staticCollisionMesh) =
         new LevelMeshLoader().LoadAndCreateCollisionMesh(this.sm64Context_);
