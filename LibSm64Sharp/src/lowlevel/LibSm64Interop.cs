@@ -32,9 +32,9 @@ namespace libsm64sharp.lowlevel {
 
     [DllImport(SM64_DLL)]
     public static extern int sm64_mario_create(
-        short marioX,
-        short marioY,
-        short marioZ);
+        float marioX,
+        float marioY,
+        float marioZ);
 
     [DllImport(SM64_DLL)]
     public static extern void sm64_mario_tick(

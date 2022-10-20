@@ -7,9 +7,9 @@ namespace libsm64sharp.lowlevel {
     public short type;
     public short force;
     public ushort terrain;
-    public short v0x, v0y, v0z;
-    public short v1x, v1y, v1z;
-    public short v2x, v2y, v2z;
+    public int v0x, v0y, v0z;
+    public int v1x, v1y, v1z;
+    public int v2x, v2y, v2z;
   };
 
   [StructLayout(LayoutKind.Sequential)]

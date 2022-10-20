@@ -7,17 +7,17 @@
     TSelf AddTriangle(
         Sm64SurfaceType surfaceType,
         Sm64TerrainType terrainType,
-        (short x, short y, short z) vertex1,
-        (short x, short y, short z) vertex2,
-        (short x, short y, short z) vertex3);
+        (int x, int y, int z) vertex1,
+        (int x, int y, int z) vertex2,
+        (int x, int y, int z) vertex3);
 
     TSelf AddQuad(
         Sm64SurfaceType surfaceType,
         Sm64TerrainType terrainType,
-        (short x, short y, short z) vertex1,
-        (short x, short y, short z) vertex2,
-        (short x, short y, short z) vertex3,
-        (short x, short y, short z) vertex4);
+        (int x, int y, int z) vertex1,
+        (int x, int y, int z) vertex2,
+        (int x, int y, int z) vertex3,
+        (int x, int y, int z) vertex4);
   }
 
   public interface ISm64CollisionMesh {

@@ -38,10 +38,10 @@ public class LevelMeshLoader {
     return (assimpScene, sm64StaticCollisionMeshBuilder.Build());
   }
 
-  private static (short, short, short) ConvertVector_(
+  private static (int, int, int) ConvertVector_(
       Vector3D vector,
       float scale)
-    => ((short) (vector.X * scale),
-        (short) (vector.Y * scale),
-        (short) (vector.Z * scale));
+    => ((int) (vector.X * scale),
+        (int) (vector.Y * scale),
+        (int) (vector.Z * scale));
 }

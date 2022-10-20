@@ -3,7 +3,7 @@
     Sm64SurfaceType SurfaceType { get; }
     Sm64TerrainType TerrainType { get; }
 
-    IReadOnlyList<IReadOnlySm64Vector3<short>> Vertices { get; }
+    IReadOnlyList<IReadOnlySm64Vector3<int>> Vertices { get; }
   }
 
   /// <summary>

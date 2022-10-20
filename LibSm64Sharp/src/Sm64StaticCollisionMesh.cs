@@ -16,14 +16,14 @@ namespace libsm64sharp {
       public ISm64StaticCollisionMeshBuilder AddTriangle(
           Sm64SurfaceType surfaceType,
           Sm64TerrainType terrainType,
-          (short x, short y, short z) vertex1,
-          (short x, short y, short z) vertex2,
-          (short x, short y, short z) vertex3) {
+          (int x, int y, int z) vertex1,
+          (int x, int y, int z) vertex2,
+          (int x, int y, int z) vertex3) {
         this.triangles_.Add(new Sm64Triangle {
             SurfaceType = surfaceType,
             TerrainType = terrainType,
             Vertices = new[] {vertex1, vertex2, vertex3}.Select(
-                    xyz => new Sm64Vector3<short> {
+                    xyz => new Sm64Vector3<int> {
                         X = xyz.x,
                         Y = xyz.y,
                         Z = xyz.z,
@@ -36,10 +36,10 @@ namespace libsm64sharp {
       public ISm64StaticCollisionMeshBuilder AddQuad(
           Sm64SurfaceType surfaceType,
           Sm64TerrainType terrainType,
-          (short x, short y, short z) vertex1,
-          (short x, short y, short z) vertex2,
-          (short x, short y, short z) vertex3,
-          (short x, short y, short z) vertex4)
+          (int x, int y, int z) vertex1,
+          (int x, int y, int z) vertex2,
+          (int x, int y, int z) vertex3,
+          (int x, int y, int z) vertex4)
         => this.AddTriangle(
                    surfaceType,
                    terrainType,

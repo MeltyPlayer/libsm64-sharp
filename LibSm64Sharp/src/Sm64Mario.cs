@@ -8,7 +8,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace libsm64sharp {
   public partial class Sm64Context {
-    public ISm64Mario CreateMario(short x, short y, short z)
+    public ISm64Mario CreateMario(float x, float y, float z)
       => new Sm64Mario(this.marioTextureImage_, x, y, z);
 
     private class Sm64Mario : ISm64Mario {
@@ -17,9 +17,9 @@ namespace libsm64sharp {
       private readonly Sm64MarioMesh mesh_;
 
       public Sm64Mario(Image<Rgba32> marioTextureImage,
-                       short x,
-                       short y,
-                       short z) {
+                       float x,
+                       float y,
+                       float z) {
         this.id_ = LibSm64Interop.sm64_mario_create(x, y, z);
         if (this.id_ == -1) {
           throw new NullReferenceException(
@@ -78,7 +78,7 @@ namespace libsm64sharp {
             uv = uvHandle.AddrOfPinnedObject()
         };
 
-
+        // TODO: Crashes here when sliding, need to investigate.
         LibSm64Interop.sm64_mario_tick(this.id_,
                                        ref inputs,
                                        ref outState,
