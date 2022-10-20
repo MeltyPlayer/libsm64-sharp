@@ -33,6 +33,8 @@ public class LevelMeshLoader {
       }
     }
 
+    new AssimpNormalSmoother().SmoothNormalsInScene(assimpScene);
+
     return (assimpScene, sm64StaticCollisionMeshBuilder.Build());
   }
 
