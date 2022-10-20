@@ -122,7 +122,7 @@ void main() {{
             GL.Normal3(-normal.X, -normal.Y, -normal.Z);
 
             var uv = uvs[vertexIndex];
-            GL.TexCoord2(uv.X, uv.Y);
+            GL.TexCoord2(uv.X, 1 - uv.Y);
 
             var vertex = mesh.Vertices[vertexIndex];
             GL.Vertex3(vertex.X * scale, vertex.Y * scale, vertex.Z * scale);
