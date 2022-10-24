@@ -108,8 +108,10 @@ namespace demo.controller {
 
       var length = MathF.Sqrt(forwardVector * forwardVector +
                               rightwardVector * rightwardVector);
-      forwardVector /= length;
-      rightwardVector /= length;
+      if (length > 0) {
+        forwardVector /= length;
+        rightwardVector /= length;
+      }
 
       var cameraNormal = this.mario_.Gamepad.CameraNormal;
       cameraNormal.X = -this.camera_.ZNormal;
