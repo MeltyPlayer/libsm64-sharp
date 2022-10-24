@@ -24,6 +24,7 @@
     <PackageReference Include="AssimpNet" Version="5.0.0-beta1" />
     <PackageReference Include="Microsoft.Win32.SystemEvents" Version="7.0.0-rc.2.22472.3" />
     <PackageReference Include="Microsoft.Windows.Compatibility.Shims" Version="2.1.0-preview3.19128.7" />
+    <PackageReference Include="OpenAL.Soft" Version="1.19.1" />
     <PackageReference Include="OpenTK" Version="3.3.2" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
   </ItemGroup>
