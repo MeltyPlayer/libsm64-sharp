@@ -48,6 +48,6 @@
   public interface ISm64AdpcmBook {
     int Order { get; }
     int NPredictors { get; }
-    short[] Book { get; }
+    public short[] Predictors { get; }
   }
 }

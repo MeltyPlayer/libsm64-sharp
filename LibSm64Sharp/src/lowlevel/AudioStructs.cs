@@ -60,13 +60,14 @@ namespace libsm64sharp.lowlevel {
     public uint end;
     public uint count;
     public uint pad;
-    // state
+    public IntPtr state;
   }
 
   [StructLayout(LayoutKind.Sequential)]
   public struct LowLevelSm64AdpcmBook {
     public int order;
     public int npredictors;
-    public IntPtr book;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+    public short[] book;
   }
 }
