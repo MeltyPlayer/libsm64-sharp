@@ -12,7 +12,7 @@
     bool Loaded { get; }
     byte ReleaseRate { get; }
     byte Pan { get; }
-    ISm64AudioBankSample Sound { get; }
+    ISm64AudioBankSound Sound { get; }
   }
 
   public interface ISm64Instrument {
@@ -20,9 +20,9 @@
     byte ReleaseRate { get; }
     byte NormalRangeLo { get; }
     byte NormalRangeHi { get; }
-    ISm64AudioBankSample? LowNotesSound { get; }
-    ISm64AudioBankSample NormalNotesSound { get; }
-    ISm64AudioBankSample? HighNotesSound { get; }
+    ISm64AudioBankSound? LowNotesSound { get; }
+    ISm64AudioBankSound NormalNotesSound { get; }
+    ISm64AudioBankSound? HighNotesSound { get; }
   }
 
   public interface ISm64AudioBankSound {
@@ -32,6 +32,22 @@
 
   public interface ISm64AudioBankSample {
     bool Loaded { get; }
-    short[] Samples { get; }
+    byte[] Samples { get; }
+    ISm64AdpcmLoop Loop { get; }
+    ISm64AdpcmBook Book { get; }
+  }
+
+  public interface ISm64AdpcmLoop {
+    uint Start { get; }
+    uint End { get; }
+    uint Count { get; }
+    uint Pad { get; }
+    // state
+  }
+
+  public interface ISm64AdpcmBook {
+    int Order { get; }
+    int NPredictors { get; }
+    short[] Book { get; }
   }
 }

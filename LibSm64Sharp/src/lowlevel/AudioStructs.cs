@@ -53,4 +53,20 @@ namespace libsm64sharp.lowlevel {
     public IntPtr book;
     public uint sampleSize;
   }
+
+  [StructLayout(LayoutKind.Sequential)]
+  public struct LowLevelSm64AdpcmLoop {
+    public uint start;
+    public uint end;
+    public uint count;
+    public uint pad;
+    // state
+  }
+
+  [StructLayout(LayoutKind.Sequential)]
+  public struct LowLevelSm64AdpcmBook {
+    public int order;
+    public int npredictors;
+    public IntPtr book;
+  }
 }
