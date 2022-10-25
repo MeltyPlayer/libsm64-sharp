@@ -100,8 +100,11 @@ namespace demo.audio.impl.al {
         AL.DeleteSource(ref this.alSourceId_);
       }
 
-      private void AssertNotDisposed_()
-        => Asserts.False(this.State == SoundState.DISPOSED);
+      private void AssertNotDisposed_() {
+        if (this.State == SoundState.DISPOSED) {
+          throw new Exception("Expected active sound to not be disposed");
+        }
+      }
 
       public IAudioStream<short> Stream { get; }
 

@@ -1,8 +1,4 @@
-﻿using demo.util.asserts;
-using System;
-
-
-namespace demo.audio.impl.al {
+﻿namespace demo.audio.impl.al {
   public partial class AlAudioManager {
     public IMutableAudioBuffer<short> CreateMutableBuffer()
       => new AlMutableAudioBuffer();
@@ -39,8 +35,10 @@ namespace demo.audio.impl.al {
 
       public void SetStereoPcm(short[] leftChannelSamples,
                                short[] rightChannelSamples) {
-        Asserts.Equal(leftChannelSamples.Length, rightChannelSamples.Length,
-                      "Expected the left/right channels to have the same number of samples!");
+        if (leftChannelSamples.Length != rightChannelSamples.Length) {
+          throw new ArgumentException(
+              "Expected the left/right channels to have the same number of samples!");
+        }
 
         this.AudioChannelsType = AudioChannelsType.STEREO;
         this.SampleCount = leftChannelSamples.Length;
