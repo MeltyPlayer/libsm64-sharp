@@ -61,58 +61,73 @@ public class DemoWindow : GameWindow {
       var audioBanks = this.sm64Context_.LoadAudioBanks();
 
       this.audioManager_ = new AlAudioManager();
-
-      this.bufferedSound_ =
-          this.audioManager_.CreateBufferedSound(
-              AudioChannelsType.STEREO, 22050 / 2 * 3, 5);
-      this.bufferedSound_.Play();
-
-      /*var firstInstrument =
-     audioBanks.CtlEntries.Skip(8).First().Instruments.Skip(1).First();
- var state = firstInstrument.NormalNotesSound.Sample.Loop.State;
- this.audioBuffer_ =
-     AifcAudioDecoder.Decode(this.audioManager_,
-                             firstInstrument.NormalNotesSound);
-
- this.audioSource_ = this.audioManager_.CreateAudioSource();
-
- this.activeSound_ = this.audioSource_.Create(this.audioBuffer_);
- this.activeSound_.Looping = true;
- this.activeSound_.Play();*/
     }
 
     Task.Run(() => {
       var stopwatch = new Stopwatch();
 
-      while (true) {
-        stopwatch.Restart();
+      var buffer =
+          new OggAudioLoader().LoadAudio(this.audioManager_,
+                                         "resources/music.ogg");
 
-        var singleChannelLength = AUDIO_BUFFER_SIZE_;
-        var singleChannelLengthInternal = 2 * singleChannelLength;
+      this.bufferedSound_ =
+          this.audioManager_.CreateBufferedSound(
+              AudioChannelsType.STEREO, 22050 / 2 * 3, 250);
 
-        var audioBuffer = new short[2 * singleChannelLengthInternal];
-        uint numSamples;
-        {
-          var audioBufferHandle =
-              GCHandle.Alloc(audioBuffer, GCHandleType.Pinned);
-          numSamples = LibSm64Interop.sm64_tick_audio(
-              this.bufferedSound_.QueuedSamples,
-              1100,
-              audioBufferHandle.AddrOfPinnedObject());
-          audioBufferHandle.Free();
+      try {
+        while (true) {
+          stopwatch.Restart();
+
+          var singleChannelLength = 2 * AUDIO_BUFFER_SIZE_;
+          var singlePassBufferLength = 2 * singleChannelLength;
+
+          // The more passes included in a single buffer, the longer the delay
+          // but less stuttering.
+          var passCount = 5;
+          var audioBuffers = new short[passCount][];
+
+          for (var p = 0; p < passCount; ++p) {
+            var audioBuffer = new short[singlePassBufferLength];
+            uint numSamples;
+            {
+              var audioBufferHandle =
+                  GCHandle.Alloc(audioBuffer, GCHandleType.Pinned);
+              numSamples = LibSm64Interop.sm64_tick_audio(
+                  this.bufferedSound_.QueuedSamples,
+                  1100,
+                  audioBufferHandle.AddrOfPinnedObject());
+              audioBufferHandle.Free();
+            }
+
+            var nextAudioBuffer =
+                audioBuffers[p] = new short[2 * 2 * numSamples];
+            for (var i = 0; i < nextAudioBuffer.Length; i++) {
+              nextAudioBuffer[i] = audioBuffer[i];
+            }
+          }
+
+          var totalAudioBufferLength =
+              audioBuffers.Sum(audioBuffer => audioBuffer.Length);
+          var totalAudioBuffer = new short[totalAudioBufferLength];
+          int ii = 0;
+          foreach (var audioBuffer in audioBuffers) {
+            foreach (var value in audioBuffer) {
+              totalAudioBuffer[ii++] = value;
+            }
+          }
+
+          this.bufferedSound_.PopulateNextBufferPcm(totalAudioBuffer);
+
+          var targetMilliseconds = 33 * passCount;
+          var elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+          var remainingMilliseconds = targetMilliseconds - elapsedMilliseconds;
+
+          if (remainingMilliseconds > 0) {
+            Thread.Sleep((int) remainingMilliseconds);
+          }
         }
-
-        var nextAudioBuffer = new short[2 * 2 * numSamples];
-        for (var i = 0; i < nextAudioBuffer.Length; i++) {
-          nextAudioBuffer[i] = audioBuffer[i];
-        }
-        this.bufferedSound_.PopulateNextBufferPcm(nextAudioBuffer);
-
-        var targetMilliseconds = 33;
-        var elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
-        var remainingMilliseconds = targetMilliseconds - elapsedMilliseconds;
-
-        Thread.Sleep((int) remainingMilliseconds);
+      } catch (Exception ex) {
+        ;
       }
     });
 

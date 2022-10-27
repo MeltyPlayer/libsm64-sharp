@@ -16,7 +16,7 @@ namespace demo.audio.impl.al {
       private readonly List<SingleBuffer> allBuffers_ = new();
 
       private readonly Queue<SingleBuffer> readyForDataBuffers_ = new();
-      
+
       private readonly Dictionary<uint, SingleBuffer> buffersById_ = new();
 
       private class SingleBuffer : IDisposable {
@@ -193,6 +193,7 @@ namespace demo.audio.impl.al {
           var unqueuedBuffers =
               AL.SourceUnqueueBuffers((int) this.alSourceId_,
                                       numBuffersProcessed);
+
           foreach (var unqueuedBuffer in unqueuedBuffers) {
             this.readyForDataBuffers_.Enqueue(
                 this.buffersById_[(uint) unqueuedBuffer]);
@@ -200,12 +201,20 @@ namespace demo.audio.impl.al {
         }
       }
 
+      private int idx = 0;
+
       public void PopulateNextBufferPcm(short[] data) {
-        this.FreeUpProcessedBuffers();
+        this.idx++;
+
+        //this.FreeUpProcessedBuffers();
 
         if (this.readyForDataBuffers_.TryDequeue(out var nextBuffer)) {
           nextBuffer.PopulateAndQueueUpInSource(data, this.alSourceId_);
-          this.Play();
+          if (this.State != SoundState.PLAYING) {
+            this.Play();
+          }
+        } else {
+          ;
         }
       }
     }
