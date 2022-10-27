@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Runtime.InteropServices;
-
+﻿using demo.audio;
 using demo.common.audio;
 using demo.common.audio.impl.al;
 using demo.camera;
@@ -9,7 +7,6 @@ using demo.common.gl;
 using demo.mesh;
 
 using libsm64sharp;
-using libsm64sharp.lowlevel;
 
 using OpenTK;
 
@@ -43,13 +40,9 @@ public class DemoWindow : GameWindow {
   private MarioOrbitingCameraController cameraController_;
 
   private IAudioManager<short> audioManager_;
-  private ICircularQueueActiveSound<short> circularQueueActiveSound_;
   private IActiveMusic<short> activeMusic_;
 
   private bool isGlInit_;
-
-  private const int AUDIO_FREQUENCY_ = 32000;
-  private const int AUDIO_BUFFER_SIZE_ = 544;
 
   public DemoWindow() {
     Sm64Context.RegisterDebugPrintFunction(text => {
@@ -84,83 +77,7 @@ public class DemoWindow : GameWindow {
       this.activeMusic_.Play();
     }
 
-    Task.Run(() => {
-      var stopwatch = new Stopwatch();
-
-      try {
-        this.circularQueueActiveSound_ =
-            this.audioManager_.CreateBufferedSound(
-                AudioChannelsType.STEREO, AUDIO_FREQUENCY_, 2);
-
-        var singleChannelLength = 2 * AUDIO_BUFFER_SIZE_;
-        var singlePassBufferLength = 2 * singleChannelLength;
-
-        // The more passes included in a single buffer, the longer the delay
-        // but less stuttering.
-        var passIndex = 0;
-        var passCount = 2;
-
-        var passLengths = new uint[passCount];
-        var audioBuffers = new short[passCount][];
-
-        for (var p = 0; p < passCount; ++p) {
-          audioBuffers[p] = new short[singlePassBufferLength];
-        }
-
-        while (true) {
-          stopwatch.Restart();
-
-          var audioBuffer = audioBuffers[passIndex];
-          uint numSamples;
-          {
-            var audioBufferHandle =
-                GCHandle.Alloc(audioBuffer, GCHandleType.Pinned);
-            numSamples = LibSm64Interop.sm64_tick_audio(
-                this.circularQueueActiveSound_.QueuedSamples,
-                1100,
-                audioBufferHandle.AddrOfPinnedObject());
-            audioBufferHandle.Free();
-          }
-
-          passLengths[passIndex] = 2 * 2 * numSamples;
-
-          if (passIndex == passCount - 1) {
-            passIndex = 0;
-
-            var totalAudioBufferLength = passLengths.Sum(v => v);
-            var totalAudioBuffer = new short[totalAudioBufferLength];
-
-            int totalIndex = 0;
-            for (var bufferIndex = 0;
-                 bufferIndex < audioBuffers.Length;
-                 ++bufferIndex) {
-              var buffer = audioBuffers[bufferIndex];
-              var passLength = passLengths[bufferIndex];
-
-              for (var s = 0; s < passLength; ++s) {
-                totalAudioBuffer[totalIndex++] = buffer[s];
-              }
-            }
-
-            this.circularQueueActiveSound_.PopulateNextBufferPcm(totalAudioBuffer);
-          } else {
-            passIndex++;
-          }
-
-          var targetSeconds = 1.0 / 30;
-          var targetTicks = targetSeconds * Stopwatch.Frequency;
-
-          // Expensive, but more accurate than Thread.sleep
-          var i = 0;
-          while (stopwatch.ElapsedTicks < targetTicks) {
-            ++i;
-          }
-        }
-      } catch (Exception ex) {
-        ;
-      }
-    });
-
+    Sm64Audio.Start(this.audioManager_);
 
     var (assimpScene, staticCollisionMesh) =
         new LevelMeshLoader().LoadAndCreateCollisionMesh(this.sm64Context_);

@@ -1,10 +1,9 @@
 ﻿using demo.common.audio;
-using demo.common.audio.impl.al;
 
 using libsm64sharp;
 
 
-namespace demo {
+namespace demo.audio {
   public static class AifcAudioDecoder {
     public static IReadOnlyList<short> itable = new short[] {
         0, 1, 2, 3, 4, 5, 6, 7,
