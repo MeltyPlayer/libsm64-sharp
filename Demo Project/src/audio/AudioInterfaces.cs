@@ -14,7 +14,7 @@ namespace demo.audio {
 
     IAudioSource<TNumber> CreateAudioSource();
 
-    IBufferedSound<TNumber> CreateBufferedSound(
+    ICircularQueueActiveSound<TNumber> CreateBufferedSound(
         AudioChannelsType audioChannelsType,
         int frequency,
         int bufferCount);
@@ -121,7 +121,7 @@ namespace demo.audio {
     bool Looping { get; set; }
   }
 
-  public interface IBufferedSound<TNumber>
+  public interface ICircularQueueActiveSound<TNumber>
       : IAudioFormat<TNumber>, IDisposable where TNumber : INumber<TNumber> {
     SoundState State { get; }
 

@@ -3,16 +3,16 @@
 
 namespace demo.audio.impl.al {
   public partial class AlAudioManager {
-    public IBufferedSound<short> CreateBufferedSound(
+    public ICircularQueueActiveSound<short> CreateBufferedSound(
         AudioChannelsType audioChannelsType,
         int frequency,
         int bufferCount)
-      => new AlBufferedSound(
+      => new AlCircularQueueActiveSound(
           audioChannelsType,
           frequency,
           bufferCount);
 
-    private class AlBufferedSound : IBufferedSound<short> {
+    private class AlCircularQueueActiveSound : ICircularQueueActiveSound<short> {
       private readonly List<SingleBuffer> allBuffers_ = new();
 
       private readonly Queue<SingleBuffer> readyForDataBuffers_ = new();
@@ -96,7 +96,7 @@ namespace demo.audio.impl.al {
       private bool isDisposed_;
       private uint alSourceId_;
 
-      public AlBufferedSound(
+      public AlCircularQueueActiveSound(
           AudioChannelsType audioChannelsType,
           int frequency,
           int bufferCount) {
@@ -114,7 +114,7 @@ namespace demo.audio.impl.al {
         }
       }
 
-      ~AlBufferedSound() => this.ReleaseUnmanagedResources_();
+      ~AlCircularQueueActiveSound() => this.ReleaseUnmanagedResources_();
 
       public void Dispose() {
         this.AssertNotDisposed_();
