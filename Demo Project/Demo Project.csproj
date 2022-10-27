@@ -89,6 +89,12 @@
     <None Update="resources\mesh\Textures\C1DF883_c.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="resources\music.ogg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\music_intro.ogg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="rom\sm64.z64">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
