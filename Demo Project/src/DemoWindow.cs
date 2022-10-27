@@ -43,10 +43,8 @@ public class DemoWindow : GameWindow {
   private MarioOrbitingCameraController cameraController_;
 
   private IAudioManager<short> audioManager_;
-  private IBufferedSound<short> bufferedSound_;
-  private IAudioBuffer<short> audioBuffer_;
-  private IAudioSource<short> audioSource_;
-  private IActiveSound<short> activeSound_;
+  private ICircularQueueActiveSound<short> circularQueueActiveSound_;
+  private IActiveMusic<short> activeMusic_;
 
   private bool isGlInit_;
 
@@ -77,16 +75,20 @@ public class DemoWindow : GameWindow {
       var musicIntroBuffer =
           new OggAudioLoader().LoadAudio(this.audioManager_,
                                          "resources/music_intro.ogg");
-      var musicBuffer =
+      var musicLoopBuffer =
           new OggAudioLoader().LoadAudio(this.audioManager_,
-                                         "resources/music.ogg");
+                                         "resources/music_loop.ogg");
+
+      this.activeMusic_ = this.audioManager_.CreateAudioSource()
+          .CreateMusic(musicIntroBuffer, musicLoopBuffer);
+      this.activeMusic_.Play();
     }
 
     Task.Run(() => {
       var stopwatch = new Stopwatch();
 
       try {
-        this.bufferedSound_ =
+        this.circularQueueActiveSound_ =
             this.audioManager_.CreateBufferedSound(
                 AudioChannelsType.STEREO, 32000, 250);
 
@@ -114,7 +116,7 @@ public class DemoWindow : GameWindow {
             var audioBufferHandle =
                 GCHandle.Alloc(audioBuffer, GCHandleType.Pinned);
             numSamples = LibSm64Interop.sm64_tick_audio(
-                this.bufferedSound_.QueuedSamples,
+                this.circularQueueActiveSound_.QueuedSamples,
                 1100,
                 audioBufferHandle.AddrOfPinnedObject());
             audioBufferHandle.Free();
@@ -140,7 +142,7 @@ public class DemoWindow : GameWindow {
               }
             }
 
-            this.bufferedSound_.PopulateNextBufferPcm(totalAudioBuffer);
+            this.circularQueueActiveSound_.PopulateNextBufferPcm(totalAudioBuffer);
           } else {
             passIndex++;
           }

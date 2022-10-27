@@ -89,10 +89,13 @@ namespace demo.audio {
 
   public interface IAudioSource<TNumber> where TNumber : INumber<TNumber> {
     IActiveSound<TNumber> Create(IAudioBuffer<TNumber> buffer);
-    IActiveSound<TNumber> Play(IAudioBuffer<TNumber> buffer);
-
     IActiveSound<TNumber> Create(IAudioStream<TNumber> stream);
-    IActiveSound<TNumber> Play(IAudioStream<TNumber> stream);
+
+
+    IActiveMusic<TNumber> CreateMusic(IAudioBuffer<TNumber> introBuffer,
+                                      IAudioBuffer<TNumber> loopBuffer);
+    IActiveMusic<TNumber> CreateMusic(IAudioStream<TNumber> introStream,
+                                      IAudioStream<TNumber> loopStream);
   }
 
   public enum SoundState {
@@ -121,6 +124,20 @@ namespace demo.audio {
     bool Looping { get; set; }
   }
 
+  public interface IActiveMusic<out TNumber>
+      : IStaticAudioFormat<TNumber>, IDisposable
+      where TNumber : INumber<TNumber> {
+    IAudioStream<TNumber> IntroStream { get; }
+    IAudioStream<TNumber> LoopStream { get; }
+
+    SoundState State { get; }
+
+    void Play();
+    void Pause();
+
+    float Volume { get; set; }
+  }
+
   public interface ICircularQueueActiveSound<TNumber>
       : IAudioFormat<TNumber>, IDisposable where TNumber : INumber<TNumber> {
     SoundState State { get; }
@@ -128,8 +145,6 @@ namespace demo.audio {
     void Play();
     void Stop();
     void Pause();
-
-    TNumber GetPcm(AudioChannelType channelType);
 
     float Volume { get; set; }
 

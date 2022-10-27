@@ -166,10 +166,6 @@ namespace demo.audio.impl.al {
         AssertNoError_();
       }
 
-      public short GetPcm(AudioChannelType channelType) {
-        throw new NotImplementedException();
-      }
-
       public float Volume { get; set; }
 
       public uint QueuedSamples {
