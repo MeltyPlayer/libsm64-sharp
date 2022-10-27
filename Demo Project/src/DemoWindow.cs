@@ -12,9 +12,19 @@ using libsm64sharp;
 using libsm64sharp.lowlevel;
 
 using OpenTK;
-using OpenTK.Graphics.OpenGL;
 
-using Timer = System.Threading.Timer;
+using BlendingFactor = OpenTK.Graphics.OpenGL.BlendingFactor;
+using ClearBufferMask = OpenTK.Graphics.OpenGL.ClearBufferMask;
+using CullFaceMode = OpenTK.Graphics.OpenGL.CullFaceMode;
+using DepthFunction = OpenTK.Graphics.OpenGL.DepthFunction;
+using EnableCap = OpenTK.Graphics.OpenGL.EnableCap;
+using GL = OpenTK.Graphics.OpenGL.GL;
+using HintMode = OpenTK.Graphics.OpenGL.HintMode;
+using HintTarget = OpenTK.Graphics.OpenGL.HintTarget;
+using MaterialFace = OpenTK.Graphics.OpenGL.MaterialFace;
+using MatrixMode = OpenTK.Graphics.OpenGL.MatrixMode;
+using PolygonMode = OpenTK.Graphics.OpenGL.PolygonMode;
+using ShadingModel = OpenTK.Graphics.OpenGL.ShadingModel;
 
 
 namespace demo;
@@ -63,67 +73,85 @@ public class DemoWindow : GameWindow {
       this.audioManager_ = new AlAudioManager();
     }
 
+    {
+      var musicIntroBuffer =
+          new OggAudioLoader().LoadAudio(this.audioManager_,
+                                         "resources/music_intro.ogg");
+      var musicBuffer =
+          new OggAudioLoader().LoadAudio(this.audioManager_,
+                                         "resources/music.ogg");
+    }
+
     Task.Run(() => {
       var stopwatch = new Stopwatch();
 
-      var buffer =
-          new OggAudioLoader().LoadAudio(this.audioManager_,
-                                         "resources/music.ogg");
-
-      this.bufferedSound_ =
-          this.audioManager_.CreateBufferedSound(
-              AudioChannelsType.STEREO, 22050 / 2 * 3, 250);
-
       try {
+        this.bufferedSound_ =
+            this.audioManager_.CreateBufferedSound(
+                AudioChannelsType.STEREO, 32000, 250);
+
+        var singleChannelLength = 2 * AUDIO_BUFFER_SIZE_;
+        var singlePassBufferLength = 2 * singleChannelLength;
+
+        // The more passes included in a single buffer, the longer the delay
+        // but less stuttering.
+        var passIndex = 0;
+        var passCount = 2;
+
+        var passLengths = new uint[passCount];
+        var audioBuffers = new short[passCount][];
+
+        for (var p = 0; p < passCount; ++p) {
+          audioBuffers[p] = new short[singlePassBufferLength];
+        }
+
         while (true) {
           stopwatch.Restart();
 
-          var singleChannelLength = 2 * AUDIO_BUFFER_SIZE_;
-          var singlePassBufferLength = 2 * singleChannelLength;
-
-          // The more passes included in a single buffer, the longer the delay
-          // but less stuttering.
-          var passCount = 5;
-          var audioBuffers = new short[passCount][];
-
-          for (var p = 0; p < passCount; ++p) {
-            var audioBuffer = new short[singlePassBufferLength];
-            uint numSamples;
-            {
-              var audioBufferHandle =
-                  GCHandle.Alloc(audioBuffer, GCHandleType.Pinned);
-              numSamples = LibSm64Interop.sm64_tick_audio(
-                  this.bufferedSound_.QueuedSamples,
-                  1100,
-                  audioBufferHandle.AddrOfPinnedObject());
-              audioBufferHandle.Free();
-            }
-
-            var nextAudioBuffer =
-                audioBuffers[p] = new short[2 * 2 * numSamples];
-            for (var i = 0; i < nextAudioBuffer.Length; i++) {
-              nextAudioBuffer[i] = audioBuffer[i];
-            }
+          var audioBuffer = audioBuffers[passIndex];
+          uint numSamples;
+          {
+            var audioBufferHandle =
+                GCHandle.Alloc(audioBuffer, GCHandleType.Pinned);
+            numSamples = LibSm64Interop.sm64_tick_audio(
+                this.bufferedSound_.QueuedSamples,
+                1100,
+                audioBufferHandle.AddrOfPinnedObject());
+            audioBufferHandle.Free();
           }
 
-          var totalAudioBufferLength =
-              audioBuffers.Sum(audioBuffer => audioBuffer.Length);
-          var totalAudioBuffer = new short[totalAudioBufferLength];
-          int ii = 0;
-          foreach (var audioBuffer in audioBuffers) {
-            foreach (var value in audioBuffer) {
-              totalAudioBuffer[ii++] = value;
+          passLengths[passIndex] = 2 * 2 * numSamples;
+
+          if (passIndex == passCount - 1) {
+            passIndex = 0;
+
+            var totalAudioBufferLength = passLengths.Sum(v => v);
+            var totalAudioBuffer = new short[totalAudioBufferLength];
+
+            int totalIndex = 0;
+            for (var bufferIndex = 0;
+                 bufferIndex < audioBuffers.Length;
+                 ++bufferIndex) {
+              var buffer = audioBuffers[bufferIndex];
+              var passLength = passLengths[bufferIndex];
+
+              for (var s = 0; s < passLength; ++s) {
+                totalAudioBuffer[totalIndex++] = buffer[s];
+              }
             }
+
+            this.bufferedSound_.PopulateNextBufferPcm(totalAudioBuffer);
+          } else {
+            passIndex++;
           }
 
-          this.bufferedSound_.PopulateNextBufferPcm(totalAudioBuffer);
+          var targetSeconds = 1.0 / 30;
+          var targetTicks = targetSeconds * Stopwatch.Frequency;
 
-          var targetMilliseconds = 33 * passCount;
-          var elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
-          var remainingMilliseconds = targetMilliseconds - elapsedMilliseconds;
-
-          if (remainingMilliseconds > 0) {
-            Thread.Sleep((int) remainingMilliseconds);
+          // Expensive, but more accurate than Thread.sleep
+          var i = 0;
+          while (stopwatch.ElapsedTicks < targetTicks) {
+            ++i;
           }
         }
       } catch (Exception ex) {

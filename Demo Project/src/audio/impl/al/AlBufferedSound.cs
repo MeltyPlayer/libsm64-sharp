@@ -86,8 +86,10 @@ namespace demo.audio.impl.al {
                         byteBufferData,
                         byteCount,
                         this.frequency_);
+          AssertNoError_();
 
           AL.SourceQueueBuffer((int) sourceId, (int) this.alBufferId_);
+          AssertNoError_();
         }
       }
 
@@ -149,16 +151,19 @@ namespace demo.audio.impl.al {
       public void Play() {
         this.AssertNotDisposed_();
         AL.SourcePlay(this.alSourceId_);
+        AssertNoError_();
       }
 
       public void Stop() {
         this.AssertNotDisposed_();
         AL.SourceStop(this.alSourceId_);
+        AssertNoError_();
       }
 
       public void Pause() {
         this.AssertNotDisposed_();
         AL.SourcePause(this.alSourceId_);
+        AssertNoError_();
       }
 
       public short GetPcm(AudioChannelType channelType) {
@@ -169,13 +174,23 @@ namespace demo.audio.impl.al {
 
       public uint QueuedSamples {
         get {
+          AL.GetSource(this.alSourceId_, ALGetSourcei.SampleOffset,
+                       out var currentSample);
+
           this.FreeUpProcessedBuffers();
 
-          // TODO: Is a more accurate number needed?
+          var queuedBufferCount =
+              this.allBuffers_.Count - this.readyForDataBuffers_.Count;
+
           var totalQueuedSamples = 0;
           foreach (var buffer in this.allBuffers_) {
             if (!this.readyForDataBuffers_.Contains(buffer)) {
-              totalQueuedSamples += buffer.bufferSize;
+              if (queuedBufferCount == 1) {
+                var remainingSamples = buffer.bufferSize - currentSample;
+                totalQueuedSamples += remainingSamples;
+              } else {
+                totalQueuedSamples += buffer.bufferSize;
+              }
             }
           }
 
@@ -188,11 +203,13 @@ namespace demo.audio.impl.al {
       public void FreeUpProcessedBuffers() {
         AL.GetSource(this.alSourceId_, ALGetSourcei.BuffersProcessed,
                      out var numBuffersProcessed);
+        AssertNoError_();
 
         if (numBuffersProcessed > 0) {
           var unqueuedBuffers =
               AL.SourceUnqueueBuffers((int) this.alSourceId_,
                                       numBuffersProcessed);
+          AssertNoError_();
 
           foreach (var unqueuedBuffer in unqueuedBuffers) {
             this.readyForDataBuffers_.Enqueue(
@@ -201,19 +218,21 @@ namespace demo.audio.impl.al {
         }
       }
 
-      private int idx = 0;
-
       public void PopulateNextBufferPcm(short[] data) {
-        this.idx++;
-
-        //this.FreeUpProcessedBuffers();
+        this.FreeUpProcessedBuffers();
 
         if (this.readyForDataBuffers_.TryDequeue(out var nextBuffer)) {
           nextBuffer.PopulateAndQueueUpInSource(data, this.alSourceId_);
+
           if (this.State != SoundState.PLAYING) {
             this.Play();
           }
-        } else {
+        }
+      }
+
+      private static void AssertNoError_() {
+        var error = AL.GetError();
+        if (error != ALError.NoError) {
           ;
         }
       }
