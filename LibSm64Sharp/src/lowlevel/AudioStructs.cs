@@ -60,7 +60,8 @@ namespace libsm64sharp.lowlevel {
     public uint end;
     public uint count;
     public uint pad;
-    public IntPtr state;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+    public short[] state;
   }
 
   [StructLayout(LayoutKind.Sequential)]

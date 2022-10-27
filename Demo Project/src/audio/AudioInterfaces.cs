@@ -13,6 +13,12 @@ namespace demo.audio {
         IAudioBuffer<TNumber> buffer);
 
     IAudioSource<TNumber> CreateAudioSource();
+
+    IBufferedSound<TNumber> CreateBufferedSound(
+        AudioChannelsType audioChannelsType,
+        int frequency,
+        int bufferSize,
+        int bufferCount);
   }
 
 
@@ -33,10 +39,15 @@ namespace demo.audio {
   public interface IAudioFormat<out TNumber> where TNumber : INumber<TNumber> {
     AudioChannelsType AudioChannelsType { get; }
     int Frequency { get; }
+  }
+
+  public interface IStaticAudioFormat<out TNumber>
+      : IAudioFormat<TNumber> where TNumber : INumber<TNumber> {
     int SampleCount { get; }
   }
 
-  public interface IAudioData<out TNumber> : IAudioFormat<TNumber>
+
+  public interface IAudioData<out TNumber> : IStaticAudioFormat<TNumber>
       where TNumber : INumber<TNumber> {
     TNumber GetPcm(AudioChannelType channelType, int sampleOffset);
   }
@@ -94,7 +105,8 @@ namespace demo.audio {
   }
 
   public interface IActiveSound<out TNumber>
-      : IAudioFormat<TNumber>, IDisposable where TNumber : INumber<TNumber> {
+      : IStaticAudioFormat<TNumber>, IDisposable
+      where TNumber : INumber<TNumber> {
     IAudioStream<TNumber> Stream { get; }
 
     SoundState State { get; }
@@ -108,5 +120,24 @@ namespace demo.audio {
 
     float Volume { get; set; }
     bool Looping { get; set; }
+  }
+
+  public interface IBufferedSound<TNumber>
+      : IAudioFormat<TNumber>, IDisposable where TNumber : INumber<TNumber> {
+    SoundState State { get; }
+
+    void Play();
+    void Stop();
+    void Pause();
+
+    TNumber GetPcm(AudioChannelType channelType);
+
+    float Volume { get; set; }
+
+    int BufferSize { get; }
+    int BufferCount { get; }
+
+    void PopulateNextBufferPcm(TNumber[] data);
+    void PopulateNextBufferPcm(TNumber[][] data);
   }
 }

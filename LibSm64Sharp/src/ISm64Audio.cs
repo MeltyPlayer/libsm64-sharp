@@ -42,7 +42,7 @@
     uint End { get; }
     uint Count { get; }
     uint Pad { get; }
-    // state
+    short[] State { get; }
   }
 
   public interface ISm64AdpcmBook {
