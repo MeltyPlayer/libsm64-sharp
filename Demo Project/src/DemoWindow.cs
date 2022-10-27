@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 using demo.audio;
 using demo.audio.impl.al;
@@ -12,6 +13,8 @@ using libsm64sharp.lowlevel;
 
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+
+using Timer = System.Threading.Timer;
 
 
 namespace demo;
@@ -61,7 +64,7 @@ public class DemoWindow : GameWindow {
 
       this.bufferedSound_ =
           this.audioManager_.CreateBufferedSound(
-              AudioChannelsType.STEREO, 22050 / 2 * 3, 544, 5);
+              AudioChannelsType.STEREO, 22050 / 2 * 3, 5);
       this.bufferedSound_.Play();
 
       /*var firstInstrument =
@@ -77,6 +80,42 @@ public class DemoWindow : GameWindow {
  this.activeSound_.Looping = true;
  this.activeSound_.Play();*/
     }
+
+    Task.Run(() => {
+      var stopwatch = new Stopwatch();
+
+      while (true) {
+        stopwatch.Restart();
+
+        var singleChannelLength = AUDIO_BUFFER_SIZE_;
+        var singleChannelLengthInternal = 2 * singleChannelLength;
+
+        var audioBuffer = new short[2 * singleChannelLengthInternal];
+        uint numSamples;
+        {
+          var audioBufferHandle =
+              GCHandle.Alloc(audioBuffer, GCHandleType.Pinned);
+          numSamples = LibSm64Interop.sm64_tick_audio(
+              this.bufferedSound_.QueuedSamples,
+              1100,
+              audioBufferHandle.AddrOfPinnedObject());
+          audioBufferHandle.Free();
+        }
+
+        var nextAudioBuffer = new short[2 * 2 * numSamples];
+        for (var i = 0; i < nextAudioBuffer.Length; i++) {
+          nextAudioBuffer[i] = audioBuffer[i];
+        }
+        this.bufferedSound_.PopulateNextBufferPcm(nextAudioBuffer);
+
+        var targetMilliseconds = 33;
+        var elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+        var remainingMilliseconds = targetMilliseconds - elapsedMilliseconds;
+
+        Thread.Sleep((int) remainingMilliseconds);
+      }
+    });
+
 
     var (assimpScene, staticCollisionMesh) =
         new LevelMeshLoader().LoadAndCreateCollisionMesh(this.sm64Context_);
@@ -135,18 +174,6 @@ public class DemoWindow : GameWindow {
 
     this.marioController_.BeforeTick();
     this.sm64Mario_.Tick();
-
-    var singleChannelLength = AUDIO_BUFFER_SIZE_;
-    var singleChannelLengthInternal = 2 * singleChannelLength;
-
-    var audioBuffer = new short[2 * singleChannelLengthInternal];
-    {
-      var audioBufferHandle = GCHandle.Alloc(audioBuffer, GCHandleType.Pinned);
-      LibSm64Interop.sm64_tick_audio(audioBufferHandle.AddrOfPinnedObject());
-      audioBufferHandle.Free();
-    }
-
-    this.bufferedSound_.PopulateNextBufferPcm(audioBuffer);
   }
 
   protected override void OnRenderFrame(FrameEventArgs args) {

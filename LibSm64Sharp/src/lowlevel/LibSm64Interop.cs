@@ -63,6 +63,8 @@ namespace libsm64sharp.lowlevel {
     public static extern void sm64_surface_object_delete(uint objectId);
 
     [DllImport(SM64_DLL)]
-    public static extern void sm64_tick_audio( IntPtr audioBuffer );
+    public static extern uint sm64_tick_audio(uint numQueuedSamples,
+                                              uint numDesiredSamples,
+                                              IntPtr audioBuffer);
   }
 }

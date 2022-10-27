@@ -6,35 +6,33 @@ namespace demo.audio.impl.al {
     public IBufferedSound<short> CreateBufferedSound(
         AudioChannelsType audioChannelsType,
         int frequency,
-        int bufferSize,
         int bufferCount)
       => new AlBufferedSound(
           audioChannelsType,
           frequency,
-          bufferSize,
           bufferCount);
 
     private class AlBufferedSound : IBufferedSound<short> {
       private readonly List<SingleBuffer> allBuffers_ = new();
+
       private readonly Queue<SingleBuffer> readyForDataBuffers_ = new();
+      
       private readonly Dictionary<uint, SingleBuffer> buffersById_ = new();
 
       private class SingleBuffer : IDisposable {
         public uint alBufferId_;
+        public int bufferSize;
 
         private bool isDisposed_;
 
         private readonly AudioChannelsType audioChannelsType_;
         private readonly int frequency_;
-        private readonly int bufferSize_;
 
         public SingleBuffer(
             AudioChannelsType audioChannelsType,
-            int frequency,
-            int bufferSize) {
+            int frequency) {
           this.audioChannelsType_ = audioChannelsType;
           this.frequency_ = frequency;
-          this.bufferSize_ = bufferSize;
 
           AL.GenBuffer(out this.alBufferId_);
         }
@@ -67,57 +65,13 @@ namespace demo.audio.impl.al {
           ALFormat bufferFormat = default;
           switch (this.audioChannelsType_) {
             case AudioChannelsType.MONO: {
+              this.bufferSize = shortBufferData.Length;
               bufferFormat = ALFormat.Mono16;
               break;
             }
             case AudioChannelsType.STEREO: {
+              this.bufferSize = shortBufferData.Length / 2;
               bufferFormat = ALFormat.Stereo16;
-              break;
-            }
-          }
-
-          var byteCount = 2 * shortBufferData.Length;
-          var byteBufferData = new byte[byteCount];
-          Buffer.BlockCopy(shortBufferData, 0, byteBufferData, 0,
-                           byteCount);
-
-          AL.BufferData((int) this.alBufferId_,
-                        bufferFormat,
-                        byteBufferData,
-                        byteCount,
-                        this.frequency_);
-
-          AL.SourceQueueBuffer((int) sourceId, (int) this.alBufferId_);
-        }
-
-        public void PopulateAndQueueUpInSource(
-            short[][] data,
-            uint sourceId) {
-          this.AssertNotDisposed_();
-
-          ALFormat bufferFormat = default;
-          short[] shortBufferData = default!;
-          switch (this.audioChannelsType_) {
-            case AudioChannelsType.MONO: {
-              bufferFormat = ALFormat.Mono16;
-              shortBufferData = new short[1 * this.bufferSize_];
-
-              for (var i = 0; i < shortBufferData.Length; ++i) {
-                shortBufferData[i] = data[0][i];
-              }
-
-              break;
-            }
-            case AudioChannelsType.STEREO: {
-              bufferFormat = ALFormat.Stereo16;
-              shortBufferData = new short[2 * this.bufferSize_];
-
-              // TODO: Is this correct, are they interleaved?
-              for (var i = 0; i < shortBufferData.Length / 2; ++i) {
-                shortBufferData[2 * i] = data[0][i];
-                shortBufferData[2 * i] = data[1][i];
-              }
-
               break;
             }
           }
@@ -143,18 +97,15 @@ namespace demo.audio.impl.al {
       public AlBufferedSound(
           AudioChannelsType audioChannelsType,
           int frequency,
-          int bufferSize,
           int bufferCount) {
         this.AudioChannelsType = audioChannelsType;
         this.Frequency = frequency;
-        this.BufferSize = bufferSize;
         this.BufferCount = bufferCount;
 
         AL.GenSource(out this.alSourceId_);
 
         for (var i = 0; i < bufferCount; ++i) {
-          var buffer =
-              new SingleBuffer(audioChannelsType, frequency, bufferSize);
+          var buffer = new SingleBuffer(audioChannelsType, frequency);
           this.allBuffers_.Add(buffer);
           this.readyForDataBuffers_.Enqueue(buffer);
           this.buffersById_[buffer.alBufferId_] = buffer;
@@ -215,10 +166,26 @@ namespace demo.audio.impl.al {
       }
 
       public float Volume { get; set; }
-      public int BufferSize { get; }
+
+      public uint QueuedSamples {
+        get {
+          this.FreeUpProcessedBuffers();
+
+          // TODO: Is a more accurate number needed?
+          var totalQueuedSamples = 0;
+          foreach (var buffer in this.allBuffers_) {
+            if (!this.readyForDataBuffers_.Contains(buffer)) {
+              totalQueuedSamples += buffer.bufferSize;
+            }
+          }
+
+          return (uint) totalQueuedSamples;
+        }
+      }
+
       public int BufferCount { get; }
 
-      public void PopulateNextBufferPcm(short[] data) {
+      public void FreeUpProcessedBuffers() {
         AL.GetSource(this.alSourceId_, ALGetSourcei.BuffersProcessed,
                      out var numBuffersProcessed);
 
@@ -231,30 +198,15 @@ namespace demo.audio.impl.al {
                 this.buffersById_[(uint) unqueuedBuffer]);
           }
         }
+      }
+
+      public void PopulateNextBufferPcm(short[] data) {
+        this.FreeUpProcessedBuffers();
 
         if (this.readyForDataBuffers_.TryDequeue(out var nextBuffer)) {
           nextBuffer.PopulateAndQueueUpInSource(data, this.alSourceId_);
           this.Play();
         }
-      }
-
-      public void PopulateNextBufferPcm(short[][] data) {
-        AL.GetSource(this.alSourceId_, ALGetSourcei.BuffersProcessed,
-                     out var numBuffersProcessed);
-
-        if (numBuffersProcessed > 0) {
-          var unqueuedBuffers =
-              AL.SourceUnqueueBuffers((int) this.alSourceId_,
-                                      numBuffersProcessed);
-          foreach (var unqueuedBuffer in unqueuedBuffers) {
-            this.readyForDataBuffers_.Enqueue(
-                this.buffersById_[(uint) unqueuedBuffer]);
-          }
-        }
-
-        var nextBuffer = this.readyForDataBuffers_.Dequeue();
-        nextBuffer.PopulateAndQueueUpInSource(data, this.alSourceId_);
-        this.Play();
       }
     }
   }

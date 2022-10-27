@@ -17,7 +17,6 @@ namespace demo.audio {
     IBufferedSound<TNumber> CreateBufferedSound(
         AudioChannelsType audioChannelsType,
         int frequency,
-        int bufferSize,
         int bufferCount);
   }
 
@@ -134,10 +133,9 @@ namespace demo.audio {
 
     float Volume { get; set; }
 
-    int BufferSize { get; }
+    uint QueuedSamples { get; }
     int BufferCount { get; }
 
     void PopulateNextBufferPcm(TNumber[] data);
-    void PopulateNextBufferPcm(TNumber[][] data);
   }
 }
