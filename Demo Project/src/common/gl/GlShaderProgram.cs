@@ -1,7 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL;
 
 
-namespace demo.gl {
+namespace demo.common.gl {
   public class GlShaderProgram : IDisposable {
     private const int UNDEFINED_ID = -1;
 

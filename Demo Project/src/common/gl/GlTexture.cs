@@ -6,7 +6,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using Color = System.Drawing.Color;
 
 
-namespace demo.gl {
+namespace demo.common.gl {
   public class GlTexture : IDisposable {
     private const int UNDEFINED_ID = -1;
 

@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 
 
-namespace demo.audio {
+namespace demo.common.audio {
   public interface IAudioManager<TNumber> where TNumber : INumber<TNumber> {
     // TODO: Add method for creating mutable buffer
     // TODO: Add method for creating mutable circular buffers

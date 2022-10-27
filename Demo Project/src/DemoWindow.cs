@@ -1,11 +1,11 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-using demo.audio;
-using demo.audio.impl.al;
+using demo.common.audio;
+using demo.common.audio.impl.al;
 using demo.camera;
 using demo.controller;
-using demo.gl;
+using demo.common.gl;
 using demo.mesh;
 
 using libsm64sharp;
@@ -48,7 +48,7 @@ public class DemoWindow : GameWindow {
 
   private bool isGlInit_;
 
-  private const int AUDIO_FREQUENCY_ = 22050;
+  private const int AUDIO_FREQUENCY_ = 32000;
   private const int AUDIO_BUFFER_SIZE_ = 544;
 
   public DemoWindow() {
@@ -90,7 +90,7 @@ public class DemoWindow : GameWindow {
       try {
         this.circularQueueActiveSound_ =
             this.audioManager_.CreateBufferedSound(
-                AudioChannelsType.STEREO, 32000, 250);
+                AudioChannelsType.STEREO, AUDIO_FREQUENCY_, 2);
 
         var singleChannelLength = 2 * AUDIO_BUFFER_SIZE_;
         var singlePassBufferLength = 2 * singleChannelLength;

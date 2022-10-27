@@ -102,7 +102,7 @@
 
   <ItemGroup>
     <Folder Include="resources\mesh\" />
-    <Folder Include="src\gl\" />
+    <Folder Include="src\common\gl\" />
   </ItemGroup>
 
 </Project>

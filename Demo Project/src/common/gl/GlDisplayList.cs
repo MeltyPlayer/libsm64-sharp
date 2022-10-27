@@ -1,7 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL;
 
 
-namespace demo.gl {
+namespace demo.common.gl {
   public class GlDisplayList : IDisposable {
     private readonly int displayListId_;
     private bool valid_ = false;

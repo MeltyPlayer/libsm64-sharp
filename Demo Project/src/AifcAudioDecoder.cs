@@ -1,5 +1,5 @@
-﻿using demo.audio;
-using demo.audio.impl.al;
+﻿using demo.common.audio;
+using demo.common.audio.impl.al;
 
 using libsm64sharp;
 

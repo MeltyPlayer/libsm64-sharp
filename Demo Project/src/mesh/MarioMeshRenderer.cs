@@ -1,4 +1,4 @@
-﻿using demo.gl;
+﻿using demo.common.gl;
 
 using libsm64sharp;
 

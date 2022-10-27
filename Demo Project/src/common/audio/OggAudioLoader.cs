@@ -1,7 +1,7 @@
 ﻿using NVorbis;
 
 
-namespace demo.audio {
+namespace demo.common.audio {
   public class OggAudioLoader {
     public IAudioBuffer<short> LoadAudio(
         IAudioManager<short> audioManager,

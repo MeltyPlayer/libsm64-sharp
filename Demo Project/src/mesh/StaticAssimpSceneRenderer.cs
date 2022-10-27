@@ -1,6 +1,6 @@
 ﻿using Assimp;
 
-using demo.gl;
+using demo.common.gl;
 
 using OpenTK.Graphics.OpenGL;
 

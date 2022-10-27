@@ -1,4 +1,4 @@
-﻿namespace demo.audio.impl.al {
+﻿namespace demo.common.audio.impl.al {
   public partial class AlAudioManager {
     public IBufferAudioStream<short> CreateBufferAudioStream(
         IAudioBuffer<short> buffer)

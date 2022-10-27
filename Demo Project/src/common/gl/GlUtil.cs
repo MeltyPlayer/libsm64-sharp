@@ -3,7 +3,7 @@
 using OpenTK.Graphics.OpenGL;
 
 
-namespace demo.gl {
+namespace demo.common.gl {
   public static class GlUtil {
     private static readonly object GL_LOCK_ = new();
     public static void RunLockedGl(Action handler) {
