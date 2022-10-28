@@ -1,5 +1,9 @@
 # libsm64 - C# Bindings (WIP)
 
+![Nuget](https://img.shields.io/nuget/v/libsm64-sharp)
+
+## Overview
+
 Bindings for calling [libsm64](https://github.com/libsm64/libsm64) from C#.
 
 This library provides both:
