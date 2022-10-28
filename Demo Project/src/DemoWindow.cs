@@ -1,4 +1,6 @@
-﻿using demo.audio;
+﻿using System.Diagnostics;
+
+using demo.audio;
 using demo.common.audio;
 using demo.common.audio.impl.al;
 using demo.camera;

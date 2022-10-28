@@ -9,7 +9,6 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace libsm64sharp {
   public sealed partial class Sm64Context : ISm64Context {
-    private readonly byte[] romBytes_; 
     private const int SM64_TEXTURE_WIDTH = 64 * 11;
     private const int SM64_TEXTURE_HEIGHT = 64;
     private Image<Rgba32> marioTextureImage_;
@@ -24,8 +23,6 @@ namespace libsm64sharp {
       => new Sm64Context(romBytes);
 
     private Sm64Context(byte[] romBytes) {
-      this.romBytes_ = romBytes;
-
       var expectedUsaHash = new byte[] {
           0x20,
           0xb8,
