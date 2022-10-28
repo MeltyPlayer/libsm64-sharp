@@ -15,6 +15,14 @@ This library provides both:
 - [libsm64](https://github.com/libsm64/libsm64), the original C library that provides this functionality.
 - [libsm64-unity](https://github.com/libsm64/libsm64-unity), which I shamelessly copied the core interop code from.
 
+## Installation via NuGet
+
+To install `libsm64-sharp`, run the following command in the **Package Manager Console**:
+
+```
+Install-Package libsm64-sharp
+```
+
 ## Usage
 
 ### High-level
