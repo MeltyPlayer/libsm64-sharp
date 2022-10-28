@@ -3,12 +3,6 @@
 
 namespace libsm64sharp.lowlevel {
   [StructLayout(LayoutKind.Sequential)]
-  public struct LowLevelSm64AudioBanks {
-    public int numCtlEntries;
-    public IntPtr ctlEntries;
-  }
-
-  [StructLayout(LayoutKind.Sequential)]
   public struct LowLevelSm64CtlEntry {
     public byte unused;
     public byte numInstruments;

@@ -26,8 +26,12 @@ namespace libsm64sharp.lowlevel {
     public static extern void sm64_global_terminate();
 
     [DllImport(SM64_DLL)]
-    public static extern LowLevelSm64AudioBanks sm64_asset_load_audio_banks(
-        IntPtr rom);
+    public static extern void sm64_audio_init(IntPtr rom);
+
+    [DllImport(SM64_DLL)]
+    public static extern uint sm64_audio_tick(uint numQueuedSamples,
+                                              uint numDesiredSamples,
+                                              IntPtr audioBuffer);
 
     [DllImport(SM64_DLL)]
     public static extern void sm64_static_surfaces_load(
@@ -61,10 +65,5 @@ namespace libsm64sharp.lowlevel {
 
     [DllImport(SM64_DLL)]
     public static extern void sm64_surface_object_delete(uint objectId);
-
-    [DllImport(SM64_DLL)]
-    public static extern uint sm64_tick_audio(uint numQueuedSamples,
-                                              uint numDesiredSamples,
-                                              IntPtr audioBuffer);
   }
 }

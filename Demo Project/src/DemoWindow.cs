@@ -58,11 +58,7 @@ public class DemoWindow : GameWindow {
     var sm64RomBytes = File.ReadAllBytes("rom\\sm64.z64");
     this.sm64Context_ = Sm64Context.InitFromRom(sm64RomBytes);
 
-    {
-      var audioBanks = this.sm64Context_.LoadAudioBanks();
-
-      this.audioManager_ = new AlAudioManager();
-    }
+    this.audioManager_ = new AlAudioManager();
 
     {
       var musicIntroBuffer =
@@ -73,7 +69,7 @@ public class DemoWindow : GameWindow {
                                          "resources/music_loop.ogg");
 
       this.activeMusic_ = this.audioManager_.CreateAudioSource()
-          .CreateMusic(musicIntroBuffer, musicLoopBuffer);
+                              .CreateMusic(musicIntroBuffer, musicLoopBuffer);
       this.activeMusic_.Play();
     }
 

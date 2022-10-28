@@ -45,7 +45,7 @@ namespace demo.audio {
             {
               var audioBufferHandle =
                   GCHandle.Alloc(audioBuffer, GCHandleType.Pinned);
-              numSamples = LibSm64Interop.sm64_tick_audio(
+              numSamples = LibSm64Interop.sm64_audio_tick(
                   Sm64Audio.circularQueueActiveSound_.QueuedSamples,
                   1100,
                   audioBufferHandle.AddrOfPinnedObject());

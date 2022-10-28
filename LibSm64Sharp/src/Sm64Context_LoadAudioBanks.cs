@@ -5,40 +5,6 @@ using System.Runtime.InteropServices;
 
 namespace libsm64sharp {
   public partial class Sm64Context {
-    public ISm64AudioBanks LoadAudioBanks() {
-      var romHandle = GCHandle.Alloc(this.romBytes_, GCHandleType.Pinned);
-
-      var lowLevelAudioBanks =
-          LibSm64Interop.sm64_asset_load_audio_banks(
-              romHandle.AddrOfPinnedObject());
-      var audioBanks = new Sm64AudioBanks(lowLevelAudioBanks);
-
-      romHandle.Free();
-
-      return audioBanks;
-    }
-
-    private class Sm64AudioBanks : ISm64AudioBanks {
-      private LowLevelSm64AudioBanks lowLevelImpl_;
-
-      public Sm64AudioBanks(LowLevelSm64AudioBanks lowLevelImpl) {
-        this.lowLevelImpl_ = lowLevelImpl;
-
-        var ctlEntries = new List<ISm64CtlEntry>();
-
-        var lowLevelCtlEntries =
-            MarshalUtil.MarshalArray<LowLevelSm64CtlEntry>(
-                lowLevelImpl.ctlEntries, lowLevelImpl.numCtlEntries);
-        foreach (var lowLevelCtlEntry in lowLevelCtlEntries) {
-          ctlEntries.Add(new Sm64CtlEntry(lowLevelCtlEntry));
-        }
-
-        this.CtlEntries = ctlEntries;
-      }
-
-      public IReadOnlyList<ISm64CtlEntry> CtlEntries { get; }
-    }
-
     private class Sm64CtlEntry : ISm64CtlEntry {
       private LowLevelSm64CtlEntry lowLevelImpl_;
 

@@ -58,6 +58,7 @@ namespace libsm64sharp {
       LibSm64Interop.sm64_global_init(
           romHandle.AddrOfPinnedObject(),
           textureDataHandle.AddrOfPinnedObject());
+      LibSm64Interop.sm64_audio_init(romHandle.AddrOfPinnedObject());
 
       this.marioTextureImage_ =
           new Image<Rgba32>(SM64_TEXTURE_WIDTH, SM64_TEXTURE_HEIGHT);
