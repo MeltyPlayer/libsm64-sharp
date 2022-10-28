@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 
 using demo.common.audio;
 
+using libsm64sharp;
 using libsm64sharp.lowlevel;
 
 
@@ -13,7 +14,8 @@ namespace demo.audio {
     private const int AUDIO_FREQUENCY_ = 32000;
     private const int AUDIO_BUFFER_SIZE_ = 544;
 
-    public static void Start(IAudioManager<short> audioManager) {
+    public static void Start(ISm64Context sm64Context,
+                             IAudioManager<short> audioManager) {
       Task.Run(() => {
         var stopwatch = new Stopwatch();
 
@@ -41,16 +43,10 @@ namespace demo.audio {
             stopwatch.Restart();
 
             var audioBuffer = audioBuffers[passIndex];
-            uint numSamples;
-            {
-              var audioBufferHandle =
-                  GCHandle.Alloc(audioBuffer, GCHandleType.Pinned);
-              numSamples = LibSm64Interop.sm64_audio_tick(
-                  Sm64Audio.circularQueueActiveSound_.QueuedSamples,
-                  1100,
-                  audioBufferHandle.AddrOfPinnedObject());
-              audioBufferHandle.Free();
-            }
+            var numSamples = sm64Context.TickAudio(
+                Sm64Audio.circularQueueActiveSound_.QueuedSamples,
+                1100,
+                audioBuffer);
 
             passLengths[passIndex] = 2 * 2 * numSamples;
 

@@ -75,7 +75,7 @@ public class DemoWindow : GameWindow {
       this.activeMusic_.Play();
     }
 
-    Sm64Audio.Start(this.audioManager_);
+    Sm64Audio.Start(this.sm64Context_, this.audioManager_);
 
     var (assimpScene, staticCollisionMesh) =
         new LevelMeshLoader().LoadAndCreateCollisionMesh(this.sm64Context_);

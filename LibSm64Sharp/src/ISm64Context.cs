@@ -1,5 +1,9 @@
 ﻿namespace libsm64sharp {
   public interface ISm64Context : IDisposable {
+    uint TickAudio(uint numQueuedSamples,
+                  uint numDesiredSamples,
+                  short[] audioBuffer);
+
     ISm64Mario CreateMario(float x, float y, float z);
 
     // TODO: Are builders the right design for this?
