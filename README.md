@@ -14,3 +14,4 @@ This library provides both:
 
 - [libsm64](https://github.com/libsm64/libsm64), the original C library that provides this functionality.
 - [libsm64-unity](https://github.com/libsm64/libsm64-unity), which I shamelessly copied the core interop code from.
+- [Quad64](https://github.com/DavidSM64/Quad64), which I shamelessly copied into this project to load levels.
