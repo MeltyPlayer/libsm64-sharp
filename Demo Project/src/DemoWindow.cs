@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-using demo.audio;
+﻿using demo.audio;
 using demo.common.audio;
 using demo.common.audio.impl.al;
 using demo.camera;
@@ -77,10 +75,10 @@ public class DemoWindow : GameWindow {
 
     Sm64Audio.Start(this.sm64Context_, this.audioManager_);
 
-    var (assimpScene, staticCollisionMesh) =
+    var (assimpSceneData, staticCollisionMesh) =
         new LevelMeshLoader().LoadAndCreateCollisionMesh(this.sm64Context_);
     this.staticAssimpSceneRenderer_ =
-        new StaticAssimpSceneRenderer(assimpScene);
+        new StaticAssimpSceneRenderer(assimpSceneData);
     this.staticCollisionMeshRenderer_ =
         new StaticCollisionMeshRenderer(staticCollisionMesh);
 

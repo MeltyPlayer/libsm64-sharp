@@ -21,24 +21,19 @@ namespace demo.mesh {
     private readonly GlDisplayList glDisplayList_;
     private readonly GlTexture[] glTextures_;
 
-    public StaticAssimpSceneRenderer(Scene assimpScene) {
-      this.assimpScene_ = assimpScene;
+    public StaticAssimpSceneRenderer(AssimpSceneData assimpSceneData) {
+      this.assimpScene_ = assimpSceneData.Scene;
       this.glDisplayList_ = new GlDisplayList(this.RenderAssimpScene_);
       this.glTextures_ =
-          assimpScene.Materials.Select(assimpMaterial => {
-                       var filePath = assimpMaterial.TextureDiffuse.FilePath;
+          this.assimpScene_.Materials.Select(assimpMaterial => {
+                var textureImage =
+                    assimpSceneData.TexturesByMaterial[assimpMaterial];
 
-                       if (filePath == null) {
-                         return GlTexture.FromColor(Color.White);
-                       }
-
-                       // TODO: Fix this so it's not hard-coded
-                       var texturePath = Path.Join("resources/mesh", filePath);
-                       var textureImage = Image.Load<Rgba32>(texturePath);
-
-                       return GlTexture.FromImage(textureImage);
-                     })
-                     .ToArray();
+                return textureImage != null
+                           ? GlTexture.FromImage(textureImage)
+                           : GlTexture.FromColor(Color.White);
+              })
+              .ToArray();
     }
 
     public void Render() {
