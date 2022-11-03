@@ -1,8 +1,5 @@
 ﻿using Quad64.src.LevelInfo;
 using Quad64.src.Scripts;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Quad64.Scripts
 {

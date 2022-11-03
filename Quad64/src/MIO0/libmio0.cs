@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace LIBMIO0
+﻿namespace LIBMIO0
 {
     struct MIO0_Header
     {

@@ -1,10 +1,4 @@
-﻿using OpenTK.Graphics.OpenGL;
-using Quad64.src.JSON;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+﻿using Quad64.src.JSON;
 
 namespace Quad64
 {

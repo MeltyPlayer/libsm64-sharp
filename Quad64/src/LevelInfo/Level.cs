@@ -1,13 +1,7 @@
 ﻿using OpenTK;
-using Quad64.Scripts;
 using Quad64.src.JSON;
 using Quad64.src.Scripts;
 using Quad64.src.Viewer;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 
 namespace Quad64.src.LevelInfo
 {

@@ -1,11 +1,4 @@
-﻿using Quad64.src.JSON;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Diagnostics;
 
 namespace Quad64.src.TestROM
 {

@@ -1,9 +1,5 @@
-﻿
-
-using OpenTK;
+﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using System;
-using System.Drawing;
 
 namespace Quad64.src.Viewer
 {

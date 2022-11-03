@@ -1,12 +1,7 @@
-﻿using Collada141;
-using OpenTK;
+﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Quad64.src.Scripts;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Quad64
 {

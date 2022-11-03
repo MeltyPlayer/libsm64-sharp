@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Quad64.src.JSON
+﻿namespace Quad64.src.JSON
 {
     class ObjectComboEntry
     {

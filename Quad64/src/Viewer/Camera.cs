@@ -1,9 +1,5 @@
 ﻿using OpenTK;
 using Quad64.src.LevelInfo;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Quad64
 {

@@ -1,10 +1,4 @@
-﻿using OpenTK;
-using Quad64.src.LevelInfo;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-
-namespace Quad64.src.Scripts
+﻿namespace Quad64.src.Scripts
 {
     class BehaviorScripts
     {

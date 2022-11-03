@@ -1,8 +1,4 @@
 ﻿using Collada141;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 
 namespace Quad64
 {

@@ -1,10 +1,6 @@
 ﻿using LIBMIO0;
 using Quad64.src;
 using Quad64.src.JSON;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace Quad64
 {

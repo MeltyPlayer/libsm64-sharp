@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Quad64
+﻿namespace Quad64
 {
     class Texture2D
     {
