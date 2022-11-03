@@ -6,6 +6,13 @@
     <Nullable>enable</Nullable>
     <RootNamespace>libsm64sharp</RootNamespace>
     <Platforms>x86;x64</Platforms>
+    <Authors>MeltyPlayer</Authors>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>libsm64-sharp</Title>
+    <PackageProjectUrl>https://github.com/MeltyPlayer/libsm64-sharp</PackageProjectUrl>
+    <PackageId>libsm64-sharp</PackageId>
+    <Description>C# bindings for libsm64.</Description>
+    <Version>1.0.1</Version>
   </PropertyGroup>
   
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
