@@ -1,9 +1,15 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using System.Drawing.Imaging;
+
+using OpenTK.Graphics.OpenGL;
+
+using Quad64;
 
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 using Color = System.Drawing.Color;
+using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
+using Rectangle = System.Drawing.Rectangle;
 
 
 namespace demo.common.gl {
@@ -24,6 +30,37 @@ namespace demo.common.gl {
       frame[0, 0] = pixel;
 
       return FromImage(image);
+    }
+
+    public static GlTexture FromBitmap(Bitmap bmp) {
+      var width = bmp.Width;
+      var height = bmp.Height;
+
+      var image = new Image<Rgba32>(width, height);
+
+      var frame = image.Frames[0];
+      var bmpData = bmp.LockBits(new Rectangle(0, 0, width, height),
+                                 ImageLockMode.ReadOnly,
+                                 System.Drawing.Imaging.PixelFormat
+                                       .Format32bppArgb);
+      unsafe {
+        var ptr = (byte*) bmpData.Scan0.ToPointer();
+        for (var y = 0; y < height; ++y) {
+          for (var x = 0; x < width; ++x) {
+            var i = 4 * (y * width + x);
+
+            var b = ptr[i + 0];
+            var g = ptr[i + 1];
+            var r = ptr[i + 2];
+            var a = ptr[i + 3];
+
+            frame[x, y] = new Rgba32(r, g, b, a);
+          }
+        }
+      }
+      bmp.UnlockBits(bmpData);
+
+      return new GlTexture(image);
     }
 
     public static GlTexture FromImage(Image<Rgba32> image) => new(image);
