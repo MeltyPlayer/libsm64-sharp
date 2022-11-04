@@ -9,6 +9,7 @@
     <Nullable>enable</Nullable>
     <Platforms>x86;x64</Platforms>
     <LangVersion>preview</LangVersion>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
