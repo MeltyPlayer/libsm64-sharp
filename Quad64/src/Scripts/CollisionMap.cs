@@ -47,7 +47,7 @@ namespace Quad64.src.Scripts
         }
     }
 
-    class CollisionMap
+    public class CollisionMap
     {
         private int vbo;
         private List<Vector3> vertices = new List<Vector3>();

@@ -5,7 +5,7 @@ using Quad64.src.JSON;
 namespace Quad64
 {
 
-    enum ROM_Region
+    public enum ROM_Region
     {
         JAPAN,
         JAPAN_SHINDOU,
@@ -14,13 +14,13 @@ namespace Quad64
         CHINESE_IQUE
     };
 
-    enum ROM_Type
+    public enum ROM_Type
     {
         VANILLA, // 8MB Compressed ROM
         EXTENDED // Uncompressed ROM
     };
 
-    enum ROM_Endian
+    public enum ROM_Endian
     {
         BIG, // .z64
         LITTLE, // .n64

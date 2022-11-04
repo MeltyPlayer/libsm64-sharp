@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Quad64.src.LevelInfo
 {
-    class Warp
+    public class Warp
     {
         public Warp(bool isPaintingWarp)
         {

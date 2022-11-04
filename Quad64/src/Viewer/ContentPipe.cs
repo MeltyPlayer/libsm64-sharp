@@ -35,7 +35,7 @@ namespace Quad64
                 TextureParameterName.TextureMagFilter,
                 (int)TextureMagFilter.Linear);
             
-            return new Texture2D(id, bitmap.Width, bitmap.Height);
+            return new Texture2D(bitmap, id, bitmap.Width, bitmap.Height);
         }
     }
 }

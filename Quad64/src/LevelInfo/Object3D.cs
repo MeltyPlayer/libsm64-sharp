@@ -7,7 +7,7 @@ using System.Reflection;
 namespace Quad64
 {
 
-    class Object3D
+    public class Object3D
     {
         public enum FLAGS {
             POSITION_X = 0x1,

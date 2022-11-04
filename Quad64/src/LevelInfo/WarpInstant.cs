@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Quad64.src.LevelInfo
 {
-    class WarpInstant
+    public class WarpInstant
     {
         
         private const ushort NUM_OF_CATERGORIES = 2;

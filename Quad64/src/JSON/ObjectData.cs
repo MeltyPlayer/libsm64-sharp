@@ -3,7 +3,7 @@
 namespace Quad64.src.JSON
 {
     [JsonObject]
-    internal sealed class ObjectData
+    public sealed class ObjectData
     {
 
         public byte ModelId { get; set; }

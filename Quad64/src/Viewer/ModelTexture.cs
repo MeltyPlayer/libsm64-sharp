@@ -2,6 +2,8 @@
 {
     public class Texture2D
     {
+        public Bitmap Bmp { get; set; }
+
         private int id;
         private int width, height;
 
@@ -11,8 +13,9 @@
         public int TextureParamS { get; set; }
         public int TextureParamT { get; set; }
 
-        public Texture2D(int id, int width, int height)
+        public Texture2D(Bitmap bmp, int id, int width, int height)
         {
+            this.Bmp = bmp;
             this.id = id;
             this.width = width;
             this.height = height;
