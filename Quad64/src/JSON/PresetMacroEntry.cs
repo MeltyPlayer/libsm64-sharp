@@ -1,6 +1,6 @@
 ﻿namespace Quad64.src.JSON
 {
-    class PresetMacroEntry
+    public class PresetMacroEntry
     {
         private ushort presetID;
         private byte modelID;

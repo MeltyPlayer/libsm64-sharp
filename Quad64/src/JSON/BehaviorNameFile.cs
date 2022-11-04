@@ -2,7 +2,7 @@
 
 namespace Quad64.src.JSON
 {
-    class BehaviorNameFile
+    public class BehaviorNameFile
     {
         private static uint parseUInt(string str)
         {

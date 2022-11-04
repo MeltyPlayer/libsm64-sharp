@@ -2,14 +2,14 @@
 
 namespace Quad64
 {
-    class ScriptDumpCommandInfo
+    public class ScriptDumpCommandInfo
     {
         public byte[] data;
         public uint romAddress, segAddress;
         public string description;
     }
 
-    class Globals
+    public class Globals
     {
         // Render Options
         public static bool doWireframe = false;

@@ -27,7 +27,7 @@ namespace Quad64
         MIXED // .v64
     };
 
-    class ROM
+    public class ROM
     {
 
         private ROM_Region region = ROM_Region.NORTH_AMERICA;

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Quad64
 {
-    class Model3D
+    public class Model3D
     {
         public class MeshData
         {

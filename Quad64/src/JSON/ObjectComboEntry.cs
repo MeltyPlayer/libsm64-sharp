@@ -1,6 +1,6 @@
 ﻿namespace Quad64.src.JSON
 {
-    class ObjectComboEntry
+    public class ObjectComboEntry
     {
         string name = "";
         string behavior_name = "";

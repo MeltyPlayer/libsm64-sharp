@@ -1,6 +1,6 @@
 ﻿namespace Quad64
 {
-    class Texture2D
+    public class Texture2D
     {
         private int id;
         private int width, height;

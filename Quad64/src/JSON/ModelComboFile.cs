@@ -2,7 +2,7 @@
 
 namespace Quad64.src.JSON
 {
-    class ModelComboFile
+    public class ModelComboFile
     {
         private static byte parseByte(string str)
         {

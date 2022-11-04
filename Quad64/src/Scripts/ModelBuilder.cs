@@ -3,7 +3,7 @@
 namespace Quad64.src.Scripts
 {
 
-    class ModelBuilder
+    public class ModelBuilder
     {
         public struct FinalMesh
         {

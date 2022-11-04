@@ -3,7 +3,7 @@ using Quad64.src.Scripts;
 
 namespace Quad64.Scripts
 {
-    class LevelScripts
+    public class LevelScripts
     {
         private static uint bytesToInt(byte[] b, int offset, int length)
         {

@@ -6,7 +6,7 @@ using Quad64.src.Viewer;
 namespace Quad64.src.LevelInfo
 {
 
-    class AreaBackgroundInfo
+    public class AreaBackgroundInfo
     {
         public uint address = 0;
         public ushort id_or_color = 0;
@@ -17,7 +17,7 @@ namespace Quad64.src.LevelInfo
         public List<uint> fogColor_romLocation = new List<uint>();
     }
 
-    class Area
+    public class Area
     {
         private Level parent;
         private ushort areaID;
@@ -221,7 +221,7 @@ namespace Quad64.src.LevelInfo
         }
     }
 
-    class Level
+    public class Level
     {
         private ushort levelID;
         public ushort LevelID { get { return levelID; } }
