@@ -4,9 +4,9 @@ using OpenTK.Graphics.OpenGL;
 namespace Quad64.src.Scripts
 {
 
-    class CollisionTriangleList
+    public class CollisionTriangleList
     {
-        private int id = 0;
+        public int id = 0;
         public List<uint> indicesList;
         public uint[] indices;
         public int ibo { get; set; }
@@ -52,8 +52,8 @@ namespace Quad64.src.Scripts
         private int vbo;
         private List<Vector3> vertices = new List<Vector3>();
         //private Vector3[] vertices = null;
-        private List<CollisionTriangleList> triangles = new List<CollisionTriangleList>();
-        private Vector3[] verts;
+        public List<CollisionTriangleList> triangles = new List<CollisionTriangleList>();
+        public Vector3[] verts;
         
         public void AddVertex(Vector3 newVert)
         {

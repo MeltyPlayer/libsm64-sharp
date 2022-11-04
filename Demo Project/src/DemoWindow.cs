@@ -29,15 +29,15 @@ namespace demo;
 public class DemoWindow : GameWindow {
   private readonly ISm64Context sm64Context_;
 
-  private readonly ISm64Mario sm64Mario_;
-  private readonly MarioController marioController_;
-  private readonly MarioMeshRenderer marioMeshRenderer_;
+  private readonly ISm64Mario? sm64Mario_;
+  private readonly MarioController? marioController_;
+  private readonly MarioMeshRenderer? marioMeshRenderer_;
 
-  private readonly StaticAssimpSceneRenderer staticAssimpSceneRenderer_;
-  private readonly StaticCollisionMeshRenderer staticCollisionMeshRenderer_;
+  private readonly IRenderable meshRenderer_;
+  private readonly IRenderable collisionMeshRenderer_;
 
-  private MarioOrbitingCamera camera_;
-  private MarioOrbitingCameraController cameraController_;
+  private ICamera camera_;
+  private ICameraController cameraController_;
 
   private IAudioManager<short> audioManager_;
   private IActiveMusic<short> activeMusic_;
@@ -75,22 +75,58 @@ public class DemoWindow : GameWindow {
 
     Sm64Audio.Start(this.sm64Context_, this.audioManager_);
 
-    var (assimpSceneData, staticCollisionMesh) =
-        new LevelMeshLoader().LoadAndCreateCollisionMesh(this.sm64Context_);
-    this.staticAssimpSceneRenderer_ =
-        new StaticAssimpSceneRenderer(assimpSceneData);
-    this.staticCollisionMeshRenderer_ =
-        new StaticCollisionMeshRenderer(staticCollisionMesh);
+    var shouldLoadViaRom = true;
+    if (shouldLoadViaRom) {
+      var level = Quad64LevelMeshLoader.LoadLevel();
+      var area = level.Areas[0];
 
-    this.sm64Mario_ = this.sm64Context_.CreateMario(0, 900, 0);
-    this.camera_ = new MarioOrbitingCamera(this.sm64Mario_);
+      var staticCollisionMesh =
+          Quad64LevelMeshLoader.UpdateCollisionMesh(this.sm64Context_, area);
+      this.collisionMeshRenderer_ =
+          new StaticCollisionMeshRenderer(staticCollisionMesh);
 
-    this.marioController_ =
-        new MarioController(this.sm64Mario_, this.camera_, this);
-    this.marioMeshRenderer_ = new MarioMeshRenderer(this.sm64Mario_.Mesh);
+      this.meshRenderer_ = new Sm64MeshRenderer(area);
 
-    this.cameraController_ =
-        new MarioOrbitingCameraController(this.camera_, this);
+      var marioStart =
+          area.Objects.First(
+              obj => obj.Behavior_Name.ToLower()
+                        .StartsWith("warp (mario start"));
+
+      this.sm64Mario_ =
+          this.sm64Context_.CreateMario(
+              marioStart.xPos, marioStart.yPos, marioStart.zPos);
+
+      var camera = new MarioOrbitingCamera(this.sm64Mario_);
+      var cameraController =
+          new MarioOrbitingCameraController(camera, this);
+
+      this.marioController_ =
+          new MarioController(this.sm64Mario_, camera, this);
+      this.marioMeshRenderer_ = new MarioMeshRenderer(this.sm64Mario_.Mesh);
+
+      this.camera_ = camera;
+      this.cameraController_ = cameraController;
+    } else {
+      var (assimpSceneData, staticCollisionMesh) =
+          new LevelMeshLoader().LoadAndCreateCollisionMesh(this.sm64Context_);
+      this.meshRenderer_ =
+          new StaticAssimpSceneRenderer(assimpSceneData);
+      this.collisionMeshRenderer_ =
+          new StaticCollisionMeshRenderer(staticCollisionMesh);
+
+      this.sm64Mario_ = this.sm64Context_.CreateMario(0, 900, 0);
+
+      var camera = new MarioOrbitingCamera(this.sm64Mario_);
+      var cameraController =
+          new MarioOrbitingCameraController(camera, this);
+
+      this.marioController_ =
+          new MarioController(this.sm64Mario_, this.camera_, this);
+      this.marioMeshRenderer_ = new MarioMeshRenderer(this.sm64Mario_.Mesh);
+
+      this.camera_ = camera;
+      this.cameraController_ = cameraController;
+    }
   }
 
   private void InitGL_() {
@@ -130,8 +166,10 @@ public class DemoWindow : GameWindow {
   protected override void OnUpdateFrame(FrameEventArgs args) {
     base.OnUpdateFrame(args);
 
-    this.marioController_.BeforeTick();
-    this.sm64Mario_.Tick();
+    this.marioController_?.BeforeTick();
+    this.cameraController_.Tick();
+
+    this.sm64Mario_?.Tick();
   }
 
   protected override void OnRenderFrame(FrameEventArgs args) {
@@ -164,8 +202,8 @@ public class DemoWindow : GameWindow {
       GL.LoadIdentity();
     }
 
-    this.marioMeshRenderer_.Render();
-    this.staticAssimpSceneRenderer_.Render();
-    //this.staticCollisionMeshRenderer_.Render();
+    this.marioMeshRenderer_?.Render();
+    this.meshRenderer_.Render();
+    //this.collisionMeshRenderer_.Render();
   }
 }

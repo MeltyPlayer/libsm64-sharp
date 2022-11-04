@@ -9,6 +9,7 @@
     <Nullable>enable</Nullable>
     <Platforms>x86;x64</Platforms>
     <LangVersion>preview</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,6 +33,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LibSm64Sharp\LibSm64Sharp.csproj" />
+    <ProjectReference Include="..\Quad64\Quad64.csproj" />
   </ItemGroup>
 
   <ItemGroup>
