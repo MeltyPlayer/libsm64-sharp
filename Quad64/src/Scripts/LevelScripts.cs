@@ -200,18 +200,27 @@ namespace Quad64.Scripts
                     case 0x30:
                         desc = "Show dialog message when level starts; dialog ID = 0x" + cmd[3].ToString("X2");
                         break;
-                    case 0x31:
-                        switch (cmd[3])
-                        {
-                            case 0: desc = "Set default terrain to \"Normal\""; break;
-                            case 1: desc = "Set default terrain to \"Normal B\""; break;
-                            case 2: desc = "Set default terrain to \"Snow\""; break;
-                            case 3: desc = "Set default terrain to \"Sand\""; break;
-                            case 4: desc = "Set default terrain to \"Haunted House\""; break;
-                            case 5: desc = "Set default terrain to \"Water levels\""; break;
-                            case 6: desc = "Set default terrain to \"Slippery Slide\""; break;
-                        }
-                        break;
+                    case 0x31: {
+                      if (lvl.IsDefaultTerrainTypeSet) {
+                        throw new Exception(
+                            "Already has default terrain type!");
+                      }
+
+                      var defaultTerrainType = cmd[3];
+                      lvl.DefaultTerrainType = defaultTerrainType;
+                      lvl.IsDefaultTerrainTypeSet = true;
+
+                      switch (defaultTerrainType) {
+                        case 0: desc = "Set default terrain to \"Normal\""; break;
+                        case 1: desc = "Set default terrain to \"Normal B\""; break;
+                        case 2: desc = "Set default terrain to \"Snow\""; break;
+                        case 3: desc = "Set default terrain to \"Sand\""; break;
+                        case 4: desc = "Set default terrain to \"Haunted House\""; break;
+                        case 5: desc = "Set default terrain to \"Water levels\""; break;
+                        case 6: desc = "Set default terrain to \"Slippery Slide\""; break;
+                      }
+                      break;
+                    }
                     case 0x32:
                         desc = "Do nothing";
                         break;

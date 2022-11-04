@@ -154,6 +154,8 @@ namespace Quad64
         [ReadOnly(true)]
         public string Behavior_Name => Globals.getBehaviorNameEntryFromSegAddress(m_data.Behaviour).Name;
 
+        public string ToString() => this.Behavior_Name;
+
         // default names
         private const string BP1DNAME = "B.Param 1";
         private const string BP2DNAME = "B.Param 2";

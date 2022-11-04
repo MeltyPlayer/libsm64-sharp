@@ -19,7 +19,7 @@ namespace Quad64.src.LevelInfo
 
     public class Area
     {
-        private Level parent;
+        public Level parent;
         private ushort areaID;
         public ushort AreaID { get { return areaID; } }
         private uint geoLayoutPointer;
@@ -239,6 +239,9 @@ namespace Quad64.src.LevelInfo
         public List<PresetMacroEntry> SpecialObjectPresets_12 = new List<PresetMacroEntry>();
 
         public List<ScriptDumpCommandInfo> LevelScriptCommands_ForDump = new List<ScriptDumpCommandInfo>();
+
+        public bool IsDefaultTerrainTypeSet { get; set; }
+        public byte DefaultTerrainType { get; set; }
 
 
         public ObjectComboEntry getObjectComboFromData(byte modelID, uint modelAddress, uint behavior, out int index)
