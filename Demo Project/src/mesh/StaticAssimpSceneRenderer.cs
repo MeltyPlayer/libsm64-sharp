@@ -4,14 +4,11 @@ using demo.common.gl;
 
 using OpenTK.Graphics.OpenGL;
 
-using SixLabors.ImageSharp.PixelFormats;
-
-using Image = SixLabors.ImageSharp.Image;
 using PrimitiveType = OpenTK.Graphics.OpenGL.PrimitiveType;
 
 
 namespace demo.mesh {
-  public class StaticAssimpSceneRenderer {
+  public class StaticAssimpSceneRenderer : IRenderable {
     private readonly Scene assimpScene_;
 
     private GlShaderProgram? texturedShaderProgram_;

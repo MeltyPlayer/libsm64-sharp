@@ -6,7 +6,7 @@ using OpenTK.Graphics.OpenGL;
 
 
 namespace demo.mesh {
-  public class StaticCollisionMeshRenderer {
+  public class StaticCollisionMeshRenderer : IRenderable {
     private readonly ISm64StaticCollisionMesh collisionMesh_;
     private readonly float minY_ = float.MaxValue;
     private readonly float maxY_ = float.MinValue;
