@@ -36,6 +36,18 @@ namespace Quad64.src.LevelInfo
         public List<Warp> PaintingWarps = new List<Warp>();
         public List<WarpInstant> InstantWarps = new List<WarpInstant>();
 
+        private byte? defaultTerrainType_;
+
+        public byte DefaultTerrainType {
+          get => defaultTerrainType_ ?? 0;
+          set {
+            if (this.defaultTerrainType_.HasValue) {
+              throw new Exception();
+            }
+            this.defaultTerrainType_ = value;
+          }
+        }
+
         public Area(ushort areaID, uint geoLayoutPointer, Level parent)
         {
             this.areaID = areaID;
@@ -239,9 +251,6 @@ namespace Quad64.src.LevelInfo
         public List<PresetMacroEntry> SpecialObjectPresets_12 = new List<PresetMacroEntry>();
 
         public List<ScriptDumpCommandInfo> LevelScriptCommands_ForDump = new List<ScriptDumpCommandInfo>();
-
-        public bool IsDefaultTerrainTypeSet { get; set; }
-        public byte DefaultTerrainType { get; set; }
 
 
         public ObjectComboEntry getObjectComboFromData(byte modelID, uint modelAddress, uint behavior, out int index)

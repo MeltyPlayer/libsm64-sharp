@@ -201,14 +201,12 @@ namespace Quad64.Scripts
                         desc = "Show dialog message when level starts; dialog ID = 0x" + cmd[3].ToString("X2");
                         break;
                     case 0x31: {
-                      if (lvl.IsDefaultTerrainTypeSet) {
-                        throw new Exception(
-                            "Already has default terrain type!");
-                      }
-
                       var defaultTerrainType = cmd[3];
-                      lvl.DefaultTerrainType = defaultTerrainType;
-                      lvl.IsDefaultTerrainTypeSet = true;
+
+                      // TODO: Does this need to be remembered for future areas?
+                      var area =
+                          lvl.Areas.Single(area => area.AreaID == curAreaID);
+                      area.DefaultTerrainType = defaultTerrainType;
 
                       switch (defaultTerrainType) {
                         case 0: desc = "Set default terrain to \"Normal\""; break;

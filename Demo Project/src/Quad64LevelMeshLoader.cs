@@ -43,7 +43,7 @@ namespace demo {
       var sm64StaticCollisionMeshBuilder =
           sm64Context.CreateStaticCollisionMesh();
 
-      var terrainType = (Sm64TerrainType) area.parent.DefaultTerrainType;
+      var terrainType = (Sm64TerrainType) area.DefaultTerrainType;
 
       foreach (var collisionTriangleList in area.collision.triangles) {
         var surfaceType = (Sm64SurfaceType) collisionTriangleList.id;
