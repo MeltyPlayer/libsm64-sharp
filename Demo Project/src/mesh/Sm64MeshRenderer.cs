@@ -188,9 +188,26 @@ void main() {{
           this.texturedShaderProgram_.GetUniformLocation("texture0");
 
       foreach (var mesh in this.area_.AreaModel.meshes) {
-        this.glTextures_[mesh.texture] = GlTexture.FromBitmap(mesh.texture.Bmp);
+        var texture = mesh.texture;
+        this.glTextures_[texture] = GlTexture.FromBitmap(
+            texture.Bmp,
+            Sm64MeshRenderer.ConvertFromGlWrap_(
+                (TextureWrapMode) texture.TextureParamS),
+            Sm64MeshRenderer.ConvertFromGlWrap_(
+                (TextureWrapMode) texture.TextureParamT)
+        );
       }
     }
+
+    private static WrapMode ConvertFromGlWrap_(
+        TextureWrapMode wrapMode) =>
+        wrapMode switch {
+            TextureWrapMode.ClampToEdge    => WrapMode.CLAMP,
+            TextureWrapMode.Repeat         => WrapMode.REPEAT,
+            TextureWrapMode.MirroredRepeat => WrapMode.MIRROR_REPEAT,
+            _ => throw new ArgumentOutOfRangeException(
+                     nameof(wrapMode), wrapMode, null)
+        };
 
     private void RenderMesh_() {
       this.texturedShaderProgram_!.Use();

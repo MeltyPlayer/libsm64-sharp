@@ -9,6 +9,7 @@ using demo.mesh;
 using libsm64sharp;
 
 using OpenTK;
+using OpenTK.Graphics;
 
 using BlendingFactor = OpenTK.Graphics.OpenGL.BlendingFactor;
 using ClearBufferMask = OpenTK.Graphics.OpenGL.ClearBufferMask;
@@ -121,7 +122,7 @@ public class DemoWindow : GameWindow {
           new MarioOrbitingCameraController(camera, this);
 
       this.marioController_ =
-          new MarioController(this.sm64Mario_, this.camera_, this);
+          new MarioController(this.sm64Mario_, camera, this);
       this.marioMeshRenderer_ = new MarioMeshRenderer(this.sm64Mario_.Mesh);
 
       this.camera_ = camera;
@@ -142,9 +143,9 @@ public class DemoWindow : GameWindow {
 
     GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
 
-    GL.ClearDepth(5.0F);
+    GL.ClearDepth(1.0F);
 
-    GL.DepthFunc(DepthFunction.Lequal);
+    GL.DepthFunc(DepthFunction.Less);
     GL.Enable(EnableCap.DepthTest);
     GL.DepthMask(true);
 

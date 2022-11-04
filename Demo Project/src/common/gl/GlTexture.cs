@@ -2,8 +2,6 @@
 
 using OpenTK.Graphics.OpenGL;
 
-using Quad64;
-
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
@@ -13,6 +11,12 @@ using Rectangle = System.Drawing.Rectangle;
 
 
 namespace demo.common.gl {
+  public enum WrapMode {
+    REPEAT,
+    MIRROR_REPEAT,
+    CLAMP,
+  }
+
   public class GlTexture : IDisposable {
     private const int UNDEFINED_ID = -1;
 
@@ -32,7 +36,9 @@ namespace demo.common.gl {
       return FromImage(image);
     }
 
-    public static GlTexture FromBitmap(Bitmap bmp) {
+    public static GlTexture FromBitmap(Bitmap bmp,
+                                       WrapMode clampS,
+                                       WrapMode clampT) {
       var width = bmp.Width;
       var height = bmp.Height;
 
@@ -60,12 +66,17 @@ namespace demo.common.gl {
       }
       bmp.UnlockBits(bmpData);
 
-      return new GlTexture(image);
+      return new GlTexture(image, clampS, clampT);
     }
 
     public static GlTexture FromImage(Image<Rgba32> image) => new(image);
 
-    private GlTexture(Image<Rgba32> image) {
+    private GlTexture(Image<Rgba32> image) : this(
+        image, WrapMode.REPEAT, WrapMode.REPEAT) { }
+
+    private GlTexture(Image<Rgba32> image,
+                      WrapMode clampS,
+                      WrapMode clampT) {
       GL.GenTextures(1, out int id);
       this.id_ = id;
 
@@ -80,8 +91,25 @@ namespace demo.common.gl {
       GL.TexParameter(target, TextureParameterName.TextureMagFilter,
                       (int) TextureMagFilter.Linear);
 
+      GL.TexParameter(target,
+                      TextureParameterName.TextureWrapS,
+                      (int) GlTexture.ConvertToGlWrap_(clampS));
+      GL.TexParameter(target,
+                      TextureParameterName.TextureWrapT,
+                      (int) GlTexture.ConvertToGlWrap_(clampT));
+
       GL.BindTexture(target, UNDEFINED_ID);
     }
+
+    private static TextureWrapMode ConvertToGlWrap_(
+        WrapMode wrapMode) =>
+        wrapMode switch {
+            WrapMode.CLAMP         => TextureWrapMode.ClampToEdge,
+            WrapMode.REPEAT        => TextureWrapMode.Repeat,
+            WrapMode.MIRROR_REPEAT => TextureWrapMode.MirroredRepeat,
+            _ => throw new ArgumentOutOfRangeException(
+                     nameof(wrapMode), wrapMode, null)
+        };
 
     private void LoadImageIntoTexture_(Image<Rgba32> image) {
       var imageWidth = image.Width;
