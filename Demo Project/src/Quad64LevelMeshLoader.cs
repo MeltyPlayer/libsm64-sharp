@@ -1,4 +1,6 @@
-﻿using libsm64sharp;
+﻿using demo.level;
+
+using libsm64sharp;
 
 using OpenTK;
 
@@ -10,7 +12,7 @@ using Quad64.src.LevelInfo;
 
 namespace demo {
   public static class Quad64LevelMeshLoader {
-    public static Level LoadLevel() {
+    public static Level LoadLevel(LevelId levelId) {
       ROM rom = ROM.Instance;
 
       var pathToAutoLoadRom = "rom/sm64.z64";
@@ -27,7 +29,7 @@ namespace demo {
                      rom.isSegmentMIO0(0x02, null), rom.Seg02_isFakeMIO0,
                      rom.Seg02_uncompressedOffset, null);
 
-      var level = new Level(0x10, 1);
+      var level = new Level((ushort) levelId, 1);
       LevelScripts.parse(ref level, 0x15, 0);
       level.sortAndAddNoModelEntries();
       level.CurrentAreaID = level.Areas[0].AreaID;
@@ -40,6 +42,8 @@ namespace demo {
         Area area) {
       var sm64StaticCollisionMeshBuilder =
           sm64Context.CreateStaticCollisionMesh();
+
+      var terrainType = (Sm64TerrainType) area.parent.DefaultTerrainType;
 
       foreach (var collisionTriangleList in area.collision.triangles) {
         var surfaceType = (Sm64SurfaceType) collisionTriangleList.id;
@@ -57,7 +61,7 @@ namespace demo {
 
           sm64StaticCollisionMeshBuilder.AddTriangle(
               surfaceType,
-              Sm64TerrainType.TERRAIN_GRASS,
+              terrainType,
               vertex1, vertex2, vertex3
           );
         }

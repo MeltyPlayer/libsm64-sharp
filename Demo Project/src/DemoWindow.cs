@@ -4,6 +4,7 @@ using demo.common.audio.impl.al;
 using demo.camera;
 using demo.controller;
 using demo.common.gl;
+using demo.level;
 using demo.mesh;
 
 using libsm64sharp;
@@ -78,7 +79,7 @@ public class DemoWindow : GameWindow {
 
     var shouldLoadViaRom = true;
     if (shouldLoadViaRom) {
-      var level = Quad64LevelMeshLoader.LoadLevel();
+      var level = Quad64LevelMeshLoader.LoadLevel(LevelId.PEACHS_SECRET_SLIDE);
       var area = level.Areas[0];
 
       var staticCollisionMesh =

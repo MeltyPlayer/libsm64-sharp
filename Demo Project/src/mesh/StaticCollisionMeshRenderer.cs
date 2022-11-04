@@ -57,6 +57,10 @@ in vec4 vertexColor;
 void main() {{
     fragColor = vertexColor;
     fragColor.rgb *= (vertexPosition.y - minY) / (maxY - minY);
+
+    if (fragColor.a < .95) {{
+      discard;
+    }}
 }}";
 
       this.texturelessShaderProgram_ =
@@ -75,8 +79,27 @@ void main() {{
 
       GL.Begin(PrimitiveType.Triangles);
 
-      GL.Color3(0, 1f, 0);
       foreach (var triangle in this.collisionMesh_.Triangles) {
+        switch (triangle.SurfaceType) {
+          case Sm64SurfaceType.SURFACE_DEFAULT: {
+            GL.Color4(0, 0, 0, 0);
+            break;
+          }
+          case Sm64SurfaceType.SURFACE_HARD_SLIPPERY:
+          case Sm64SurfaceType.SURFACE_HARD_VERY_SLIPPERY:
+          case Sm64SurfaceType.SURFACE_NO_CAM_COL_SLIPPERY:
+          case Sm64SurfaceType.SURFACE_NO_CAM_COL_VERY_SLIPPERY:
+          case Sm64SurfaceType.SURFACE_NOISE_SLIPPERY:
+          case Sm64SurfaceType.SURFACE_NOISE_VERY_SLIPPERY: {
+            GL.Color3(.5f, .5f, 1f);
+            break;
+          }
+          default: {
+            GL.Color3(1f, 1f, 1f);
+            break;
+          }
+        }
+
         foreach (var vertex in triangle.Vertices) {
           GL.Vertex3(vertex.X, vertex.Y, vertex.Z);
         }
