@@ -5,7 +5,7 @@ using OpenTK.Platform;
 
 
 namespace demo.controller {
-  public class MarioOrbitingCameraController {
+  public class MarioOrbitingCameraController : ICameraController {
     private bool isMouseDown_ = false;
     private (int, int)? prevMousePosition_ = null;
 
@@ -51,5 +51,7 @@ namespace demo.controller {
         }
       };
     }
+
+    public void Tick() {}
   }
 }

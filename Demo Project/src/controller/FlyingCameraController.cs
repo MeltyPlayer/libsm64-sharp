@@ -5,7 +5,7 @@ using OpenTK.Platform;
 
 
 namespace demo.controller {
-  public class FlyingCameraController {
+  public class FlyingCameraController : ICameraController {
     private readonly FlyingCamera flyingCamera_;
 
     private bool isMouseDown_ = false;
