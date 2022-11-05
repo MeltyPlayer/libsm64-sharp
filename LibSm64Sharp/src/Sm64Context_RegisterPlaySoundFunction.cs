@@ -7,6 +7,7 @@ namespace libsm64sharp {
   public partial class Sm64Context {
     private static bool hasInitPlaySoundHandler_;
     private static PlaySoundFuncDelegate? playSoundHandler_;
+    private static lowlevel.PlaySoundFuncDelegate? playSoundFuncDelegate_;
 
     public class PlaySoundArgs {
       public Sm64SoundId SoundId { get; init; }
@@ -58,9 +59,9 @@ namespace libsm64sharp {
 
       if (!Sm64Context.hasInitPlaySoundHandler_) {
         Sm64Context.hasInitPlaySoundHandler_ = true;
-        lowlevel.PlaySoundFuncDelegate wrapper = PlaySoundFuncDelegateWrapper_;
+        Sm64Context.playSoundFuncDelegate_ = PlaySoundFuncDelegateWrapper_;
         LibSm64Interop.sm64_register_play_sound_function(
-            Marshal.GetFunctionPointerForDelegate(wrapper));
+            Marshal.GetFunctionPointerForDelegate(Sm64Context.playSoundFuncDelegate_));
       }
     }
   }
