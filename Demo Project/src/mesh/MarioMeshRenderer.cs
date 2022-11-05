@@ -33,7 +33,6 @@ namespace demo.mesh {
 
       var vertexShaderSrc = @"
 # version 120
-in vec2 in_uv0;
 varying vec4 vertexColor;
 varying vec3 vertexNormal;
 varying vec2 uv0;
@@ -44,7 +43,7 @@ void main() {
     uv0 = gl_MultiTexCoord0.st;
 }";
 
-      var fragmentShaderSrc = @$"
+      var fragmentShaderSrc = @"
 # version 130 
 uniform sampler2D texture0;
 uniform float useLighting;
