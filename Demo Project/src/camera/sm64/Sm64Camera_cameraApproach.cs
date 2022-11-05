@@ -1,5 +1,5 @@
 ﻿namespace demo.camera.sm64 {
-  public class Sm64CameraHelpers {
+  public partial class Sm64Camera {
     /**
      * Approaches a value by a given increment, returns FALSE if the target is
      * reached. Appears to be a strange way of implementing
@@ -27,7 +27,7 @@
           current = target;
         }
       }
-      return !(Math.Abs(current - target) < .001);
+      return !(Math.Abs(current - target) < TOLERANCE);
     }
   }
 }
