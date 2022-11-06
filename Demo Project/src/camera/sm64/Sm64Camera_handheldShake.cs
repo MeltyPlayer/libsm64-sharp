@@ -125,42 +125,5 @@
       sHandheldShakeMag = 0;
       sHandheldShakeInc = 0f;
     }
-
-    /**
-     * Produces values using a cubic b-spline curve. Basically Q is the used output,
-     * u is a value between 0 and 1 that represents the position along the spline,
-     * and a0-a3 are parameters that define the spline.
-     *
-     * The spline is described at www2.cs.uregina.ca/~anima/408/Notes/Interpolation/UniformBSpline.htm
-     */
-    void evaluate_cubic_spline(float u, Vec3f Q, Vec3f a0, Vec3f a1, Vec3f a2, Vec3f a3) {
-      float[] B = new float[4];
-      float x;
-      float y;
-      float z;
-
-      if (u > 1f) {
-        u = 1f;
-      }
-
-      B[0] = (1f - u) * (1f - u) * (1f - u) / 6f;
-      B[1] = u * u * u / 2f - u * u + 0.6666667f;
-      B[2] = -u * u * u / 2f + u * u / 2f + u / 2f + 0.16666667f;
-      B[3] = u * u * u / 6f;
-
-      Q[0] = B[0] * a0[0] + B[1] * a1[0] + B[2] * a2[0] + B[3] * a3[0];
-      Q[1] = B[0] * a0[1] + B[1] * a1[1] + B[2] * a2[1] + B[3] * a3[1];
-      Q[2] = B[0] * a0[2] + B[1] * a1[2] + B[2] * a2[2] + B[3] * a3[2];
-
-      // Unused code
-      B[0] = -0.5f * u * u + u - 0.33333333f;
-      B[1] = 1.5f * u * u - 2f * u - 0.5f;
-      B[2] = -1.5f * u * u + u + 1f;
-      B[3] = 0.5f * u * u - 0.16666667f;
-
-      x = B[0] * a0[0] + B[1] * a1[0] + B[2] * a2[0] + B[3] * a3[0];
-      y = B[0] * a0[1] + B[1] * a1[1] + B[2] * a2[1] + B[3] * a3[1];
-      z = B[0] * a0[2] + B[1] * a1[2] + B[2] * a2[2] + B[3] * a3[2];
-    }
   }
 }
