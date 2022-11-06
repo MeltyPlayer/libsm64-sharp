@@ -9,7 +9,7 @@
      *
      * Since this function only affects the camera's focus, Mario's movement direction isn't affected.
      */
-    public void pan_ahead_of_player() {
+    void pan_ahead_of_player(Camera c) {
       var pan = new Vec3f();
 
       var sm64MarioPos = this.sm64Mario_.Position;
@@ -24,15 +24,16 @@
       rotatef_in_xz(pan, pan, this.sm64Mario_.FaceAngle);
       // rotate in the opposite direction
       yaw = (short)(-yaw);
-      rotate_in_xz( pan, pan, yaw);
+      rotate_in_xz(pan, pan, yaw);
       // Only pan left or right
       pan[2] = 0f;
 
       // If Mario is long jumping, or on a flag pole (but not at the top), then pan in the opposite direction
-      /*if (sMarioCamState->action == ACT_LONG_JUMP ||
-          (sMarioCamState->action != ACT_TOP_OF_POLE && (sMarioCamState->action & ACT_FLAG_ON_POLE))) {
+      if (sMarioCamState.action == PlayerAction.ACT_LONG_JUMP ||
+          (sMarioCamState.action != PlayerAction.ACT_TOP_OF_POLE &&
+           ((int)sMarioCamState.action & (int)PlayerAction.ACT_FLAG_ON_POLE) != 0)) {
         pan[0] = -pan[0];
-      }*/
+      }
 
       // Slowly make the actual pan, sPanDistance, approach the calculated pan
       // If Mario is sleeping, then don't pan
@@ -46,7 +47,7 @@
       pan[0] = sPanDistance;
       yaw = (short)(-yaw);
       rotate_in_xz(pan, pan, yaw);
-      vec3f_add(focus, pan);
+      vec3f_add(c.focus, pan);
     }
   }
 }

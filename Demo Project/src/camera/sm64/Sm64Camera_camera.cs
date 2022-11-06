@@ -1,6 +1,6 @@
 ﻿namespace demo.camera.sm64 {
   public partial class Sm64Camera {
-    private Camera gCamera;
+    private Camera gCamera = new();
 
     /**
      * The main camera struct. Gets updated by the active camera mode and the current level/area. In
@@ -9,9 +9,9 @@
      */
     class Camera {
       /*0x00*/
-      byte mode; // What type of mode the camera uses (see defines above)
+      public byte mode; // What type of mode the camera uses (see defines above)
       /*0x01*/
-      byte defMode;
+      public byte defMode;
       /**
        * Determines what direction Mario moves in when the analog stick is moved.
        *
@@ -21,35 +21,35 @@
        *          vec3f_get_dist_and_angle() if you need the camera's yaw.
        */
       /*0x02*/
-      short yaw;
+      public short yaw;
       /*0x04*/
-      Vec3f focus = new();
+      public Vec3f focus = new();
       /*0x10*/
-      Vec3f pos = new();
+      public Vec3f pos = new();
       /*0x1C*/
-      Vec3f unusedVec1 = new();
+      public Vec3f unusedVec1 = new();
       /// The x coordinate of the "center" of the area. The camera will rotate around this point.
       /// For example, this is what makes the camera rotate around the hill in BoB
       /*0x28*/
-      float areaCenX;
+      public float areaCenX;
       /// The z coordinate of the "center" of the area. The camera will rotate around this point.
       /// For example, this is what makes the camera rotate around the hill in BoB
       /*0x2C*/
-      float areaCenZ;
+      public float areaCenZ;
       /*0x30*/
-      byte cutscene;
+      public byte cutscene;
       /*0x31*/
-      byte[] filler1 = new byte[8];
+      public byte[] filler1 = new byte[8];
       /*0x3A*/
-      short nextYaw;
+      public short nextYaw;
       /*0x3C*/
-      byte[] filler2 = new byte[40];
+      public byte[] filler2 = new byte[40];
       /*0x64*/
-      byte doorStatus;
+      public byte doorStatus;
       /// The y coordinate of the "center" of the area. Unlike areaCenX and areaCenZ, this is only used
       /// when paused. See zoom_out_if_paused_and_outside
       /*0x68*/
-      float areaCenY;
+      public float areaCenY;
     }
   }
 }
