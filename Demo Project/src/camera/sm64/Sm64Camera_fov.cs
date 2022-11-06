@@ -1,6 +1,8 @@
 ﻿namespace demo.camera.sm64 {
   public partial class Sm64Camera {
-    public enum CameraFovFunc {
+    private readonly CameraFovStatus sFOVState = new();
+
+    enum CameraFovFunc : byte {
       CAM_FOV_SET_45,
       CAM_FOV_SET_29,
       CAM_FOV_ZOOM_30,
@@ -17,7 +19,7 @@
     /**
      * Info for the camera's field of view and the FOV shake effect.
      */
-    public class CameraFovStatus {
+    class CameraFovStatus {
       /// The current function being used to set the camera's field of view (before any fov shake is applied).
       /*0x00*/
       public CameraFovFunc fovFunc;
@@ -45,7 +47,23 @@
       /// How much to decrease shakeAmplitude each frame.
       /*0x18*/
       public short decay;
-    };
+    }
 
+    /**
+     * Change the camera's FOV mode.
+     *
+     * @see geo_camera_fov
+     */
+    void set_fov_function(CameraFovFunc func) {
+      this.sFOVState.fovFunc = func;
+    }
+
+    void approach_fov_30() {
+      camera_approach_float_symmetric_bool(ref this.sFOVState.fov, 30f, 1f);
+    }
+
+    void approach_fov_60() {
+      camera_approach_float_symmetric_bool(ref this.sFOVState.fov, 60f, 1f);
+    }
   }
 }

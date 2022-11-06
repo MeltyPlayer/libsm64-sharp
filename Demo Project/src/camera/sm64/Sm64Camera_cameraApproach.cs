@@ -6,7 +6,7 @@
      * approach_float_symmetric from object_helpers.c. It could possibly be an
      * older version of the function
      */
-    public static bool camera_approach_float_symmetric_bool(ref float current, float target, float increment) {
+    static bool camera_approach_float_symmetric_bool(ref float current, float target, float increment) {
       var dist = target - current;
 
       if (increment < 0) {
