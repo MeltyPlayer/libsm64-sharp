@@ -278,18 +278,18 @@
     /**
      * A copy of player information that is relevant to the camera.
      */
-    struct PlayerCameraState {
+    class PlayerCameraState {
       /**
        * Mario's action on this frame.
        */
       /*0x00*/
       public PlayerAction action;
       /*0x04*/
-      public Vec3f pos;
+      public Vec3f pos = new();
       /*0x10*/
-      public Vec3s faceAngle;
+      public Vec3s faceAngle = new();
       /*0x16*/
-      public Vec3s headRotation;
+      public Vec3s headRotation = new();
       /*0x1C*/
       public short unused;
       /**
@@ -298,6 +298,8 @@
        */
       /*0x1E*/
       public short cameraEvent;
+      /*0x20*/
+      public Object? usedObj;
     }
   }
 }

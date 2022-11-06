@@ -2,6 +2,31 @@
   public partial class Sm64Camera {
     private Camera gCamera = new();
 
+    enum DoorStatus : byte {
+      DOOR_DEFAULT = 0,
+      DOOR_LEAVING_SPECIAL = 1,
+      DOOR_ENTER_LOBBY = 2,
+    }
+
+    enum CamMove {
+      CAM_MOVE_RETURN_TO_MIDDLE = 0x0001,
+      CAM_MOVE_ZOOMED_OUT = 0x0002,
+      CAM_MOVE_ROTATE_RIGHT = 0x0004,
+      CAM_MOVE_ROTATE_LEFT = 0x0008,
+      CAM_MOVE_ENTERED_ROTATE_SURFACE = 0x0010,
+      CAM_MOVE_METAL_BELOW_WATER = 0x0020,
+      CAM_MOVE_FIX_IN_PLACE = 0x0040,
+      CAM_MOVE_UNKNOWN_8 = 0x0080,
+      CAM_MOVING_INTO_MODE = 0x0100,
+      CAM_MOVE_STARTED_EXITING_C_UP = 0x0200,
+      CAM_MOVE_UNKNOWN_11 = 0x0400,
+      CAM_MOVE_INIT_CAMERA = 0x0800,
+      CAM_MOVE_ALREADY_ZOOMED_OUT = 0x1000,
+      CAM_MOVE_C_UP_MODE = 0x2000,
+      CAM_MOVE_SUBMERGED = 0x4000,
+      CAM_MOVE_PAUSE_SCREEN = 0x8000,
+    }
+
     /**
      * The main camera struct. Gets updated by the active camera mode and the current level/area. In
      * update_lakitu, its pos and focus are used to calculate lakitu's next position and focus, which are
@@ -45,7 +70,7 @@
       /*0x3C*/
       public byte[] filler2 = new byte[40];
       /*0x64*/
-      public byte doorStatus;
+      public DoorStatus doorStatus;
       /// The y coordinate of the "center" of the area. Unlike areaCenX and areaCenZ, this is only used
       /// when paused. See zoom_out_if_paused_and_outside
       /*0x68*/

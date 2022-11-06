@@ -12,16 +12,13 @@
     void pan_ahead_of_player(Camera c) {
       var pan = new Vec3f();
 
-      var sm64MarioPos = this.sm64Mario_.Position;
-      var marioPos = new Vec3f(sm64MarioPos.X, sm64MarioPos.Y, sm64MarioPos.Z);
-
       // Get distance and angle from camera to Mario.
-      vec3f_get_dist_and_angle(position, marioPos, out var dist, out var pitch, out var yaw);
+      vec3f_get_dist_and_angle(c.pos, sMarioCamState.pos, out var dist, out var pitch, out var yaw);
 
       // The camera will pan ahead up to about 30% of the camera's distance to Mario.
       pan[2] = sins(0xC00) * dist;
 
-      rotatef_in_xz(pan, pan, this.sm64Mario_.FaceAngle);
+      rotatef_in_xz(pan, pan, sMarioCamState.faceAngle[1]);
       // rotate in the opposite direction
       yaw = (short)(-yaw);
       rotate_in_xz(pan, pan, yaw);
