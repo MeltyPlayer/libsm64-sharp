@@ -3,17 +3,17 @@
     private readonly CameraFovStatus sFOVState = new();
 
     enum CameraFovFunc : byte {
-      CAM_FOV_SET_45,
-      CAM_FOV_SET_29,
-      CAM_FOV_ZOOM_30,
-      CAM_FOV_DEFAULT,
-      CAM_FOV_BBH,
-      CAM_FOV_APP_45,
-      CAM_FOV_SET_30,
-      CAM_FOV_APP_20,
-      CAM_FOV_APP_80,
-      CAM_FOV_APP_30,
-      CAM_FOV_APP_60
+      CAM_FOV_SET_45 = 1,
+      CAM_FOV_DEFAULT = 2,
+      CAM_FOV_APP_45 = 4,
+      CAM_FOV_SET_30 = 5,
+      CAM_FOV_APP_20 = 6,
+      CAM_FOV_BBH = 7,
+      CAM_FOV_APP_80 = 9,
+      CAM_FOV_APP_30 = 10,
+      CAM_FOV_APP_60 = 11,
+      CAM_FOV_ZOOM_30 = 12,
+      CAM_FOV_SET_29 = 13,
     }
 
     /**
