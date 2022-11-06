@@ -2,8 +2,16 @@
 
 namespace demo.camera.sm64 {
   public partial class Sm64Camera {
-    class Vector3<TNumber> where TNumber : INumber<TNumber> {
+    class Vec3<TNumber> where TNumber : INumber<TNumber> {
       private readonly TNumber[] impl_ = new TNumber[3];
+
+      public Vec3() { }
+
+      public Vec3(TNumber x, TNumber y, TNumber z) {
+        this.impl_[0] = x;
+        this.impl_[1] = y;
+        this.impl_[2] = z;
+      }
 
       public TNumber this[int index] {
         set => this.impl_[index] = value;
@@ -11,8 +19,19 @@ namespace demo.camera.sm64 {
       }
     }
 
-    class Vec3f : Vector3<float> { }
-    class Vec3s : Vector3<short> { }
+    class Vec3f : Vec3<float> {
+      public Vec3f() { }
+
+      public Vec3f(float x, float y, float z) : base(x, y, z) {
+      }
+    }
+
+    class Vec3s : Vec3<short> {
+      public Vec3s() { }
+
+      public Vec3s(short x, short y, short z) : base(x, y, z) {
+      }
+    }
 
     /// Copy vector 'src' to 'dest'
     void vec3f_copy(Vec3f dest, Vec3f src) {

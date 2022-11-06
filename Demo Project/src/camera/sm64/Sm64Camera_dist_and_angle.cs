@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace demo.camera.sm64 {
+﻿namespace demo.camera.sm64 {
   public partial class Sm64Camera {
     /**
      * Take the vector starting at 'from' pointed at 'to' an retrieve the length
