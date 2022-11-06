@@ -24,5 +24,57 @@
       to[1] = from[1] + dist * sins(pitch);
       to[2] = from[2] + dist * coss(pitch) * coss(yaw);
     }
+
+    short calculate_pitch(Vec3f from, Vec3f to) {
+      var dx = to[0] - from[0];
+      var dy = to[1] - from[1];
+      var dz = to[2] - from[2];
+      var pitch = atan2s(MathF.Sqrt(dx * dx + dz * dz), dy);
+      return pitch;
+    }
+
+    short calculate_yaw(Vec3f from, Vec3f to) {
+      var dx = to[0] - from[0];
+      var dz = to[2] - from[2];
+      var yaw = atan2s(dz, dx);
+
+      return yaw;
+    }
+
+    /**
+     * Calculates the pitch and yaw between two vectors.
+     */
+    void calculate_angles(Vec3f from, Vec3f to, out short pitch, out short yaw) {
+      var dx = to[0] - from[0];
+      var dy = to[1] - from[1];
+      var dz = to[2] - from[2];
+
+      pitch = atan2s(MathF.Sqrt(dx * dx + dz * dz), dy);
+      yaw = atan2s(dz, dx);
+    }
+
+
+    /**
+     * Finds the distance between two vectors.
+     */
+    float calc_abs_dist(Vec3f a, Vec3f b) {
+      var distX = b[0] - a[0];
+      var distY = b[1] - a[1];
+      var distZ = b[2] - a[2];
+      var distAbs = MathF.Sqrt(distX * distX + distY * distY + distZ * distZ);
+
+      return distAbs;
+    }
+
+    /**
+     * Finds the horizontal distance between two vectors.
+     */
+    float calc_hor_dist(Vec3f a, Vec3f b) {
+      var distX = b[0] - a[0];
+      var distZ = b[2] - a[2];
+      var distHor = MathF.Sqrt(distX * distX + distZ * distZ);
+
+      return distHor;
+    }
   }
 }
