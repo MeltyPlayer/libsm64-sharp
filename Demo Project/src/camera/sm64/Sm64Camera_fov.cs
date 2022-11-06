@@ -58,12 +58,46 @@
       this.sFOVState.fovFunc = func;
     }
 
+    void set_fov_30() {
+      sFOVState.fov = 30f;
+    }
+
+    void approach_fov_20() {
+      camera_approach_float_symmetric_bool(ref sFOVState.fov, 20f, 0.3f);
+    }
+
+    void set_fov_45() {
+      sFOVState.fov = 45f;
+    }
+
+    void set_fov_29() {
+      sFOVState.fov = 29f;
+    }
+
+    void zoom_fov_30() {
+      // Pretty sure approach_float_asymptotic_bool would do a much nicer job here, but you do you,
+      // Nintendo.
+      camera_approach_float_symmetric_bool(ref sFOVState.fov, 30f, (30f - sFOVState.fov) / 60f);
+    }
+
     void approach_fov_30() {
       camera_approach_float_symmetric_bool(ref this.sFOVState.fov, 30f, 1f);
     }
 
     void approach_fov_60() {
       camera_approach_float_symmetric_bool(ref this.sFOVState.fov, 60f, 1f);
+    }
+
+    void approach_fov_45() {
+      float targetFoV = sFOVState.fov;
+
+      targetFoV = 45f;
+
+      sFOVState.fov = approach_float(sFOVState.fov, targetFoV, 2f, 2f);
+    }
+
+    void approach_fov_80() {
+      camera_approach_float_symmetric_bool(ref sFOVState.fov, 80f, 3.5f);
     }
   }
 }

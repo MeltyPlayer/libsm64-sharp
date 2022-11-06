@@ -3,6 +3,25 @@
     private const float TOLERANCE = .001f;
 
     /**
+     * Return the value 'current' after it tries to approach target, going up at
+     * most 'inc' and going down at most 'dec'.
+     */
+    float approach_float(float current, float target, float inc, float dec) {
+      if (current < target) {
+        current += inc;
+        if (current > target) {
+          current = target;
+        }
+      } else {
+        current -= dec;
+        if (current < target) {
+          current = target;
+        }
+      }
+      return current;
+    }
+
+    /**
      * Approaches an float value by taking the difference between the target
      * and current value and adding a fraction of that to the current value.
      * Edits the current value directly, returns TRUE if the target has been
