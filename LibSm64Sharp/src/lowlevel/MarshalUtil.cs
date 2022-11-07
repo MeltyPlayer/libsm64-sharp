@@ -3,6 +3,9 @@
 
 namespace libsm64sharp.lowlevel {
   public static class MarshalUtil {
+    public static unsafe T? MarshalRef<T>(T* ptr) where T : unmanaged
+      => MarshalUtil.MarshalRef<T>(new IntPtr(ptr));
+
     public static T? MarshalRef<T>(IntPtr ptr)
       => ptr.ToInt64() != 0 ? Marshal.PtrToStructure<T>(ptr) : default;
 

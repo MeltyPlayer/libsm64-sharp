@@ -40,7 +40,7 @@
     /**
      * Reset all the camera variables to their arcane defaults
      */
-    void reset_camera(Camera c) {
+    void reset_camera(ref Camera c) {
       gCamera = c;
       gCameraMovementFlags = 0;
       s2ndRotateFlags = 0;

@@ -9,7 +9,7 @@
      *
      * Since this function only affects the camera's focus, Mario's movement direction isn't affected.
      */
-    void pan_ahead_of_player(Camera c) {
+    void pan_ahead_of_player(ref Camera c) {
       var pan = new Vec3f();
 
       // Get distance and angle from camera to Mario.
