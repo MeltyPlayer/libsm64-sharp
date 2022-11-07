@@ -9,7 +9,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibSm64SharpTests", "LibSm6
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo Project", "Demo Project\Demo Project.csproj", "{576D6A84-8754-465F-8993-C8FFF1F18F37}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quad64", "Quad64\Quad64.csproj", "{93C4105D-229B-4125-B55D-7E5E25FA53A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quad64", "Quad64\Quad64.csproj", "{93C4105D-229B-4125-B55D-7E5E25FA53A1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B2E72C10-1552-4FCA-86E5-F188A77E9ACC}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

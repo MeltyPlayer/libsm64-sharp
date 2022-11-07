@@ -10,7 +10,6 @@ using demo.mesh;
 using libsm64sharp;
 
 using OpenTK;
-using OpenTK.Graphics;
 
 using BlendingFactor = OpenTK.Graphics.OpenGL.BlendingFactor;
 using ClearBufferMask = OpenTK.Graphics.OpenGL.ClearBufferMask;
@@ -34,6 +33,8 @@ public class DemoWindow : GameWindow {
   private readonly ISm64Mario? sm64Mario_;
   private readonly MarioController? marioController_;
   private readonly MarioMeshRenderer? marioMeshRenderer_;
+
+  private List<Quad64ObjectRenderer> objectRenderers_ = new();
 
   private readonly IRenderable meshRenderer_;
   private readonly IRenderable collisionMeshRenderer_;
@@ -79,7 +80,7 @@ public class DemoWindow : GameWindow {
 
     var shouldLoadViaRom = true;
     if (shouldLoadViaRom) {
-      var level = Quad64LevelMeshLoader.LoadLevel(LevelId.PEACHS_SECRET_SLIDE);
+      var level = Quad64LevelMeshLoader.LoadLevel(LevelId.WHOMPS_FORTRESS);
       var area = level.Areas[0];
 
       var staticCollisionMesh =
@@ -87,7 +88,7 @@ public class DemoWindow : GameWindow {
       this.collisionMeshRenderer_ =
           new StaticCollisionMeshRenderer(staticCollisionMesh);
 
-      this.meshRenderer_ = new Sm64MeshRenderer(area);
+      this.meshRenderer_ = new Quad64AreaRenderer(area);
 
       var marioStart =
           area.Objects.First(
@@ -108,6 +109,15 @@ public class DemoWindow : GameWindow {
 
       this.camera_ = camera;
       this.cameraController_ = cameraController;
+
+      var objects =
+          area.MacroObjects
+              .Concat(area.Objects)
+              .Concat(area.SpecialObjects);
+
+      foreach (var obj in objects) {
+        this.objectRenderers_.Add(new Quad64ObjectRenderer(level, obj));
+      }
     } else {
       var (assimpSceneData, staticCollisionMesh) =
           new LevelMeshLoader().LoadAndCreateCollisionMesh(this.sm64Context_);
@@ -207,5 +217,9 @@ public class DemoWindow : GameWindow {
     this.marioMeshRenderer_?.Render();
     this.meshRenderer_.Render();
     //this.collisionMeshRenderer_.Render();
+
+    foreach (var objectRenderer in objectRenderers_) {
+      objectRenderer.Render();
+    }
   }
 }
