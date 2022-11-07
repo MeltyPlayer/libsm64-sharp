@@ -1,5 +1,8 @@
 ﻿namespace demo.camera.sm64 {
   public partial class Sm64Camera {
+
+    short DEGREES(short x) => (short) (x * 0x10000 / 360);
+
     public static float sins(short x) => gSineTable[(ushort)(x) >> 4];
     public static float coss(short x) => gCosineTable[(ushort)(x) >> 4];
 
