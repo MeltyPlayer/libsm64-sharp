@@ -70,6 +70,15 @@ namespace libsm64sharp.lowlevel {
     public override string ToString() => $"({X}, {Y}, {Z})";
   }
 
+  [StructLayout(LayoutKind.Sequential)]
+  public readonly struct LowLevelSm64Vector3i : IReadOnlySm64Vector3<int> {
+    public int X { get; }
+    public int Y { get; }
+    public int Z { get; }
+
+    public override string ToString() => $"({X}, {Y}, {Z})";
+  }
+
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
   public delegate void DebugPrintFuncDelegate(string str);
 
@@ -77,4 +86,77 @@ namespace libsm64sharp.lowlevel {
   public delegate void PlaySoundFuncDelegate(
       uint soundBits,
       ref LowLevelSm64Vector3f position);
+
+
+  [StructLayout(LayoutKind.Sequential)]
+  public struct LowLevelSm64SurfaceInternal {
+    public short type;
+    public short force;
+    public sbyte flags;
+    public sbyte room;
+    public int lowerY; // libsm64: 32 bit
+    public int upperY; // libsm64: 32 bit
+    public LowLevelSm64Vector3i vertex1; // libsm64: 32 bit
+    public LowLevelSm64Vector3i vertex2; // libsm64: 32 bit
+    public LowLevelSm64Vector3i vertex3; // libsm64: 32 bit
+
+    public LowLevelSm64Vector3f normal;
+
+    public float originOffset;
+    //struct Object *object;
+
+    public byte isValid; // libsm64: added field
+
+    public LowLevelSm64SurfaceObjectTransform transform; // libsm64: added field
+    public ushort terrain; // libsm64: added field
+  }
+
+  [StructLayout(LayoutKind.Sequential)]
+  public struct LowLevelSm64SurfaceObjectTransform {
+    public float aPosX, aPosY, aPosZ;
+    public float aVelX, aVelY, aVelZ;
+
+    public short aFaceAnglePitch;
+    public short aFaceAngleYaw;
+    public short aFaceAngleRoll;
+
+    public short aAngleVelPitch;
+    public short aAngleVelYaw;
+    public short aAngleVelRoll;
+  };
+
+  [StructLayout(LayoutKind.Sequential)]
+  public struct LowLevelSm64WallCollisionData {
+    /*0x00*/
+    public float x, y, z;
+
+    /*0x0C*/
+    public float offsetY;
+
+    /*0x10*/
+    public float radius;
+
+    /*0x14*/
+    public short unk14;
+
+    /*0x16*/
+    public short numWalls;
+
+    /*0x18*/
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+    public LowLevelSm64SurfaceInternal[] walls;
+  }
+
+  [StructLayout(LayoutKind.Sequential)]
+  public struct LowLevelSm64FloorGeometry {
+    public float unused1;
+    public float unused2;
+    public float unused3;
+    public float unused4;
+
+    public float normalX;
+    public float normalY;
+    public float normalZ;
+    public float originOffset;
+  }
 }
