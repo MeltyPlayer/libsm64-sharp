@@ -76,6 +76,13 @@ namespace libsm64sharp.lowlevel {
     public int Y { get; }
     public int Z { get; }
 
+    public int this[int index]
+      => index switch {
+          0 => X,
+          1 => Y,
+          2 => Z,
+      };
+
     public override string ToString() => $"({X}, {Y}, {Z})";
   }
 

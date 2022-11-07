@@ -1,7 +1,7 @@
-﻿using SixLabors.ImageSharp.PixelFormats;
-
-namespace demo.camera.sm64 {
+﻿namespace demo.camera.sm64 {
   public partial class Sm64Camera {
+    short sYawSpeed = 0x400;
+
     /**
      * The yaw passed here is the yaw of the direction FROM Mario TO Lakitu.
      *

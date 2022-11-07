@@ -43,14 +43,14 @@
     }
 
 
-    bool camera_approach_short_symmetric_bool(ref short current,
+    bool camera_approach_s16_symmetric_bool(ref short current,
                                               short target,
                                               short increment) {
-      current = camera_approach_short_symmetric(current, target, increment);
+      current = camera_approach_s16_symmetric(current, target, increment);
       return current != target;
     }
 
-    short camera_approach_short_symmetric(short current,
+    short camera_approach_s16_symmetric(short current,
                                           short target,
                                           short increment) {
       var dist = (short) (target - current);

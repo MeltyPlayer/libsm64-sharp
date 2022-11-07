@@ -53,7 +53,7 @@
      */
     class Camera {
       /*0x00*/
-      public byte mode; // What type of mode the camera uses (see defines above)
+      public CameraMode mode; // What type of mode the camera uses (see defines above)
 
       /*0x01*/
       public byte defMode;

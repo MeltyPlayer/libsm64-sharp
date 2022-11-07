@@ -113,5 +113,18 @@ namespace demo.camera.sm64 {
       dest[1] = (short)(a[1] + ((a[1] > 0) ? 0.5f : -0.5f));
       dest[2] = (short)(a[2] + ((a[2] > 0) ? 0.5f : -0.5f));
     }
+
+    /**
+     * Calculates the distance between two points and sets a vector to a point
+     * scaled along a line between them. Typically, somewhere in the middle.
+     */
+    void scale_along_line(Vec3f dst, Vec3f from, Vec3f to, float scale) {
+      Vec3f tempVec = new();
+
+      tempVec[0] = (to[0] - from[0]) * scale + from[0];
+      tempVec[1] = (to[1] - from[1]) * scale + from[1];
+      tempVec[2] = (to[2] - from[2]) * scale + from[2];
+      vec3f_copy(dst, tempVec);
+    }
   }
 }
