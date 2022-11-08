@@ -97,7 +97,7 @@ namespace libsm64sharp.lowlevel {
 
   [StructLayout(LayoutKind.Sequential)]
   public struct LowLevelSm64SurfaceInternal {
-    public short type;
+    public Sm64SurfaceType type;
     public short force;
     public sbyte flags;
     public sbyte room;

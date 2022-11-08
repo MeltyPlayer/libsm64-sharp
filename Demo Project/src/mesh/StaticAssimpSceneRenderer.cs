@@ -27,7 +27,7 @@ namespace demo.mesh {
                     assimpSceneData.TexturesByMaterial[assimpMaterial];
 
                 return textureImage != null
-                           ? GlTexture.FromImage(textureImage)
+                           ? GlTexture.FromImage(textureImage, WrapMode.REPEAT, WrapMode.REPEAT)
                            : GlTexture.FromColor(Color.White);
               })
               .ToArray();

@@ -105,7 +105,8 @@ public class DemoWindow : GameWindow {
 
       this.marioController_ =
           new MarioController(this.sm64Mario_, camera, this);
-      this.marioMeshRenderer_ = new MarioMeshRenderer(this.sm64Mario_.Mesh);
+      this.marioMeshRenderer_ = new MarioMeshRenderer(
+          this.sm64Context_, this.sm64Mario_);
 
       this.camera_ = camera;
       this.cameraController_ = cameraController;
@@ -134,7 +135,8 @@ public class DemoWindow : GameWindow {
 
       this.marioController_ =
           new MarioController(this.sm64Mario_, camera, this);
-      this.marioMeshRenderer_ = new MarioMeshRenderer(this.sm64Mario_.Mesh);
+      this.marioMeshRenderer_ = new MarioMeshRenderer(
+          this.sm64Context_, this.sm64Mario_);
 
       this.camera_ = camera;
       this.cameraController_ = cameraController;
@@ -214,12 +216,13 @@ public class DemoWindow : GameWindow {
       GL.LoadIdentity();
     }
 
-    this.marioMeshRenderer_?.Render();
     this.meshRenderer_.Render();
     //this.collisionMeshRenderer_.Render();
 
     foreach (var objectRenderer in objectRenderers_) {
       objectRenderer.Render();
     }
+
+    this.marioMeshRenderer_?.Render();
   }
 }

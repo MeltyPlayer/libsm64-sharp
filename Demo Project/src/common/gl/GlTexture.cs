@@ -6,6 +6,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 using Color = System.Drawing.Color;
+using Image = System.Drawing.Image;
 using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 using Rectangle = System.Drawing.Rectangle;
 
@@ -33,7 +34,14 @@ namespace demo.common.gl {
       pixel.A = color.A;
       frame[0, 0] = pixel;
 
-      return FromImage(image);
+      return FromImage(image, WrapMode.CLAMP, WrapMode.CLAMP);
+    }
+
+    public static GlTexture FromFile(string path,
+                                     WrapMode clampS,
+                                     WrapMode clampT) {
+      var bitmap = (Bitmap) Image.FromFile(path);
+      return GlTexture.FromBitmap(bitmap, clampS, clampT);
     }
 
     public static GlTexture FromBitmap(Bitmap bmp,
@@ -69,10 +77,10 @@ namespace demo.common.gl {
       return new GlTexture(image, clampS, clampT);
     }
 
-    public static GlTexture FromImage(Image<Rgba32> image) => new(image);
-
-    private GlTexture(Image<Rgba32> image) : this(
-        image, WrapMode.REPEAT, WrapMode.REPEAT) { }
+    public static GlTexture FromImage(Image<Rgba32> image,
+                                      WrapMode clampS,
+                                      WrapMode clampT) 
+      => new(image, clampS, clampT);
 
     private GlTexture(Image<Rgba32> image,
                       WrapMode clampS,
