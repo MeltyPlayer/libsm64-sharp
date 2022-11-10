@@ -7,6 +7,39 @@ using System.Text;
 
 
 namespace Quad64 {
+  public class Model3DLods {
+    private List<Model3D> lods_ = new();
+
+    public Model3DLods() {
+      this.Add();
+      this.Lods = this.lods_;
+    }
+
+    public IReadOnlyList<Model3D> Lods { get; }
+
+    public Model3D HighestLod {
+      get {
+        if (this.Lods.Count > 1) {
+          return this.Lods.Skip(1).First();
+        } else {
+          return this.Lods.First();
+        }
+      }
+    }
+
+    public Model3D Current => this.Lods.Last();
+
+    public void Add() {
+      this.lods_.Add(new());
+    }
+
+    public void BuildBuffers() {
+      foreach (var lod in this.lods_) {
+        lod.buildBuffers();
+      }
+    }
+  }
+
   public class Model3D {
     public class MeshData {
       public int vbo, ibo, texBuf, colorBuf;

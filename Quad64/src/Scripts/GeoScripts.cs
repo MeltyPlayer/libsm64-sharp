@@ -44,7 +44,7 @@ namespace Quad64.src.Scripts {
       nodeCurrent = rootNode;
     }
 
-    public static void parse(ref Model3D mdl,
+    public static void parse(Model3DLods mdlLods,
                              ref Level lvl,
                              byte seg,
                              uint off,
@@ -75,9 +75,9 @@ namespace Quad64.src.Scripts {
           case 0x00:
             desc = "Branch geometry layout to address 0x" +
                    bytesToInt(cmd, 4, 4).ToString("X8");
-            addGLSCommandToDump(ref mdl, cmd, seg, off, desc, areaID);
+            addGLSCommandToDump(mdlLods.Current, cmd, seg, off, desc, areaID);
             alreadyAdded = true;
-            CMD_00(ref mdl, ref lvl, cmd, areaID);
+            CMD_00(mdlLods, ref lvl, cmd, areaID);
             break;
           case 0x01:
             desc = "End geometry layout";
@@ -86,9 +86,9 @@ namespace Quad64.src.Scripts {
           case 0x02:
             desc = "Branch geometry layout to address 0x" +
                    bytesToInt(cmd, 4, 4).ToString("X8");
-            addGLSCommandToDump(ref mdl, cmd, seg, off, desc, areaID);
+            addGLSCommandToDump(mdlLods.Current, cmd, seg, off, desc, areaID);
             alreadyAdded = true;
-            CMD_02(ref mdl, ref lvl, cmd, areaID);
+            CMD_02(mdlLods, ref lvl, cmd, areaID);
 
             if (cmd[1] == 0x01) {
               if (nodeCurrent.parent == null ||
@@ -137,16 +137,19 @@ namespace Quad64.src.Scripts {
               desc = "Enable Z-Buffer";
             break;
           case 0x0D:
+            var minRenderRange = (short) bytesToInt(cmd, 4, 2);
+            var maxRenderRange = (short) bytesToInt(cmd, 6, 2);
             desc = "Set render range from camera (min = " +
-                   (short) bytesToInt(cmd, 4, 2) + ", max = " +
-                   (short) bytesToInt(cmd, 6, 2) + ")";
+                   minRenderRange + ", max = " +
+                   maxRenderRange + ")";
+            mdlLods.Add();
             break;
           case 0x0E:
             desc =
                 "Switch case with following display lists using ASM function 0x" +
                 bytesToInt(cmd, 4, 4).ToString("X8");
             //rom.printArray(cmd, cmdLen);
-            CMD_0E(ref mdl, ref lvl, cmd);
+            CMD_0E(mdlLods.Current, ref lvl, cmd);
             break;
           case 0x10:
             desc = "Translate and rotate";
@@ -155,7 +158,7 @@ namespace Quad64.src.Scripts {
           case 0x11:
             //rom.printArray(cmd, cmdLen);
             desc = "Translate Node";
-            CMD_11(ref mdl, ref lvl, cmd);
+            CMD_11(mdlLods.Current, ref lvl, cmd);
             break;
           case 0x13:
             desc = "Load display list 0x" +
@@ -166,7 +169,7 @@ namespace Quad64.src.Scripts {
                    "," + (short) bytesToInt(cmd, 2, 2) +
                    ")";
             //rom.printArray(cmd, cmdLen);
-            CMD_13(ref mdl, ref lvl, cmd, areaID);
+            CMD_13(mdlLods.Current, ref lvl, cmd, areaID);
             break;
           case 0x14:
             desc = "Billboard Model";
@@ -176,7 +179,7 @@ namespace Quad64.src.Scripts {
             desc = "Load display list 0x" +
                    bytesToInt(cmd, 4, 4).ToString("X8") +
                    " into layer " + cmd[1];
-            CMD_15(ref mdl, ref lvl, cmd, areaID);
+            CMD_15(mdlLods.Current, ref lvl, cmd, areaID);
             // rom.printArray(cmd, cmdLen);
             break;
           case 0x16:
@@ -192,7 +195,7 @@ namespace Quad64.src.Scripts {
             desc = "Create display list(s) from the ASM function 0x" +
                    bytesToInt(cmd, 4, 4).ToString("X8")
                    + " (a0 = " + bytesToInt(cmd, 2, 2) + ")";
-            CMD_18(ref mdl, ref lvl, cmd);
+            CMD_18(mdlLods.Current, ref lvl, cmd);
             // rom.printArray(cmd, cmdLen);
             break;
           case 0x19:
@@ -209,14 +212,14 @@ namespace Quad64.src.Scripts {
                      ", calls ASM function 0x" +
                      bytesToInt(cmd, 4, 4).ToString("X8");
             }
-            CMD_19(ref mdl, ref lvl, cmd,
+            CMD_19(mdlLods.Current, ref lvl, cmd,
                    rom.decodeSegmentAddress(seg, off, areaID));
             // rom.printArray(cmd, cmdLen);
             break;
           case 0x1D:
             desc = "Scale following node by " +
                    ((bytesToInt(cmd, 4, 4) / 65536.0f) * 100.0f) + "%";
-            CMD_1D(ref mdl, cmd);
+            CMD_1D(mdlLods.Current, cmd);
             break;
           case 0x1A:
           case 0x1E:
@@ -229,7 +232,7 @@ namespace Quad64.src.Scripts {
             break;
         }
         if (!alreadyAdded)
-          addGLSCommandToDump(ref mdl, cmd, seg, off, desc, areaID);
+          addGLSCommandToDump(mdlLods.Current, cmd, seg, off, desc, areaID);
         off += cmdLen;
         /*
         if (nodeCurrent.isSwitch)
@@ -238,7 +241,7 @@ namespace Quad64.src.Scripts {
       }
     }
 
-    private static void addGLSCommandToDump(ref Model3D mdl,
+    private static void addGLSCommandToDump(Model3D mdl,
                                             byte[] cmd,
                                             byte seg,
                                             uint offset,
@@ -253,22 +256,22 @@ namespace Quad64.src.Scripts {
       mdl.GeoLayoutCommands_ForDump.Add(info);
     }
 
-    private static void CMD_00(ref Model3D mdl,
+    private static void CMD_00(Model3DLods mdlLods,
                                ref Level lvl,
                                byte[] cmd,
                                byte? areaID) {
       byte seg = cmd[4];
       uint off = bytesToInt(cmd, 5, 3);
-      parse(ref mdl, ref lvl, seg, off, areaID);
+      parse(mdlLods, ref lvl, seg, off, areaID);
     }
 
-    private static void CMD_02(ref Model3D mdl,
+    private static void CMD_02(Model3DLods mdlLods,
                                ref Level lvl,
                                byte[] cmd,
                                byte? areaID) {
       byte seg = cmd[4];
       uint off = bytesToInt(cmd, 5, 3);
-      parse(ref mdl, ref lvl, seg, off, areaID);
+      parse(mdlLods, ref lvl, seg, off, areaID);
     }
 
 
@@ -288,7 +291,7 @@ namespace Quad64.src.Scripts {
       nodeCurrent = newNode;
     }
 
-    private static void CMD_0E(ref Model3D mdl, ref Level lvl, byte[] cmd) {
+    private static void CMD_0E(Model3D mdl, ref Level lvl, byte[] cmd) {
       //nodeCurrent.switchFunc = bytesToInt(cmd, 4, 4);
       // Special Ignore cases
       //if (nodeCurrent.switchFunc == 0x8029DBD4) return;
@@ -296,21 +299,21 @@ namespace Quad64.src.Scripts {
       nodeCurrent.callSwitch = true;
     }
 
-    private static void CMD_10(ref Model3D mdl, ref Level lvl, byte[] cmd) {
+    private static void CMD_10(Model3D mdl, ref Level lvl, byte[] cmd) {
       short x = (short) bytesToInt(cmd, 4, 2);
       short y = (short) bytesToInt(cmd, 6, 2);
       short z = (short) bytesToInt(cmd, 8, 2);
       nodeCurrent.offset += new Vector3(x, y, z);
     }
 
-    private static void CMD_11(ref Model3D mdl, ref Level lvl, byte[] cmd) {
+    private static void CMD_11(Model3D mdl, ref Level lvl, byte[] cmd) {
       short x = (short) bytesToInt(cmd, 2, 2);
       short y = (short) bytesToInt(cmd, 4, 2);
       short z = (short) bytesToInt(cmd, 6, 2);
       //mdl.builder.GeoLayoutOffset += new OpenTK.Vector3(x, y, z);
     }
 
-    private static void CMD_13(ref Model3D mdl,
+    private static void CMD_13(Model3D mdl,
                                ref Level lvl,
                                byte[] cmd,
                                byte? areaID) {
@@ -337,7 +340,7 @@ namespace Quad64.src.Scripts {
       }
     }
 
-    private static void CMD_15(ref Model3D mdl,
+    private static void CMD_15(Model3D mdl,
                                ref Level lvl,
                                byte[] cmd,
                                byte? areaID) {
@@ -358,7 +361,7 @@ namespace Quad64.src.Scripts {
       lvl.temp_bgInfo.fogColor_romLocation = mdl.builder.FogColor_romLocation;
     }
 
-    private static void CMD_18(ref Model3D mdl, ref Level lvl, byte[] cmd) {
+    private static void CMD_18(Model3D mdl, ref Level lvl, byte[] cmd) {
       ROM rom = ROM.Instance;
       uint asmAddress = bytesToInt(cmd, 4, 4);
       switch (rom.Region) {
@@ -370,7 +373,7 @@ namespace Quad64.src.Scripts {
       }
     }
 
-    private static void CMD_19(ref Model3D mdl,
+    private static void CMD_19(Model3D mdl,
                                ref Level lvl,
                                byte[] cmd,
                                uint romOffset) {
@@ -380,7 +383,7 @@ namespace Quad64.src.Scripts {
       lvl.temp_bgInfo.romLocation = romOffset;
     }
 
-    private static void CMD_1D(ref Model3D mdl, byte[] cmd) {
+    private static void CMD_1D(Model3D mdl, byte[] cmd) {
       uint scale = bytesToInt(cmd, 4, 4);
       mdl.builder.currentScale = (float) scale / 65536.0f;
     }

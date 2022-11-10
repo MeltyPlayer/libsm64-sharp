@@ -1,7 +1,4 @@
-﻿using System.Drawing.Drawing2D;
-
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics.OpenGL;
 
 using Quad64;
 using Quad64.src.LevelInfo;
@@ -14,8 +11,9 @@ namespace demo.mesh {
 
     public Quad64ObjectRenderer(Level level, Object3D obj) {
       this.object_ = obj;
+
       if (level.ModelIDs.TryGetValue(obj.ModelID, out var model)) {
-        this.impl_ = new Quad64ModelRenderer(model);
+        this.impl_ = new Quad64ModelRenderer(model.HighestLod);
       }
     }
 

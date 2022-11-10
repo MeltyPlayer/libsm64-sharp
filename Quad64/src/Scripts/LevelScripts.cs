@@ -498,12 +498,12 @@ namespace Quad64.Scripts {
 
       Area newArea = new Area(areaID, bytesToInt(cmd, 4, 4), lvl);
       GeoScripts.resetNodes();
-      newArea.AreaModel.GeoDataSegAddress = bytesToInt(cmd, 4, 4);
+      newArea.AreaModel.Current.GeoDataSegAddress = bytesToInt(cmd, 4, 4);
 
       // Globals.DEBUG_PARSING_LEVEL_AREA = true;
       // Stopwatch stopWatch = new Stopwatch();
       // stopWatch.Start();
-      GeoScripts.parse(ref newArea.AreaModel, ref lvl, seg, off, areaID);
+      GeoScripts.parse(newArea.AreaModel, ref lvl, seg, off, areaID);
       lvl.setAreaBackgroundInfo(ref newArea);
       lvl.Areas.Add(newArea);
       lvl.CurrentAreaID = areaID;
@@ -512,7 +512,7 @@ namespace Quad64.Scripts {
 
       //stopWatch = new Stopwatch();
       // stopWatch.Start();
-      newArea.AreaModel.buildBuffers();
+      newArea.AreaModel.BuildBuffers();
       //if(areaID == 1) newArea.AreaModel.dumpModelToOBJ(1.0f/500.0f);
       //stopWatch.Stop();
       //Console.WriteLine("RunTime (newArea.AreaModel.buildBuffers): " + stopWatch.Elapsed.Milliseconds + "ms");
@@ -532,17 +532,19 @@ namespace Quad64.Scripts {
       desc = "Define Model ID 0x" + modelID.ToString("X2") +
              "; Load Fast3D from 0x" + seg.ToString("X2") + off.ToString("X6");
 
-      Model3D newModel = new Model3D();
-      newModel.Fast3DCommands_ForDump.Add(new List<ScriptDumpCommandInfo>());
-      newModel.GeoDataSegAddress = bytesToInt(cmd, 4, 4);
-      lvl.AddObjectCombos(modelID, newModel.GeoDataSegAddress);
+      Model3DLods newModel = new Model3DLods();
+      newModel.Current.Fast3DCommands_ForDump.Add(new List<ScriptDumpCommandInfo>());
+      newModel.Current.GeoDataSegAddress = bytesToInt(cmd, 4, 4);
+      lvl.AddObjectCombos(modelID, newModel.Current.GeoDataSegAddress);
+
+      var model = newModel.Current;
 
       if (rom.getSegment(seg, areaID) != null)
-        Fast3DScripts.parse(ref newModel, ref lvl, seg, off, areaID, 0);
+        Fast3DScripts.parse(ref model, ref lvl, seg, off, areaID, 0);
 
       if (lvl.ModelIDs.ContainsKey(modelID))
         lvl.ModelIDs.Remove(modelID);
-      newModel.buildBuffers();
+      newModel.BuildBuffers();
       lvl.ModelIDs.Add(modelID, newModel);
     }
 
@@ -563,13 +565,13 @@ namespace Quad64.Scripts {
              off.ToString("X6");
 
       //Console.WriteLine("Size of seg 0x"+seg.ToString("X2")+" = " + rom.getSegment(seg).Length);
-      Model3D newModel = new Model3D();
-      newModel.GeoDataSegAddress = bytesToInt(cmd, 4, 4);
-      lvl.AddObjectCombos(modelID, newModel.GeoDataSegAddress);
+      Model3DLods newModel = new Model3DLods();
+      newModel.Current.GeoDataSegAddress = bytesToInt(cmd, 4, 4);
+      lvl.AddObjectCombos(modelID, newModel.Current.GeoDataSegAddress);
       if (rom.getSegment(seg, areaID) != null) {
         try {
           GeoScripts.resetNodes();
-          GeoScripts.parse(ref newModel, ref lvl, seg, off, areaID);
+          GeoScripts.parse(newModel, ref lvl, seg, off, areaID);
         } catch (Exception e) {
           Console.WriteLine(e.Message);
           Console.WriteLine(e.StackTrace);
@@ -577,7 +579,7 @@ namespace Quad64.Scripts {
       }
       if (lvl.ModelIDs.ContainsKey(modelID))
         lvl.ModelIDs.Remove(modelID);
-      newModel.buildBuffers();
+      newModel.BuildBuffers();
       lvl.ModelIDs.Add(modelID, newModel);
 
       if (modelID == 0x7A)

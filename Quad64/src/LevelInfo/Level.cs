@@ -32,7 +32,7 @@ namespace Quad64.src.LevelInfo {
 
     public AreaBackgroundInfo bgInfo = new AreaBackgroundInfo();
 
-    public Model3D AreaModel = new Model3D();
+    public Model3DLods AreaModel = new Model3DLods();
     public CollisionMap collision = new CollisionMap();
 
     public List<Object3D> Objects = new List<Object3D>();
@@ -84,7 +84,7 @@ namespace Quad64.src.LevelInfo {
         Vector3 position = new Vector3(obj.xPos, obj.yPos, obj.zPos);
         if (obj.ModelID != 0) {
           if (parent.ModelIDs.ContainsKey(obj.ModelID)) {
-            Model3D model = parent.ModelIDs[obj.ModelID];
+            Model3D model = parent.ModelIDs[obj.ModelID].Current;
             BoundingBox.draw_solid(scale, rotation, position,
                                    System.Drawing.Color.FromArgb(
                                        i % 256, i / 256, 1),
@@ -107,7 +107,7 @@ namespace Quad64.src.LevelInfo {
         Vector3 position = new Vector3(obj.xPos, obj.yPos, obj.zPos);
         if (obj.ModelID != 0) {
           if (parent.ModelIDs.ContainsKey(obj.ModelID)) {
-            Model3D model = parent.ModelIDs[obj.ModelID];
+            Model3D model = parent.ModelIDs[obj.ModelID].Current;
             BoundingBox.draw_solid(scale, rotation, position,
                                    System.Drawing.Color.FromArgb(
                                        i % 256, i / 256, 2),
@@ -130,7 +130,7 @@ namespace Quad64.src.LevelInfo {
         Vector3 position = new Vector3(obj.xPos, obj.yPos, obj.zPos);
         if (obj.ModelID != 0) {
           if (parent.ModelIDs.ContainsKey(obj.ModelID)) {
-            Model3D model = parent.ModelIDs[obj.ModelID];
+            Model3D model = parent.ModelIDs[obj.ModelID].Current;
             BoundingBox.draw_solid(scale, rotation, position,
                                    System.Drawing.Color.FromArgb(
                                        i % 256, i / 256, 3),
@@ -151,7 +151,7 @@ namespace Quad64.src.LevelInfo {
       if (Globals.renderCollisionMap)
         collision.drawCollisionMap(false);
       else
-        AreaModel.drawModel(Vector3.One, Quaternion.Identity, Vector3.Zero);
+        AreaModel.HighestLod.drawModel(Vector3.One, Quaternion.Identity, Vector3.Zero);
 
       for (int i = 0; i < Objects.Count; i++) {
         Object3D obj = Objects[i];
@@ -163,7 +163,7 @@ namespace Quad64.src.LevelInfo {
             new Quaternion(obj.xRot, obj.yRot, obj.zRot, 1.0f);
         Vector3 position = new Vector3(obj.xPos, obj.yPos, obj.zPos);
         if (obj.ModelID != 0 && parent.ModelIDs.ContainsKey(obj.ModelID)) {
-          Model3D model = parent.ModelIDs[obj.ModelID];
+          Model3D model = parent.ModelIDs[obj.ModelID].HighestLod;
           if (Globals.drawObjectModels)
             model.drawModel(scale, rotation, position);
           BoundingBox.draw(scale, rotation, position,
@@ -188,7 +188,7 @@ namespace Quad64.src.LevelInfo {
             new Quaternion(obj.xRot, obj.yRot, obj.zRot, 1.0f);
         Vector3 position = new Vector3(obj.xPos, obj.yPos, obj.zPos);
         if (obj.ModelID != 0 && parent.ModelIDs.ContainsKey(obj.ModelID)) {
-          Model3D model = parent.ModelIDs[obj.ModelID];
+          Model3D model = parent.ModelIDs[obj.ModelID].HighestLod;
           if (Globals.drawObjectModels)
             model.drawModel(scale, rotation, position);
           BoundingBox.draw(scale, rotation, position,
@@ -213,7 +213,7 @@ namespace Quad64.src.LevelInfo {
             new Quaternion(obj.xRot, obj.yRot, obj.zRot, 1.0f);
         Vector3 position = new Vector3(obj.xPos, obj.yPos, obj.zPos);
         if (obj.ModelID != 0 && parent.ModelIDs.ContainsKey(obj.ModelID)) {
-          Model3D model = parent.ModelIDs[obj.ModelID];
+          Model3D model = parent.ModelIDs[obj.ModelID].HighestLod;
           if (Globals.drawObjectModels)
             model.drawModel(scale, rotation, position);
           BoundingBox.draw(scale, rotation, position,
@@ -251,8 +251,8 @@ namespace Quad64.src.LevelInfo {
     public List<Area> Areas = new List<Area>();
     public AreaBackgroundInfo temp_bgInfo = new AreaBackgroundInfo();
 
-    public Dictionary<ushort, Model3D> ModelIDs =
-        new Dictionary<ushort, Model3D>();
+    public Dictionary<ushort, Model3DLods> ModelIDs =
+        new Dictionary<ushort, Model3DLods>();
 
     public List<ObjectComboEntry> LevelObjectCombos =
         new List<ObjectComboEntry>();
