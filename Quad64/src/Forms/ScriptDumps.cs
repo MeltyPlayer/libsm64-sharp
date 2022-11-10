@@ -129,14 +129,15 @@ namespace Quad64.src.Forms {
         if (sd_tabs.SelectedIndex == 0)
           organizeCurrentGeoLayoutScript(level.Areas[lt_gls_areaIndex]
                                               .AreaModel
+                                              .Current
                                               .GeoLayoutCommands_ForDump);
         else if (listBoxObjects.SelectedIndex > -1) {
           ushort key = objectCombos[listBoxObjects.SelectedIndex].ModelID;
           ;
           if (level.ModelIDs.ContainsKey(key) &&
-              level.ModelIDs[key].GeoLayoutCommands_ForDump.Count > 0) {
+              level.ModelIDs[key].Current.GeoLayoutCommands_ForDump.Count > 0) {
             organizeCurrentGeoLayoutScript(
-                level.ModelIDs[key].GeoLayoutCommands_ForDump);
+                level.ModelIDs[key].Current.GeoLayoutCommands_ForDump);
           } else {
             currentTextbox.ResetText();
             currentTextbox.ForeColor = Theme.SCRIPTDUMPS_GEOLAYOUT_TEXTBOX_TEXT;
@@ -147,6 +148,7 @@ namespace Quad64.src.Forms {
         if (sd_tabs.SelectedIndex == 0)
           organizeCurrentFast3DScript(level.Areas[lt_f3d_areaIndex]
                                            .AreaModel
+                                           .Current
                                            .Fast3DCommands_ForDump[
                                                lt_f3d_listbox.SelectedIndex]);
         else if (listBoxObjects.SelectedIndex > -1) {
@@ -159,6 +161,7 @@ namespace Quad64.src.Forms {
             else
               organizeCurrentFast3DScript(
                   level.ModelIDs[key]
+                       .Current
                        .Fast3DCommands_ForDump[ot_f3d_listbox.SelectedIndex]);
           } else {
             currentTextbox.ResetText();

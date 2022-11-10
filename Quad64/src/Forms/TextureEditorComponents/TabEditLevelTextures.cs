@@ -45,13 +45,15 @@ namespace Quad64.src.Forms {
     private void loadModelsOnlyButtonSet() {
       HashSet<uint> addresses = new HashSet<uint>();
       List<RadioButtonWithInfo> buttons = new List<RadioButtonWithInfo>();
-      foreach (KeyValuePair<ushort, Model3D> entry in level.ModelIDs) {
-        for (int i = 0; i < entry.Value.builder.TextureImages.Count; i++) {
-          uint address = entry.Value.builder.TextureAddresses[i];
+      foreach (KeyValuePair<ushort, Model3DLods> entry in level.ModelIDs) {
+        var modelBuilder = entry.Value.Current.builder;
+
+        for (int i = 0; i < modelBuilder.TextureImages.Count; i++) {
+          uint address = modelBuilder.TextureAddresses[i];
           if (address == 0)
             continue;
           if (!addresses.Contains(address)) {
-            AddNewImage(ref buttons, entry.Value.builder.TextureImages[i],
+            AddNewImage(ref buttons, modelBuilder.TextureImages[i],
                         address, RadioButtonWithInfo_Click);
             addresses.Add(address);
           }
@@ -66,16 +68,16 @@ namespace Quad64.src.Forms {
       HashSet<ushort> modelIDs = level.getModelIDsUsedByObjects();
 
       foreach (ushort modelID in modelIDs) {
+        var modelBuilder = level.ModelIDs[modelID].Current.builder;
+
         if (level.ModelIDs.ContainsKey(modelID)) {
-          for (int i = 0;
-               i < level.ModelIDs[modelID].builder.TextureImages.Count;
-               i++) {
-            uint address = level.ModelIDs[modelID].builder.TextureAddresses[i];
+          for (int i = 0; i < modelBuilder.TextureImages.Count; i++) {
+            uint address = modelBuilder.TextureAddresses[i];
             if (address == 0)
               continue;
             if (!addresses.Contains(address)) {
               AddNewImage(ref buttons,
-                          level.ModelIDs[modelID].builder.TextureImages[i],
+                          modelBuilder.TextureImages[i],
                           address, RadioButtonWithInfo_Click);
               addresses.Add(address);
             }
@@ -89,12 +91,13 @@ namespace Quad64.src.Forms {
       List<RadioButtonWithInfo> buttons = new List<RadioButtonWithInfo>();
       HashSet<uint> addresses = new HashSet<uint>();
       foreach (Area area in level.Areas) {
-        for (int i = 0; i < area.AreaModel.builder.TextureImages.Count; i++) {
-          uint address = area.AreaModel.builder.TextureAddresses[i];
+        var modelBuilder = area.AreaModel.Current.builder;
+        for (int i = 0; i < modelBuilder.TextureImages.Count; i++) {
+          uint address = modelBuilder.TextureAddresses[i];
           if (address == 0)
             continue;
           if (!addresses.Contains(address)) {
-            AddNewImage(ref buttons, area.AreaModel.builder.TextureImages[i],
+            AddNewImage(ref buttons, modelBuilder.TextureImages[i],
                         address, RadioButtonWithInfo_Click);
             addresses.Add(address);
           }

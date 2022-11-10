@@ -67,7 +67,7 @@ namespace Quad64.src.Forms {
             byte modelID = Convert.ToByte(combo[0].Substring(2), 16);
             uint modelAddress = 0;
             if (level.ModelIDs.ContainsKey(modelID)) {
-              modelAddress = level.ModelIDs[modelID].GeoDataSegAddress;
+              modelAddress = level.ModelIDs[modelID].Current.GeoDataSegAddress;
             }
             uint behavior = Convert.ToUInt32(combo[1].Substring(3), 16);
             ObjectComboEntry newOCE =
@@ -132,10 +132,12 @@ namespace Quad64.src.Forms {
                                              (level.ModelIDs.ContainsKey(
                                                   o.ModelID)
                                                   ? (level.ModelIDs[o.ModelID]
+                                                          .Current
                                                           .GeoLayoutCommands_ForDump
                                                           .Count > 0
                                                           ? level.ModelIDs[
                                                                   o.ModelID]
+                                                              .Current
                                                               .GeoLayoutCommands_ForDump
                                                                   [0]
                                                               .segAddress
@@ -150,10 +152,12 @@ namespace Quad64.src.Forms {
                                              (level.ModelIDs.ContainsKey(
                                                   o.ModelID)
                                                   ? (level.ModelIDs[o.ModelID]
+                                                          .Current
                                                           .GeoLayoutCommands_ForDump
                                                           .Count > 0
                                                           ? level.ModelIDs[
                                                                   o.ModelID]
+                                                              .Current
                                                               .GeoLayoutCommands_ForDump
                                                                   [0]
                                                               .romAddress
@@ -168,20 +172,26 @@ namespace Quad64.src.Forms {
                                              (level.ModelIDs.ContainsKey(
                                                   o.ModelID)
                                                   ? (level.ModelIDs[o.ModelID]
+                                                          .Current
                                                           .Fast3DCommands_ForDump
                                                           .Count > 0
                                                           ? (level.ModelIDs[
-                                                                      o.ModelID]
-                                                                  .Fast3DCommands_ForDump
-                                                                      [0]
-                                                                  .Count > 0
-                                                                  ? level
-                                                                      .ModelIDs[
                                                                           o.ModelID]
+                                                                      .Current
                                                                       .Fast3DCommands_ForDump
-                                                                          [0][0]
-                                                                      .segAddress
-                                                                  : 0)
+                                                                          [0]
+                                                                      .Count >
+                                                                  0
+                                                                    ? level
+                                                                        .ModelIDs
+                                                                        [
+                                                                            o.ModelID]
+                                                                        .Current
+                                                                        .Fast3DCommands_ForDump
+                                                                            [0]
+                                                                        [0]
+                                                                        .segAddress
+                                                                    : 0)
                                                           : 0)
                                                   : 0)
                                      )
@@ -193,20 +203,26 @@ namespace Quad64.src.Forms {
                                              (level.ModelIDs.ContainsKey(
                                                   o.ModelID)
                                                   ? (level.ModelIDs[o.ModelID]
+                                                          .Current
                                                           .Fast3DCommands_ForDump
                                                           .Count > 0
                                                           ? (level.ModelIDs[
-                                                                      o.ModelID]
-                                                                  .Fast3DCommands_ForDump
-                                                                      [0]
-                                                                  .Count > 0
-                                                                  ? level
-                                                                      .ModelIDs[
                                                                           o.ModelID]
+                                                                      .Current
                                                                       .Fast3DCommands_ForDump
-                                                                          [0][0]
-                                                                      .romAddress
-                                                                  : 0)
+                                                                          [0]
+                                                                      .Count >
+                                                                  0
+                                                                    ? level
+                                                                        .ModelIDs
+                                                                        [
+                                                                            o.ModelID]
+                                                                        .Current
+                                                                        .Fast3DCommands_ForDump
+                                                                            [0]
+                                                                        [0]
+                                                                        .romAddress
+                                                                    : 0)
                                                           : 0)
                                                   : 0)
                                      )

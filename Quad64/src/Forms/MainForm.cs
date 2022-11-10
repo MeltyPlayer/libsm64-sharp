@@ -938,7 +938,7 @@ namespace Quad64 {
 
     private void updateTriangleCount() {
       triangleCount.Text = "Area Triangle Count: " + level.getCurrentArea()
-                               .AreaModel.getNumberOfTrianglesInModel()
+                               .AreaModel.Current.getNumberOfTrianglesInModel()
                                .ToString();
     }
 

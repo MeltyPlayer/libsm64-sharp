@@ -6,7 +6,7 @@ namespace demo.mesh {
     private readonly Quad64ModelRenderer impl_;
 
     public Quad64AreaRenderer(Area area) {
-      this.impl_ = new Quad64ModelRenderer(area.AreaModel);
+      this.impl_ = new Quad64ModelRenderer(area.AreaModel.HighestLod);
     }
 
     public void Render() => this.impl_.Render();

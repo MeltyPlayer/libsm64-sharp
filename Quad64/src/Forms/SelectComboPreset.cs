@@ -55,7 +55,7 @@ namespace Quad64.src.Forms {
       foreach (PresetMacroEntry entry in specialList) {
         if (!presetsTaken.Contains(entry.PresetID)) {
           if (level.ModelIDs.ContainsKey(entry.ModelID)) {
-            uint modelAddress = level.ModelIDs[entry.ModelID].GeoDataSegAddress;
+            uint modelAddress = level.ModelIDs[entry.ModelID].Current.GeoDataSegAddress;
             int oce_index = -1;
             ObjectComboEntry oce = level.getObjectComboFromData(
                 entry.ModelID, modelAddress, entry.Behavior, out oce_index);
@@ -101,7 +101,7 @@ namespace Quad64.src.Forms {
           foreach (PresetMacroEntry entry in level.MacroObjectPresets) {
             if (level.ModelIDs.ContainsKey(entry.ModelID)) {
               uint modelAddress =
-                  level.ModelIDs[entry.ModelID].GeoDataSegAddress;
+                  level.ModelIDs[entry.ModelID].Current.GeoDataSegAddress;
               int oce_index = -1;
               ObjectComboEntry oce = level.getObjectComboFromData(
                   entry.ModelID, modelAddress, entry.Behavior, out oce_index);
@@ -262,9 +262,8 @@ namespace Quad64.src.Forms {
           break;
         case 1:
           foreach (PresetMacroEntry entry in level.MacroObjectPresets) {
-            if (level.ModelIDs.ContainsKey(entry.ModelID)) {
-              uint modelAddress =
-                  level.ModelIDs[entry.ModelID].GeoDataSegAddress;
+            if (level.ModelIDs.TryGetValue(entry.ModelID, out var modelLods)) {
+              uint modelAddress = modelLods.Current.GeoDataSegAddress;
               int oce_index = -1;
               ObjectComboEntry oce = level.getObjectComboFromData(
                   entry.ModelID, modelAddress, entry.Behavior, out oce_index);

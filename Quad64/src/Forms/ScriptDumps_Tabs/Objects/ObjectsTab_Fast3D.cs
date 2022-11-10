@@ -10,10 +10,10 @@ namespace Quad64.src.Forms {
       ot_f3d_textbox.ResetText();
 
       ushort key = objectCombos[listBoxObjects.SelectedIndex].ModelID;
-      if (level.ModelIDs.ContainsKey(key) &&
-          level.ModelIDs[key].Fast3DCommands_ForDump.Count > 0) {
+      if (level.ModelIDs.TryGetValue(key, out var modelLods) &&
+          modelLods.Current.Fast3DCommands_ForDump.Count > 0) {
         List<List<ScriptDumpCommandInfo>> list =
-            level.ModelIDs[key].Fast3DCommands_ForDump;
+            modelLods.Current.Fast3DCommands_ForDump;
         for (int i = 0; i < list.Count; i++) {
           if (list[i].Count > 0) {
             ot_f3d_listbox.Items.Add(list[i][0].segAddress.ToString("X8"));

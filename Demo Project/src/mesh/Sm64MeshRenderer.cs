@@ -186,7 +186,7 @@ void main() {{
       this.texture0Location_ =
           this.texturedShaderProgram_.GetUniformLocation("texture0");
 
-      foreach (var mesh in this.area_.AreaModel.meshes) {
+      foreach (var mesh in this.area_.AreaModel.HighestLod.meshes) {
         var texture = mesh.texture;
         this.glTextures_[texture] = GlTexture.FromBitmap(
             texture.Bmp,
@@ -217,7 +217,7 @@ void main() {{
 
       GL.Color3(1f, 1f, 1f);
 
-      var model = this.area_.AreaModel;
+      var model = this.area_.AreaModel.HighestLod;
       foreach (var mesh in model.meshes) {
         var glTexture = this.glTextures_[mesh.texture];
 

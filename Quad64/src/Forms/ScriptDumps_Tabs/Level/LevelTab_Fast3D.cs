@@ -48,7 +48,7 @@ namespace Quad64.src.Forms
         private void refreshLevelTabFast3DList()
         {
             lt_f3d_listbox.Items.Clear();
-            List<List<ScriptDumpCommandInfo>> list = level.Areas[lt_f3d_areaIndex].AreaModel.Fast3DCommands_ForDump;
+            List<List<ScriptDumpCommandInfo>> list = level.Areas[lt_f3d_areaIndex].AreaModel.Current.Fast3DCommands_ForDump;
             for (int i = 0; i < list.Count; i++)
             {
                 lt_f3d_listbox.Items.Add(list[i][0].segAddress.ToString("X8"));
