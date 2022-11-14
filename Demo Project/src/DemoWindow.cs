@@ -52,6 +52,11 @@ public class DemoWindow : GameWindow {
       //Debug.WriteLine(text);
     });
 
+    this.Closed += (_, _) => {
+      this.sm64Context_.Dispose();
+      this.audioManager_.Dispose();
+    };
+
     Sm64Context.RegisterPlaySoundFunction(
         args => {
           // TODO: Play sounds

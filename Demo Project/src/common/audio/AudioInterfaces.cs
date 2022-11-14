@@ -2,7 +2,8 @@
 
 
 namespace demo.common.audio {
-  public interface IAudioManager<TNumber> where TNumber : INumber<TNumber> {
+  public interface IAudioManager<TNumber> : IDisposable
+      where TNumber : INumber<TNumber> {
     // TODO: Add method for creating mutable buffer
     // TODO: Add method for creating mutable circular buffers
     // TODO: Add support for looping a certain section of audio
@@ -94,6 +95,7 @@ namespace demo.common.audio {
 
     IActiveMusic<TNumber> CreateMusic(IAudioBuffer<TNumber> introBuffer,
                                       IAudioBuffer<TNumber> loopBuffer);
+
     IActiveMusic<TNumber> CreateMusic(IAudioStream<TNumber> introStream,
                                       IAudioStream<TNumber> loopStream);
   }
