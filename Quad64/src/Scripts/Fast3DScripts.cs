@@ -4,6 +4,19 @@ using Quad64.src.LevelInfo;
 
 
 namespace Quad64.src.Scripts {
+  [Flags]
+  public enum RspGeometryMode : uint {
+    G_ZBUFFER = 0x00000001,
+    G_SHADE = 0x00000004,
+    G_SHADE_SMOOTH = 0x00000200,
+    G_CULL_FRONT = 0x00001000,
+    G_CULL_BACK = 0x00002000,
+    G_FOG = 0x00010000,
+    G_LIGHTING = 0x00020000,
+    G_TEXTURE_GEN = 0x00040000,
+    G_TEXTURE_GEN_LINEAR = 0x00080000,
+  }
+
   class Fast3DScripts {
     private struct F3D_Vertex {
       public short x, y, z, f, u, v; // f = flag (Not sure what it does)
@@ -137,10 +150,14 @@ namespace Quad64.src.Scripts {
               end = true;
             break;
           case CMD.F3D_CLEARGEOMETRYMODE:
-            tempMaterial.geometryMode &= ~bytesToInt(cmd, 4, 4);
+            tempMaterial.geometryMode &=
+                (RspGeometryMode) ~bytesToInt(cmd, 4, 4);
+            mdl.builder.AddGeometryMode(tempMaterial.geometryMode);
             break;
           case CMD.F3D_SETGEOMETRYMODE:
-            tempMaterial.geometryMode |= bytesToInt(cmd, 4, 4);
+            tempMaterial.geometryMode |=
+                (RspGeometryMode) bytesToInt(cmd, 4, 4);
+            mdl.builder.AddGeometryMode(tempMaterial.geometryMode);
             break;
           case CMD.F3D_ENDDL:
             desc = "End of display list";
@@ -231,7 +248,7 @@ namespace Quad64.src.Scripts {
 
       if (mdl.builder.processingTexture != status) {
         if (status == false) {
-          if (!mdl.builder.hasTexture(temp.segOff)) {
+          if (!mdl.builder.TryToReuseLoadedTexture(temp.segOff)) {
             if (temp.segOff != 0 && temp.w != 0 && temp.h != 0) {
               mdl.builder.AddTexture(
                   TextureFormats.decodeTexture(
@@ -344,7 +361,7 @@ namespace Quad64.src.Scripts {
       ushort tsX = (ushort) bytesToInt(cmd, 4, 2);
       ushort tsY = (ushort) bytesToInt(cmd, 6, 2);
 
-      if ((temp.geometryMode & 0x40000) == 0x40000) {
+      if (temp.geometryMode.HasFlag(RspGeometryMode.G_TEXTURE_GEN)) {
         temp.w = (ushort) ((tsX >> 6));
         temp.h = (ushort) ((tsY >> 6));
         if (temp.w == 31) temp.w = 32;
@@ -390,7 +407,7 @@ namespace Quad64.src.Scripts {
 
       //System.Console.WriteLine("Adding new Triangle: " + a_pos + "," + b_pos + "," + c_pos);
 
-      if ((temp.geometryMode & 0x20000) != 0) {
+      if (temp.geometryMode.HasFlag(RspGeometryMode.G_LIGHTING)) {
         mdl.builder.AddTempVertex(a_pos, a_uv, getColor(temp.color));
         mdl.builder.AddTempVertex(b_pos, b_uv, getColor(temp.color));
         mdl.builder.AddTempVertex(c_pos, c_uv, getColor(temp.color));
@@ -486,7 +503,7 @@ namespace Quad64.src.Scripts {
     public ushort w = 0, h = 0;
     public uint segOff = 0, color = 0xFFFFFFFF;
     public byte format = 0x10;
-    public uint geometryMode = 0x22205;
+    public RspGeometryMode geometryMode = (RspGeometryMode) 0x22205;
     public float texScaleX = 1.0f, texScaleY = 1.0f;
 
     public int wrapS = (int) OpenTK.Graphics.OpenGL.All.Repeat,

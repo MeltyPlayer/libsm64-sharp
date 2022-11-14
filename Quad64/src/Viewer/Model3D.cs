@@ -48,6 +48,7 @@ namespace Quad64 {
       public Vector4[] colors;
       public uint[] indices;
       public Texture2D texture;
+      public ModelBuilder.ModelBuilderMaterial Material;
 
       public override string ToString() {
         return "Texture [ID/W/H]: [" + texture.ID + "/" + texture.Width + "/" +
@@ -142,7 +143,8 @@ namespace Quad64 {
 
     public void outputTextureAtlasToPng(string filename) {
       TextureAtlasBuilder.TextureAtlas atlas
-          = new TextureAtlasBuilder.TextureAtlas(builder.TextureImages);
+          = new TextureAtlasBuilder.TextureAtlas(
+              builder.TextureImages.ToList());
       atlas.outputToPNG(filename);
     }
 
@@ -151,6 +153,7 @@ namespace Quad64 {
       //Console.WriteLine("#meshes = " + meshes.Count);
       for (int i = 0; i < meshes.Count; i++) {
         MeshData m = meshes[i];
+        m.Material = builder.GetMaterial(i);
         m.vertices = builder.getVertices(i);
         m.texCoord = builder.getTexCoords(i);
         m.colors = builder.getColors(i);
@@ -206,7 +209,9 @@ namespace Quad64 {
       GL.Rotate(rot.Y, 0, 1, 0);
       GL.Rotate(rot.Z, 0, 0, 1);
       //GL.Translate(-center.X, -center.Y, -center.Z);
+
       GL.Scale(scale.X, scale.Y, scale.Z);
+
       GL.EnableClientState(ArrayCap.VertexArray);
       GL.EnableClientState(ArrayCap.TextureCoordArray);
       GL.EnableClientState(ArrayCap.ColorArray);
@@ -264,7 +269,7 @@ namespace Quad64 {
       int index_offset = 1;
       int img_index = 0;
 
-      foreach (System.Drawing.Bitmap bmp in builder.TextureImages) {
+      foreach ((var bmp, _, _) in builder.TextureData) {
         string filepath = Directory.GetCurrentDirectory() + "\\Level\\" +
                           img_index + ".png";
         (new FileInfo(filepath)).Directory.Create();

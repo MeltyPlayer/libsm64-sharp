@@ -3,6 +3,7 @@
 using OpenTK.Graphics.OpenGL;
 
 using Quad64;
+using Quad64.src.Scripts;
 
 using PrimitiveType = OpenTK.Graphics.OpenGL.PrimitiveType;
 
@@ -219,6 +220,26 @@ void main() {{
 
       var model = this.model_;
       foreach (var mesh in model.meshes) {
+        var geometryMode = mesh.Material.GeometryMode;
+
+        var cullFront = geometryMode.HasFlag(RspGeometryMode.G_CULL_FRONT);
+        var cullBack = geometryMode.HasFlag(RspGeometryMode.G_CULL_BACK);
+
+        if (!cullFront && !cullBack) {
+          GL.Disable(EnableCap.CullFace);
+        } else {
+          GL.Enable(EnableCap.CullFace);
+          GL.CullFace(cullFront switch {
+              false => cullBack switch {
+                  true => CullFaceMode.Back,
+              },
+              true => cullBack switch {
+                  false => CullFaceMode.Front,
+                  true  => CullFaceMode.FrontAndBack,
+              },
+          });
+        }
+
         var glTexture = this.glTextures_[mesh.texture];
 
         glTexture.Bind();
@@ -238,7 +259,7 @@ void main() {{
             GL.TexCoord2(uv.X, uv.Y);
 
             var color = colors[vertexIndex];
-            GL.Color3(color.X, color.Y, color.Z);
+            GL.Color4(color.X, color.Y, color.Z, color.W);
 
             var vertex = vertices[vertexIndex];
             GL.Vertex3(vertex.X * scale, vertex.Y * scale, vertex.Z * scale);
@@ -248,6 +269,9 @@ void main() {{
         GL.End();
         glTexture.Unbind();
       }
+
+      GL.Enable(EnableCap.CullFace);
+      GL.CullFace(CullFaceMode.Back);
     }
   }
 }

@@ -48,13 +48,11 @@ namespace Quad64.src.Forms {
       foreach (KeyValuePair<ushort, Model3DLods> entry in level.ModelIDs) {
         var modelBuilder = entry.Value.Current.builder;
 
-        for (int i = 0; i < modelBuilder.TextureImages.Count; i++) {
-          uint address = modelBuilder.TextureAddresses[i];
+        foreach (var (bmp, address, _) in modelBuilder.TextureData) {
           if (address == 0)
             continue;
           if (!addresses.Contains(address)) {
-            AddNewImage(ref buttons, modelBuilder.TextureImages[i],
-                        address, RadioButtonWithInfo_Click);
+            AddNewImage(ref buttons, bmp, address, RadioButtonWithInfo_Click);
             addresses.Add(address);
           }
         }
@@ -71,14 +69,11 @@ namespace Quad64.src.Forms {
         var modelBuilder = level.ModelIDs[modelID].Current.builder;
 
         if (level.ModelIDs.ContainsKey(modelID)) {
-          for (int i = 0; i < modelBuilder.TextureImages.Count; i++) {
-            uint address = modelBuilder.TextureAddresses[i];
+          foreach (var (bmp, address, _) in modelBuilder.TextureData) {
             if (address == 0)
               continue;
             if (!addresses.Contains(address)) {
-              AddNewImage(ref buttons,
-                          modelBuilder.TextureImages[i],
-                          address, RadioButtonWithInfo_Click);
+              AddNewImage(ref buttons, bmp, address, RadioButtonWithInfo_Click);
               addresses.Add(address);
             }
           }
@@ -92,13 +87,11 @@ namespace Quad64.src.Forms {
       HashSet<uint> addresses = new HashSet<uint>();
       foreach (Area area in level.Areas) {
         var modelBuilder = area.AreaModel.Current.builder;
-        for (int i = 0; i < modelBuilder.TextureImages.Count; i++) {
-          uint address = modelBuilder.TextureAddresses[i];
+        foreach (var (bmp, address, _) in modelBuilder.TextureData) {
           if (address == 0)
             continue;
           if (!addresses.Contains(address)) {
-            AddNewImage(ref buttons, modelBuilder.TextureImages[i],
-                        address, RadioButtonWithInfo_Click);
+            AddNewImage(ref buttons, bmp, address, RadioButtonWithInfo_Click);
             addresses.Add(address);
           }
         }

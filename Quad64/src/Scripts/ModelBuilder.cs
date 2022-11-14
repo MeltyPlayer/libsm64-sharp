@@ -3,18 +3,22 @@
 
 namespace Quad64.src.Scripts {
   public class ModelBuilder {
-    public struct FinalMesh {
+    public class FinalMesh {
       public List<Vector3> vertices;
       public List<Vector2> texCoords;
       public List<Vector4> colors;
       public List<uint> indices;
+
+      public ModelBuilderMaterial Material { get; set; }
     }
 
-    public struct TempMesh {
+    public class TempMesh {
       public List<Vector3> vertices;
       public List<Vector2> texCoords;
       public List<Vector4> colors;
       public FinalMesh final;
+
+      public ModelBuilderMaterial Material { get; set; }
     }
 
     public struct TextureInfo {
@@ -24,28 +28,9 @@ namespace Quad64.src.Scripts {
     public bool processingTexture = false;
 
     public float currentScale = 1f;
-    private int currentMaterial = -1;
     public int numTriangles = 0;
 
-    public int CurrentMaterial {
-      get { return currentMaterial; }
-    }
-
-    private List<Bitmap> textureImages = new List<Bitmap>();
-    private List<uint> textureAddresses = new List<uint>();
-    private List<TextureInfo> textureInfo = new List<TextureInfo>();
-
-    public List<Bitmap> TextureImages {
-      get { return textureImages; }
-    }
-
-    public List<uint> TextureAddresses {
-      get { return textureAddresses; }
-    }
-
-    public List<TextureInfo> TexInfo {
-      get { return textureInfo; }
-    }
+    public ModelBuilderMaterial? CurrentMaterial { get; set; }
 
     private List<TempMesh> TempMeshes = new List<TempMesh>();
     private FinalMesh finalMesh;
@@ -55,6 +40,12 @@ namespace Quad64.src.Scripts {
     public List<uint> FogColor_romLocation = new List<uint>();
 
     private Vector3 offset = new Vector3(0, 0, 0);
+
+    public HashSet<(Bitmap image, uint segmentAddr, TextureInfo info)>
+        TextureData { get; } = new();
+
+    public IEnumerable<Bitmap> TextureImages =>
+        this.TextureData.Select(data => data.image);
 
     public Vector3 Offset {
       get { return offset; }
@@ -86,12 +77,53 @@ namespace Quad64.src.Scripts {
       return info;
     }
 
+    public void AddGeometryMode(RspGeometryMode geometryMode) {
+      var newMaterial =
+          this.CurrentMaterial?.Clone() ?? new ModelBuilderMaterial();
+      newMaterial.GeometryMode = geometryMode;
+
+      this.TryToStartNewMesh(newMaterial);
+    }
+
     public void AddTexture(Bitmap bmp, TextureInfo info, uint segmentAddress) {
-      currentMaterial = textureImages.Count;
-      textureImages.Add(bmp);
-      textureAddresses.Add(segmentAddress);
-      textureInfo.Add(info);
-      TempMeshes.Add(newTempMesh());
+      var newMaterial =
+          this.CurrentMaterial?.Clone() ?? new ModelBuilderMaterial();
+      newMaterial.Bitmap = bmp;
+      newMaterial.SegmentAddress = segmentAddress;
+      newMaterial.TextureInfo = info;
+
+      this.TextureData.Add((bmp, segmentAddress, info));
+
+      this.TryToStartNewMesh(newMaterial);
+    }
+
+    public class ModelBuilderMaterial {
+      public ModelBuilderMaterial Clone() {
+        return new ModelBuilderMaterial {
+            Bitmap = Bitmap,
+            TextureInfo = TextureInfo,
+            SegmentAddress = SegmentAddress,
+            GeometryMode = GeometryMode
+        };
+      }
+
+      public Bitmap Bitmap { get; set; }
+      public TextureInfo TextureInfo { get; set; }
+      public uint SegmentAddress { get; set; }
+      public RspGeometryMode GeometryMode { get; set; }
+    }
+
+    public void TryToStartNewMesh(ModelBuilderMaterial material) {
+      var lastTempMesh = this.TempMeshes.LastOrDefault();
+      if ((lastTempMesh?.vertices.Count ?? -1) == 0) {
+        lastTempMesh!.Material = material;
+      } else {
+        var newMesh = newTempMesh();
+        newMesh.Material = material;
+        TempMeshes.Add(newMesh);
+      }
+
+      CurrentMaterial = material;
     }
 
     public void AddTempVertex(Vector3 pos, Vector2 uv, Vector4 color) {
@@ -99,7 +131,7 @@ namespace Quad64.src.Scripts {
       if (currentScale != 1f)
         pos *= currentScale;
       //Console.WriteLine("currentMaterial = " + currentMaterial + ", totalCount = " + textureImages.Count);
-      if (currentMaterial == -1) {
+      if (CurrentMaterial?.Bitmap == null) {
         AddTexture(
             TextureFormats.createColorTexture(System.Drawing.Color.White),
             newTexInfo((int) OpenTK.Graphics.OpenGL.All.Repeat,
@@ -107,9 +139,11 @@ namespace Quad64.src.Scripts {
             0x00000000
         );
       }
-      TempMeshes[currentMaterial].vertices.Add(pos);
-      TempMeshes[currentMaterial].texCoords.Add(uv);
-      TempMeshes[currentMaterial].colors.Add(color);
+
+      var lastMesh = this.TempMeshes.Last();
+      lastMesh.vertices.Add(pos);
+      lastMesh.texCoords.Add(uv);
+      lastMesh.colors.Add(color);
     }
     /*
     private void AddFinalVertex(Vector3 pos, Vector2 uv, Vector4 color)
@@ -142,13 +176,19 @@ namespace Quad64.src.Scripts {
     public void BuildData(ref List<Model3D.MeshData> meshes) {
       finalMesh = newFinalMesh();
       for (int t = 0; t < TempMeshes.Count; t++) {
+        TempMesh temp = TempMeshes[t];
+
         uint indexCount = 0;
         Model3D.MeshData md = new Model3D.MeshData();
-        Bitmap bmp = textureImages[t];
+
+        var material = temp.Material;
+        Bitmap bmp = material.Bitmap;
         md.texture = ContentPipe.LoadTexture(ref bmp);
-        md.texture.TextureParamS = textureInfo[t].wrapS;
-        md.texture.TextureParamT = textureInfo[t].wrapT;
-        TempMesh temp = TempMeshes[t];
+        md.texture.TextureParamS = material.TextureInfo.wrapS;
+        md.texture.TextureParamT = material.TextureInfo.wrapT;
+
+        temp.final.Material = material;
+
         for (int i = 0; i < temp.vertices.Count; i++) {
           int vExists =
               doesVertexAlreadyExist(t, temp.vertices[i], temp.texCoords[i],
@@ -170,6 +210,10 @@ namespace Quad64.src.Scripts {
       }
     }
 
+    public ModelBuilderMaterial GetMaterial(int i) {
+      return TempMeshes[i].final.Material;
+    }
+
     public Vector3[] getVertices(int i) {
       return TempMeshes[i].final.vertices.ToArray();
     }
@@ -186,14 +230,19 @@ namespace Quad64.src.Scripts {
       return TempMeshes[i].final.indices.ToArray();
     }
 
-    public bool hasTexture(uint segmentAddress) {
+    public bool TryToReuseLoadedTexture(uint segmentAddress) {
       int index = 0;
-      foreach (uint addr in textureAddresses) {
-        if (addr == segmentAddress) {
-          currentMaterial = index;
+      foreach (var tempMesh in this.TempMeshes) {
+        if (tempMesh.Material.SegmentAddress == segmentAddress) {
+          var currentGeometryMode = tempMesh.Material.GeometryMode;
+
+          var newMaterial = tempMesh.Material.Clone();
+          newMaterial.GeometryMode = currentGeometryMode;
+
+          TryToStartNewMesh(newMaterial);
+
           return true;
         }
-        index++;
       }
       return false;
     }

@@ -208,7 +208,7 @@ namespace Quad64
         {
             library_geometries lib_geo = new library_geometries();
             //lib_geo.id = "lib_geo";
-            ulong len = (ulong)mdl.builder.TextureImages.Count;
+            ulong len = (ulong)mdl.builder.TextureImages.Count();
             
             geometry geo = new geometry();
 
@@ -250,7 +250,7 @@ namespace Quad64
         private static library_images MakeImagesLibrary(ref Model3D mdl, string modelName)
         {
             library_images lib_img = new library_images();
-            int len = mdl.builder.TextureImages.Count;
+            int len = mdl.builder.TextureImages.Count();
             
             image[] imgs = new image[len];
             for (ulong i = 0; i < (ulong)imgs.LongLength; i++)
@@ -319,7 +319,7 @@ namespace Quad64
         {
             library_effects lib_eff = new library_effects();
 
-            int len = mdl.builder.TextureImages.Count;
+            int len = mdl.builder.TextureImages.Count();
             
             effect[] effects = new effect[len];
             for (ulong i = 0; i < (ulong)effects.LongLength; i++)
@@ -344,7 +344,7 @@ namespace Quad64
         {
             library_materials lib_mats = new library_materials();
 
-            int len = mdl.builder.TextureImages.Count;
+            int len = mdl.builder.TextureImages.Count();
             
             material[] materials = new material[len];
             for (ulong i = 0; i < (ulong)materials.LongLength; i++)
@@ -357,7 +357,7 @@ namespace Quad64
         private static bind_material MakeBindedMaterial(ref Model3D mdl)
         {
             bind_material bm = new bind_material();
-            instance_material[] materials = new instance_material[mdl.builder.TextureImages.Count];
+            instance_material[] materials = new instance_material[mdl.builder.TextureImages.Count()];
             for (int id_num = 0; id_num < materials.Length; id_num++)
             {
                 materials[id_num] = new instance_material();
@@ -392,7 +392,7 @@ namespace Quad64
                 ItemsChoiceType2.matrix
             };
             transform_matrix.sid = "transform";
-            int len = mdl.builder.TextureImages.Count;
+            int len = mdl.builder.TextureImages.Count();
 
             instance_geometry geo = new instance_geometry();
             geo.url = "#geometry";
@@ -435,7 +435,7 @@ namespace Quad64
                 MakeGeometryLibrary(ref mdl),
                 MakeVisualScenesLibrary(ref mdl)
             };
-            WriteAllTextures(mdl.builder.TextureImages, "Test");
+            WriteAllTextures(mdl.builder.TextureImages.ToList(), "Test");
             model.Save("Test.dae");
         }
     }
