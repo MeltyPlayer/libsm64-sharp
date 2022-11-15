@@ -58,11 +58,8 @@ namespace demo.common.gamepad {
               var deltaXFrac = 1f * deltaMouseX / gameWindow.Width;
               var deltaYFrac = 1f * deltaMouseY / gameWindow.Height;
 
-              var mouseSpeedX = 1;
-              var mouseSpeedY = 1;
-
-              this.axes_.X = -deltaXFrac * fovX * mouseSpeedX;
-              this.axes_.Y = deltaYFrac * fovY * mouseSpeedY;
+              this.axes_.X = -deltaXFrac * fovX;
+              this.axes_.Y = deltaYFrac * fovY;
             }
 
             this.prevMousePosition_ = mouseLocation;
