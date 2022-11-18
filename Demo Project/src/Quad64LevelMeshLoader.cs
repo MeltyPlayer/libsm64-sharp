@@ -8,6 +8,7 @@ using Quad64;
 using Quad64.Scripts;
 using Quad64.src.JSON;
 using Quad64.src.LevelInfo;
+using Quad64.src.Scripts;
 
 
 namespace demo {
@@ -44,11 +45,27 @@ namespace demo {
           sm64Context.CreateStaticCollisionMesh();
 
       var terrainType = (Sm64TerrainType) area.DefaultTerrainType;
+      CopyIntoBuilder<ISm64StaticCollisionMeshBuilder,
+          ISm64StaticCollisionMesh>(
+          area.collision,
+          sm64StaticCollisionMeshBuilder,
+          terrainType);
 
-      foreach (var collisionTriangleList in area.collision.triangles) {
+      return sm64StaticCollisionMeshBuilder.Build();
+    }
+
+    public static void CopyIntoBuilder<TCollisionMeshBuilder,
+                                       TCollisionMesh>(
+        CollisionMap collisionMap,
+        TCollisionMeshBuilder collisionMeshBuilder,
+        Sm64TerrainType terrainType = Sm64TerrainType.TERRAIN_GRASS)
+        where TCollisionMeshBuilder : ISm64CollisionMeshBuilder<
+            TCollisionMeshBuilder, TCollisionMesh>
+        where TCollisionMesh : ISm64CollisionMesh {
+      foreach (var collisionTriangleList in collisionMap.triangles) {
         var surfaceType = (Sm64SurfaceType) collisionTriangleList.id;
 
-        var vertices = area.collision.verts;
+        var vertices = collisionMap.verts;
 
         var indices = collisionTriangleList.indices;
         for (var i = 0; i < indices.Length; i += 3) {
@@ -59,15 +76,13 @@ namespace demo {
           var vertex3 =
               Quad64LevelMeshLoader.ConvertVector_(vertices[indices[i + 2]]);
 
-          sm64StaticCollisionMeshBuilder.AddTriangle(
+          collisionMeshBuilder.AddTriangle(
               surfaceType,
               terrainType,
               vertex1, vertex2, vertex3
           );
         }
       }
-
-      return sm64StaticCollisionMeshBuilder.Build();
     }
 
 

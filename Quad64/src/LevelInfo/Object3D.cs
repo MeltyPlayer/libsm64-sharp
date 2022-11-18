@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
 
+using Quad64.src.Scripts;
+
 
 namespace Quad64 {
   public class Object3D {
@@ -346,6 +348,12 @@ namespace Quad64 {
     }
 
     public uint getBehaviorAddress() => m_data.Behaviour;
+
+    public List<ScriptDumpCommandInfo> ParseBehavior() {
+      var script = new List<ScriptDumpCommandInfo>();
+      BehaviorScripts.parse(ref script, this.getBehaviorAddress());
+      return script;
+    }
 
     public void updateROMData() {
       if (Address.Equals("N/A")) return;

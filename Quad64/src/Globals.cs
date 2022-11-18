@@ -6,6 +6,10 @@ namespace Quad64 {
     public byte[] data;
     public uint romAddress, segAddress;
     public string description;
+
+    public byte Command => this.data[0];
+
+    public string ToString() => this.description;
   }
 
   public class Globals {

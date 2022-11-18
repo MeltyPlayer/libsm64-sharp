@@ -772,7 +772,7 @@ namespace Quad64.Scripts {
         //rom.printArraySection(data, (int)off, 4 + (int)collisionLength(sub_cmd));
         cmap.NewTriangleList((int) bytesToInt(data, (int) off, 2));
         uint num_tri = (ushort) bytesToInt(data, (int) off + 2, 2);
-        uint col_len = collisionLength(sub_cmd);
+        uint col_len = CollisionMapLoader.GetLengthOfSubCommand(sub_cmd);
         off += 4;
         for (int i = 0; i < num_tri; i++) {
           uint a = bytesToInt(data, (int) off + 0, 2);
@@ -911,21 +911,6 @@ namespace Quad64.Scripts {
       else if (obj == 0xCD) return 12;
       else if (obj == 0x00) return 10;
       return 8;
-    }
-
-    private static uint collisionLength(int type) {
-      switch (type) {
-        case 0x0E:
-        case 0x24:
-        case 0x25:
-        case 0x27:
-        case 0x2C:
-        case 0x2D:
-        case 0x40:
-          return 8;
-        default:
-          return 6;
-      }
     }
 
     private static void CMD_39(ref Level lvl,

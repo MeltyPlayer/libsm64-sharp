@@ -1,5 +1,4 @@
-﻿using demo.audio;
-using demo.common.audio;
+﻿using demo.common.audio;
 using demo.common.audio.impl.al;
 using demo.camera;
 using demo.controller;
@@ -10,6 +9,8 @@ using demo.mesh;
 using libsm64sharp;
 
 using OpenTK;
+
+using Quad64;
 
 using BlendingFactor = OpenTK.Graphics.OpenGL.BlendingFactor;
 using ClearBufferMask = OpenTK.Graphics.OpenGL.ClearBufferMask;
@@ -34,7 +35,7 @@ public class DemoWindow : GameWindow {
   private readonly MarioController? marioController_;
   private readonly MarioMeshRenderer? marioMeshRenderer_;
 
-  private List<Quad64ObjectRenderer> objectRenderers_ = new();
+  private List<Sm64Object> objects_ = new();
 
   private readonly IRenderable meshRenderer_;
   private readonly IRenderable collisionMeshRenderer_;
@@ -68,7 +69,7 @@ public class DemoWindow : GameWindow {
 
     this.audioManager_ = new AlAudioManager();
 
-    {
+    /*{
       var musicIntroBuffer =
           new OggAudioLoader().LoadAudio(this.audioManager_,
                                          "resources/music_intro.ogg");
@@ -81,7 +82,7 @@ public class DemoWindow : GameWindow {
       this.activeMusic_.Play();
     }
 
-    Sm64Audio.Start(this.sm64Context_, this.audioManager_);
+    Sm64Audio.Start(this.sm64Context_, this.audioManager_); */
 
     var shouldLoadViaRom = true;
     if (shouldLoadViaRom) {
@@ -117,12 +118,13 @@ public class DemoWindow : GameWindow {
       this.cameraController_ = cameraController;
 
       var objects =
-          area.MacroObjects
-              .Concat(area.Objects)
-              .Concat(area.SpecialObjects);
+          Array.Empty<Object3D>()
+               .Concat(area.MacroObjects)
+               .Concat(area.Objects)
+               .Concat(area.SpecialObjects);
 
       foreach (var obj in objects) {
-        this.objectRenderers_.Add(new Quad64ObjectRenderer(level, obj));
+        this.objects_.Add(new Sm64Object(this.sm64Context_, level, obj));
       }
     } else {
       var (assimpSceneData, staticCollisionMesh) =
@@ -224,7 +226,7 @@ public class DemoWindow : GameWindow {
     this.meshRenderer_.Render();
     //this.collisionMeshRenderer_.Render();
 
-    foreach (var objectRenderer in objectRenderers_) {
+    foreach (var objectRenderer in this.objects_) {
       objectRenderer.Render();
     }
 

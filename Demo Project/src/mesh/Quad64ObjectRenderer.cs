@@ -1,6 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL;
 
 using Quad64;
+using Quad64.Scripts;
 using Quad64.src.LevelInfo;
 
 
@@ -33,9 +34,9 @@ namespace demo.mesh {
 
     private static void Rotate_(short xRot, short yRot, short zRot) {
       // TODO: This doesn't seem to rotate correctly??
-      GL.Rotate(xRot, 1, 0, 0);
+      /*GL.Rotate(xRot, 1, 0, 0);
       GL.Rotate(yRot, 0, 1, 0);
-      GL.Rotate(zRot, 0, 0, 1);
+      GL.Rotate(zRot, 0, 0, 1);*/
 
       /*var quaternion = new Quaternion(xRot, yRot, zRot, 1.0f);
       var matrix = Matrix4.CreateFromQuaternion(quaternion);

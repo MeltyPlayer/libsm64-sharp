@@ -1,5 +1,5 @@
 ﻿namespace libsm64sharp {
-  public interface ISm64CollisionMeshBuilder<TSelf, TBuildType>
+  public interface ISm64CollisionMeshBuilder<out TSelf, out TBuildType>
       where TSelf : ISm64CollisionMeshBuilder<TSelf, TBuildType>
       where TBuildType : ISm64CollisionMesh {
     TBuildType Build();
