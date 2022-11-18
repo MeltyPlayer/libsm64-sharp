@@ -3,6 +3,17 @@
 
 namespace Quad64.Scripts {
   public static class CollisionMapLoader {
+    public enum CollisionSubCommand : ushort {
+      TERRAIN_LOAD_VERTICES =
+          0x0040, // Begins vertices list for collision triangles
+
+      TERRAIN_LOAD_CONTINUE =
+          0x0041, // Stop loading vertices but continues to load other collision commands
+      TERRAIN_LOAD_END = 0x0042, // End the collision list
+      TERRAIN_LOAD_OBJECTS = 0x0043, // Loads in certain objects for level start
+      TERRAIN_LOAD_ENVIRONMENT = 0x0044, // Loads water/HMC gas
+    }
+
     public static CollisionMap Load(uint address) {
       var cmap = new CollisionMap();
       LoadInto(cmap, address);
@@ -15,7 +26,8 @@ namespace Quad64.Scripts {
       var segment = (ushort) (address >> 24);
       uint off = address & 0xFFFFFF;
       byte[] data = rom.getSegment(segment, null);
-      var sub_cmd = (ushort) BitLogic.BytesToInt(data, (int) off, 2);
+      var sub_cmd =
+          (CollisionSubCommand) BitLogic.BytesToInt(data, (int) off, 2);
 
       // Check if the data is actually collision data.
       if (data[off] != 0x00 || data[off + 1] != 0x40)
@@ -32,10 +44,10 @@ namespace Quad64.Scripts {
         off += 6;
       }
 
-      while (sub_cmd != 0x0041) {
-        sub_cmd = (ushort) BitLogic.BytesToInt(data, (int) off, 2);
+      while (sub_cmd != CollisionSubCommand.TERRAIN_LOAD_CONTINUE) {
+        sub_cmd = (CollisionSubCommand) BitLogic.BytesToInt(data, (int) off, 2);
         //Console.WriteLine(sub_cmd.ToString("X8"));
-        if (sub_cmd == 0x0041) break;
+        if (sub_cmd == CollisionSubCommand.TERRAIN_LOAD_CONTINUE) break;
         //rom.printArraySection(data, (int)off, 4 + (int)collisionLength(sub_cmd));
         cmap.NewTriangleList((int) BitLogic.BytesToInt(data, (int) off, 2));
         uint num_tri = (ushort) BitLogic.BytesToInt(data, (int) off + 2, 2);
@@ -53,14 +65,15 @@ namespace Quad64.Scripts {
       off += 2;
       bool end = false;
       while (!end) {
-        sub_cmd = (ushort) BitLogic.BytesToInt(data, (int) off, 2);
+        sub_cmd = (CollisionSubCommand) BitLogic.BytesToInt(data, (int) off, 2);
         switch (sub_cmd) {
-          case 0x0042:
+          case CollisionSubCommand.TERRAIN_LOAD_END:
             end = true;
             break;
-          case 0x0043:
+          case CollisionSubCommand.TERRAIN_LOAD_OBJECTS:
             throw new NotImplementedException();
-          case 0x0044:
+          case CollisionSubCommand.TERRAIN_LOAD_ENVIRONMENT:
+            // TODO: Handle water and gas boxes
             // Also skipping water boxes. Will come back to it later.
             uint num_boxes =
                 (ushort) BitLogic.BytesToInt(data, (int) off + 2, 2);
@@ -72,8 +85,8 @@ namespace Quad64.Scripts {
       }
     }
 
-    public static uint GetLengthOfSubCommand(int type) {
-      switch (type) {
+    public static uint GetLengthOfSubCommand(CollisionSubCommand type) {
+      switch ((int) type) {
         case 0x0E:
         case 0x24:
         case 0x25:

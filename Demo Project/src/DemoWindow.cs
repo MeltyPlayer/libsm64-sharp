@@ -1,4 +1,5 @@
-﻿using demo.common.audio;
+﻿using demo.audio;
+using demo.common.audio;
 using demo.common.audio.impl.al;
 using demo.camera;
 using demo.controller;
@@ -69,7 +70,7 @@ public class DemoWindow : GameWindow {
 
     this.audioManager_ = new AlAudioManager();
 
-    /*{
+    {
       var musicIntroBuffer =
           new OggAudioLoader().LoadAudio(this.audioManager_,
                                          "resources/music_intro.ogg");
@@ -82,7 +83,7 @@ public class DemoWindow : GameWindow {
       this.activeMusic_.Play();
     }
 
-    Sm64Audio.Start(this.sm64Context_, this.audioManager_); */
+    Sm64Audio.Start(this.sm64Context_, this.audioManager_);
 
     var shouldLoadViaRom = true;
     if (shouldLoadViaRom) {

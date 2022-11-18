@@ -3,6 +3,8 @@ using Quad64.src.Scripts;
 
 
 namespace Quad64.Scripts {
+  using CollisionSubCommand = CollisionMapLoader.CollisionSubCommand;
+
   public class LevelScripts {
     private static uint bytesToInt(byte[] b, int offset, int length) {
       switch (length) {
@@ -743,11 +745,10 @@ namespace Quad64.Scripts {
         return;
       desc = "Load collision, and place special objects from address 0x" +
              bytesToInt(cmd, 4, 4).ToString("X8");
-      ushort sub_cmd = 0x40;
       byte segment = cmd[4];
       uint off = bytesToInt(cmd, 5, 3);
       byte[] data = rom.getSegment(segment, areaID);
-      sub_cmd = (ushort) bytesToInt(data, (int) off, 2);
+      var sub_cmd = (CollisionSubCommand) bytesToInt(data, (int) off, 2);
 
       // Check if the data is actually collision data.
       if (data[off] != 0x00 || data[off + 1] != 0x40)
@@ -765,10 +766,10 @@ namespace Quad64.Scripts {
         off += 6;
       }
 
-      while (sub_cmd != 0x0041) {
-        sub_cmd = (ushort) bytesToInt(data, (int) off, 2);
+      while (sub_cmd != CollisionSubCommand.TERRAIN_LOAD_CONTINUE) {
+        sub_cmd = (CollisionSubCommand) bytesToInt(data, (int) off, 2);
         //Console.WriteLine(sub_cmd.ToString("X8"));
-        if (sub_cmd == 0x0041) break;
+        if (sub_cmd == CollisionSubCommand.TERRAIN_LOAD_CONTINUE) break;
         //rom.printArraySection(data, (int)off, 4 + (int)collisionLength(sub_cmd));
         cmap.NewTriangleList((int) bytesToInt(data, (int) off, 2));
         uint num_tri = (ushort) bytesToInt(data, (int) off + 2, 2);
@@ -786,12 +787,12 @@ namespace Quad64.Scripts {
       off += 2;
       bool end = false;
       while (!end) {
-        sub_cmd = (ushort) bytesToInt(data, (int) off, 2);
+        sub_cmd = (CollisionSubCommand) bytesToInt(data, (int) off, 2);
         switch (sub_cmd) {
-          case 0x0042:
+          case CollisionSubCommand.TERRAIN_LOAD_END:
             end = true;
             break;
-          case 0x0043:
+          case CollisionSubCommand.TERRAIN_LOAD_OBJECTS:
             uint num_obj = (ushort) bytesToInt(data, (int) off + 2, 2);
             off += 4;
             for (int i = 0; i < num_obj; i++) {
@@ -858,7 +859,7 @@ namespace Quad64.Scripts {
               off += obj_len;
             }
             break;
-          case 0x0044:
+          case CollisionSubCommand.TERRAIN_LOAD_ENVIRONMENT:
             // Also skipping water boxes. Will come back to it later.
             uint num_boxes = (ushort) bytesToInt(data, (int) off + 2, 2);
             off += 4 + (num_boxes * 0xC);
