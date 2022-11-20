@@ -125,7 +125,8 @@ public class DemoWindow : GameWindow {
                .Concat(area.SpecialObjects);
 
       foreach (var obj in objects) {
-        this.objects_.Add(new Sm64Object(this.sm64Context_, level, obj));
+        this.objects_.Add(
+            new Sm64Object(this.sm64Context_, level, obj, this.camera_));
       }
     } else {
       var (assimpSceneData, staticCollisionMesh) =

@@ -1,4 +1,5 @@
-﻿using demo.mesh;
+﻿using demo.camera;
+using demo.mesh;
 
 using libsm64sharp;
 
@@ -16,9 +17,13 @@ namespace demo {
     public Sm64Object(
         ISm64Context context,
         Level level,
-        Object3D obj) {
+        Object3D obj,
+        ICamera camera
+    ) {
       CollisionMap? collisionMap = null;
       var scale = 1f;
+
+      var billboard = false;
 
       var scripts = obj.ParseBehavior();
       foreach (var script in scripts) {
@@ -31,18 +36,24 @@ namespace demo {
           var rawScale = BitLogic.BytesToInt(script.data, 2, 2);
           scale = rawScale / 100f;
         }
+
+        if (script.Command == BehaviorCommand.billboard) {
+          billboard = true;
+        }
       }
 
       if (collisionMap != null) {
         var collisionBuilder = context.CreateDynamicCollisionMesh(scale)
-                                      .SetPosition(obj.xPos, obj.yPos, obj.zPos);
+                                      .SetPosition(
+                                          obj.xPos, obj.yPos, obj.zPos);
         Quad64LevelMeshLoader.CopyIntoBuilder<ISm64DynamicCollisionMeshBuilder,
             ISm64DynamicCollisionMesh>(
             collisionMap,
             collisionBuilder);
         this.dynamicCollisionMesh_ = collisionBuilder.Build();
       }
-      this.renderer_ = new Quad64ObjectRenderer(level, obj, scale);
+      this.renderer_ =
+          new Quad64ObjectRenderer(level, obj, camera, scale, billboard);
     }
 
     ~Sm64Object() => this.ReleaseUnmanagedResources_();

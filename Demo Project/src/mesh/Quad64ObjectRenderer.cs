@@ -1,4 +1,7 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using demo.camera;
+using demo.common.gl;
+
+using OpenTK.Graphics.OpenGL;
 
 using Quad64;
 using Quad64.src.LevelInfo;
@@ -8,16 +11,26 @@ namespace demo.mesh {
   public class Quad64ObjectRenderer : IRenderable {
     private readonly Quad64ModelRenderer? impl_;
     private readonly Object3D object_;
+    private readonly ICamera camera_;
     private readonly float scale_;
+    private readonly bool billboard_;
 
-    public Quad64ObjectRenderer(Level level, Object3D obj, float scale) {
-      this.object_ = obj;
-
+    public Quad64ObjectRenderer(
+        Level level,
+        Object3D obj,
+        ICamera camera,
+        float scale,
+        bool billboard
+    ) {
       if (level.ModelIDs.TryGetValue(obj.ModelID, out var model)) {
         this.impl_ = new Quad64ModelRenderer(model.HighestLod);
       }
 
+      this.object_ = obj;
+      this.camera_ = camera;
+
       this.scale_ = scale;
+      this.billboard_ = billboard;
     }
 
     public void Render() {
@@ -27,6 +40,11 @@ namespace demo.mesh {
         Quad64ObjectRenderer.Rotate_(this.object_.xRot,
                                      this.object_.yRot,
                                      this.object_.zRot);
+        if (this.billboard_) {
+          var angle = (Math.Atan2(this.camera_.XNormal, this.camera_.ZNormal) /
+                      Math.PI * 180) + 180;
+          GL.Rotate(angle, 0, 1, 0);
+        }
         GL.Scale(this.scale_, this.scale_, this.scale_);
 
         this.impl_.Render();
