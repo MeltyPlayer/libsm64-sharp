@@ -10,7 +10,7 @@ namespace libsm64sharp {
     ISm64Mario CreateMario(float x, float y, float z);
 
     // TODO: Are builders the right design for this?
-    ISm64DynamicCollisionMeshBuilder CreateDynamicCollisionMesh();
+    ISm64DynamicCollisionMeshBuilder CreateDynamicCollisionMesh(float scale = 1);
     ISm64StaticCollisionMeshBuilder CreateStaticCollisionMesh();
 
 

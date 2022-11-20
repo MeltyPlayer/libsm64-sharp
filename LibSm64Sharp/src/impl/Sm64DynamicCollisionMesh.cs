@@ -5,14 +5,20 @@ using libsm64sharp.lowlevel;
 
 namespace libsm64sharp {
   public partial class Sm64Context {
-    public ISm64DynamicCollisionMeshBuilder CreateDynamicCollisionMesh()
-      => new Sm64DynamicCollisionMeshBuilder();
+    public ISm64DynamicCollisionMeshBuilder CreateDynamicCollisionMesh(
+        float scale = 1)
+      => new Sm64DynamicCollisionMeshBuilder(scale);
 
     private class Sm64DynamicCollisionMeshBuilder
         : ISm64DynamicCollisionMeshBuilder {
+      private readonly float scale_;
       private Sm64Vector3<float> position_ = new();
       private Sm64Vector3<float> eulerRotation_ = new();
       private List<ISm64Triangle> triangles_ = new();
+
+      public Sm64DynamicCollisionMeshBuilder(float scale) {
+        this.scale_ = scale;
+      }
 
       public ISm64DynamicCollisionMesh Build()
         => new Sm64DynamicCollisionMesh(this.position_,
@@ -30,9 +36,9 @@ namespace libsm64sharp {
             TerrainType = terrainType,
             Vertices = new[] {vertex1, vertex2, vertex3}.Select(
                     xyz => new Sm64Vector3<int> {
-                        X = xyz.x,
-                        Y = xyz.y,
-                        Z = xyz.z,
+                        X = (int) (xyz.x * this.scale_),
+                        Y = (int) (xyz.y * this.scale_),
+                        Z = (int) (xyz.z * this.scale_),
                     })
                 .ToArray(),
         });

@@ -1,7 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL;
 
 using Quad64;
-using Quad64.Scripts;
 using Quad64.src.LevelInfo;
 
 
@@ -9,13 +8,16 @@ namespace demo.mesh {
   public class Quad64ObjectRenderer : IRenderable {
     private readonly Quad64ModelRenderer? impl_;
     private readonly Object3D object_;
+    private readonly float scale_;
 
-    public Quad64ObjectRenderer(Level level, Object3D obj) {
+    public Quad64ObjectRenderer(Level level, Object3D obj, float scale) {
       this.object_ = obj;
 
       if (level.ModelIDs.TryGetValue(obj.ModelID, out var model)) {
         this.impl_ = new Quad64ModelRenderer(model.HighestLod);
       }
+
+      this.scale_ = scale;
     }
 
     public void Render() {
@@ -25,6 +27,7 @@ namespace demo.mesh {
         Quad64ObjectRenderer.Rotate_(this.object_.xRot,
                                      this.object_.yRot,
                                      this.object_.zRot);
+        GL.Scale(this.scale_, this.scale_, this.scale_);
 
         this.impl_.Render();
 

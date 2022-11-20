@@ -5,6 +5,7 @@ using libsm64sharp;
 using Quad64.src.LevelInfo;
 using Quad64;
 using Quad64.Scripts;
+using Quad64.src.Scripts;
 
 
 namespace demo {
@@ -16,24 +17,32 @@ namespace demo {
         ISm64Context context,
         Level level,
         Object3D obj) {
+      CollisionMap? collisionMap = null;
+      var scale = 1f;
+
       var scripts = obj.ParseBehavior();
       foreach (var script in scripts) {
-        if (script.Command == 0x2A) {
+        if (script.Command == BehaviorCommand.load_collision_data) {
           var collisionAddress = BitLogic.BytesToInt(script.data, 4, 4);
-          var cmap = CollisionMapLoader.Load(collisionAddress);
-          var collisionBuilder = context.CreateDynamicCollisionMesh()
-                                        .SetPosition(obj.xPos, obj.yPos, obj.zPos);
-          Quad64LevelMeshLoader.CopyIntoBuilder<ISm64DynamicCollisionMeshBuilder,
-              ISm64DynamicCollisionMesh>(
-              cmap,
-              collisionBuilder);
-          this.dynamicCollisionMesh_ = collisionBuilder.Build();
+          collisionMap = CollisionMapLoader.Load(collisionAddress);
+        }
 
-          break;
+        if (script.Command == BehaviorCommand.SCALE) {
+          var rawScale = BitLogic.BytesToInt(script.data, 2, 2);
+          scale = rawScale / 100f;
         }
       }
 
-      this.renderer_ = new Quad64ObjectRenderer(level, obj);
+      if (collisionMap != null) {
+        var collisionBuilder = context.CreateDynamicCollisionMesh(scale)
+                                      .SetPosition(obj.xPos, obj.yPos, obj.zPos);
+        Quad64LevelMeshLoader.CopyIntoBuilder<ISm64DynamicCollisionMeshBuilder,
+            ISm64DynamicCollisionMesh>(
+            collisionMap,
+            collisionBuilder);
+        this.dynamicCollisionMesh_ = collisionBuilder.Build();
+      }
+      this.renderer_ = new Quad64ObjectRenderer(level, obj, scale);
     }
 
     ~Sm64Object() => this.ReleaseUnmanagedResources_();

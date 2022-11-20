@@ -1,4 +1,5 @@
 ﻿using Quad64.src.JSON;
+using Quad64.src.Scripts;
 
 
 namespace Quad64 {
@@ -7,7 +8,7 @@ namespace Quad64 {
     public uint romAddress, segAddress;
     public string description;
 
-    public byte Command => this.data[0];
+    public BehaviorCommand Command => (BehaviorCommand) this.data[0];
 
     public string ToString() => this.description;
   }
