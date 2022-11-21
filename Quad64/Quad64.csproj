@@ -80,4 +80,7 @@
     <None Include="Resources\icon_Star1_gray.png" />
     <None Include="Resources\icon_Star1.png" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LibSm64Sharp\LibSm64Sharp.csproj" />
+  </ItemGroup>
 </Project>

@@ -152,13 +152,20 @@ namespace Quad64.src.Scripts {
             CMD_0E(mdlLods.Current, ref lvl, cmd);
             break;
           case 0x10:
+            // TODO: Not implemented
             desc = "Translate and rotate";
-            //CMD_10(ref mdl, ref lvl, cmd);
+            //CMD_10(mdlLods.Current, ref lvl, cmd);
             break;
           case 0x11:
+            // TODO: Not implemented
             //rom.printArray(cmd, cmdLen);
             desc = "Translate Node";
             CMD_11(mdlLods.Current, ref lvl, cmd);
+            break;
+          case 0x12:
+            // TODO: Not implemented
+            desc = "Rotate node";
+            CMD_12(mdlLods.Current, ref lvl, cmd);
             break;
           case 0x13:
             desc = "Load display list 0x" +
@@ -172,6 +179,7 @@ namespace Quad64.src.Scripts {
             CMD_13(mdlLods.Current, ref lvl, cmd, areaID);
             break;
           case 0x14:
+            // TODO: Not implemented
             desc = "Billboard Model";
             //CMD_10(ref mdl, ref lvl, cmd);
             break;
@@ -221,6 +229,10 @@ namespace Quad64.src.Scripts {
                    ((bytesToInt(cmd, 4, 4) / 65536.0f) * 100.0f) + "%";
             CMD_1D(mdlLods.Current, cmd);
             break;
+          case 0x1C:
+            // TODO: Not implemented
+            desc = "Held object scene graph node";
+            break;
           case 0x1A:
           case 0x1E:
           case 0x1F:
@@ -229,6 +241,8 @@ namespace Quad64.src.Scripts {
           case 0x20:
             desc = "Start geometry layout with render area of " +
                    bytesToInt(cmd, 2, 2);
+            break;
+          default:
             break;
         }
         if (!alreadyAdded)
@@ -296,10 +310,12 @@ namespace Quad64.src.Scripts {
       // Special Ignore cases
       //if (nodeCurrent.switchFunc == 0x8029DBD4) return;
       //nodeCurrent.switchCount = cmd[3];
+      // TODO: Seems to be broken
       nodeCurrent.callSwitch = true;
     }
 
     private static void CMD_10(Model3D mdl, ref Level lvl, byte[] cmd) {
+      // TODO: Definitely broken
       short x = (short) bytesToInt(cmd, 4, 2);
       short y = (short) bytesToInt(cmd, 6, 2);
       short z = (short) bytesToInt(cmd, 8, 2);
@@ -307,9 +323,18 @@ namespace Quad64.src.Scripts {
     }
 
     private static void CMD_11(Model3D mdl, ref Level lvl, byte[] cmd) {
+      // TODO: Definitely broken
       short x = (short) bytesToInt(cmd, 2, 2);
       short y = (short) bytesToInt(cmd, 4, 2);
       short z = (short) bytesToInt(cmd, 6, 2);
+      //mdl.builder.GeoLayoutOffset += new OpenTK.Vector3(x, y, z);
+    }
+
+    private static void CMD_12(Model3D mdl, ref Level lvl, byte[] cmd) {
+      // TODO: Definitely broken
+      short x = (short)bytesToInt(cmd, 2, 2);
+      short y = (short)bytesToInt(cmd, 4, 2);
+      short z = (short)bytesToInt(cmd, 6, 2);
       //mdl.builder.GeoLayoutOffset += new OpenTK.Vector3(x, y, z);
     }
 
@@ -321,14 +346,14 @@ namespace Quad64.src.Scripts {
       short x = (short) bytesToInt(cmd, 2, 2);
       short y = (short) bytesToInt(cmd, 4, 2);
       short z = (short) bytesToInt(cmd, 6, 2);
-      uint seg_offset = bytesToInt(cmd, 8, 4);
-      byte seg = (byte) (seg_offset >> 24);
+      uint displayListAddress = bytesToInt(cmd, 8, 4);
+      byte seg = (byte) (displayListAddress >> 24);
       if (seg > 0x20)
         return;
-      uint off = seg_offset & 0xFFFFFF;
+      uint off = displayListAddress & 0xFFFFFF;
       mdl.builder.Offset = new OpenTK.Vector3(x, y, z) + getTotalOffset();
       // Don't bother processing duplicate display lists.
-      if (seg_offset != 0) {
+      if (displayListAddress != 0) {
         if (!mdl.hasGeoDisplayList(off)) {
           Fast3DScripts.parse(ref mdl, ref lvl, seg, off, areaID, 0);
         }
