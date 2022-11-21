@@ -192,6 +192,10 @@ public class DemoWindow : GameWindow {
     this.marioController_?.BeforeTick();
     this.cameraController_.Tick();
 
+    foreach (var obj in this.objects_) {
+      obj.Tick();
+    }
+
     this.sm64Mario_?.Tick();
   }
 
@@ -228,8 +232,8 @@ public class DemoWindow : GameWindow {
     this.meshRenderer_.Render();
     //this.collisionMeshRenderer_.Render();
 
-    foreach (var objectRenderer in this.objects_) {
-      objectRenderer.Render();
+    foreach (var obj in this.objects_) {
+      obj.Render();
     }
 
     this.marioMeshRenderer_?.Render();
