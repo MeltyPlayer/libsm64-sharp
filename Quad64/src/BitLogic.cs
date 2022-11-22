@@ -1,5 +1,12 @@
 ﻿namespace Quad64 {
   public static class BitLogic {
+    public static void SplitAddress(uint address,
+                                    out byte segment,
+                                    out uint offset) {
+      segment = (byte) (address >> 24);
+      offset = address & 0xffffff;
+    }
+
     public static uint BytesToInt(byte[] b, int offset, int length) {
       switch (length) {
         case 1: return b[0 + offset];

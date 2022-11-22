@@ -4,8 +4,26 @@ using Quad64.f3d;
 
 
 namespace Quad64.graph {
+  public enum GraphReturnType {
+    UNDEFINED,
+    RETURN,
+    END,
+  }
+
+  public interface IGraphNodeParser {
+    IGraphNode Parse(uint address,
+                     byte? areaId,
+                     out GraphReturnType graphReturnType);
+  }
+
   public interface IGraphNode {
-    IReadOnlyList<IGraphNode> Children { get; }
+    IGraphNode? Parent { get; }
+
+    IGraphNode? FirstChild { get; }
+    IGraphNode? NextSibling { get; }
+
+    void AddChildToEnd(IGraphNode node);
+    void InsertSiblingAfter(IGraphNode node);
   }
 
   public interface ILevelOfDetailGraphNode : IGraphNode {
