@@ -25,25 +25,11 @@ namespace Quad64 {
   };
 
   public class ROM {
-    private ROM_Region region = ROM_Region.NORTH_AMERICA;
-    private ROM_Endian endian = ROM_Endian.BIG;
-    private ROM_Type type = ROM_Type.VANILLA;
-    private static ROM instance; // Singleton
+    private static ROM? instance; // Singleton
 
-    public static ROM Instance {
-      get {
-        if (instance == null) instance = new ROM();
-        return instance;
-      }
-    }
+    public static ROM Instance => instance ??= new ROM();
 
-    public string filepath = "";
-
-    public string Filepath {
-      get { return filepath; }
-    }
-
-    private byte[] bytes;
+    public string Filepath { get; set; } = "";
 
     private byte[] writeMask;
 
@@ -52,65 +38,48 @@ namespace Quad64 {
     //private byte[][] segData = new byte[0x20][];
     private Dictionary<byte, SegBank> segData = new Dictionary<byte, SegBank>();
 
-    private Dictionary<byte, Dictionary<byte, SegBank>> areaSegData =
-        new Dictionary<byte, Dictionary<byte, SegBank>>();
+    private Dictionary<byte, Dictionary<byte, SegBank>> areaSegData = new();
 
-    private uint seg02_uncompressedOffset = 0;
+    public uint Seg02_uncompressedOffset { get; private set; } = 0;
 
-    public uint Seg02_uncompressedOffset {
-      get { return seg02_uncompressedOffset; }
-    }
+    public bool Seg02_isFakeMIO0 { get; private set; } = false;
 
-    private bool seg02_isFakeMIO0 = false;
+    public ROM_Region Region { get; private set; } = ROM_Region.NORTH_AMERICA;
 
-    public bool Seg02_isFakeMIO0 {
-      get { return seg02_isFakeMIO0; }
-    }
+    public ROM_Endian Endian { get; private set; } = ROM_Endian.BIG;
 
-    public ROM_Region Region {
-      get { return region; }
-    }
+    public ROM_Type Type { get; private set; } = ROM_Type.VANILLA;
 
-    public ROM_Endian Endian {
-      get { return endian; }
-    }
-
-    public ROM_Type Type {
-      get { return type; }
-    }
-
-    public byte[] Bytes {
-      get { return bytes; }
-    }
+    public byte[] Bytes { get; private set; }
 
     private void checkROM() {
-      if (bytes[0] == 0x80 && bytes[1] == 0x37)
-        endian = ROM_Endian.BIG;
-      else if (bytes[0] == 0x37 && bytes[1] == 0x80)
-        endian = ROM_Endian.MIXED;
-      else if (bytes[0] == 0x40 && bytes[1] == 0x12)
-        endian = ROM_Endian.LITTLE;
+      if (this.Bytes[0] == 0x80 && this.Bytes[1] == 0x37)
+        this.Endian = ROM_Endian.BIG;
+      else if (this.Bytes[0] == 0x37 && this.Bytes[1] == 0x80)
+        this.Endian = ROM_Endian.MIXED;
+      else if (this.Bytes[0] == 0x40 && this.Bytes[1] == 0x12)
+        this.Endian = ROM_Endian.LITTLE;
 
-      if (endian == ROM_Endian.MIXED)
+      if (this.Endian == ROM_Endian.MIXED)
         swapMixedBig();
-      else if (endian == ROM_Endian.LITTLE)
+      else if (this.Endian == ROM_Endian.LITTLE)
         swapLittleBig();
 
-      if (bytes[0x3E] == 0x45)
-        region = ROM_Region.NORTH_AMERICA;
-      else if (bytes[0x3E] == 0x50)
-        region = ROM_Region.EUROPE;
-      else if (bytes[0x3E] == 0x4A) {
-        if (bytes[0x3F] < 3)
-          region = ROM_Region.JAPAN;
+      if (this.Bytes[0x3E] == 0x45)
+        this.Region = ROM_Region.NORTH_AMERICA;
+      else if (this.Bytes[0x3E] == 0x50)
+        this.Region = ROM_Region.EUROPE;
+      else if (this.Bytes[0x3E] == 0x4A) {
+        if (this.Bytes[0x3F] < 3)
+          this.Region = ROM_Region.JAPAN;
         else
-          region = ROM_Region.JAPAN_SHINDOU;
-      } else if (bytes[0x3E] == 0x00) {
-        region = ROM_Region.CHINESE_IQUE;
+          this.Region = ROM_Region.JAPAN_SHINDOU;
+      } else if (this.Bytes[0x3E] == 0x00) {
+        this.Region = ROM_Region.CHINESE_IQUE;
       }
 
       // Setup segment 0x02 & segment 0x15 addresses
-      if (region == ROM_Region.NORTH_AMERICA) {
+      if (this.Region == ROM_Region.NORTH_AMERICA) {
         Globals.macro_preset_table = 0xEC7E0;
         Globals.special_preset_table = 0xED350;
         // Globals.seg02_location = new[] { (uint)0x108A40, (uint)0x114750 };
@@ -119,22 +88,22 @@ namespace Quad64 {
             readWordUnsigned(0x2A622C),
             readWordUnsigned(0x2A6230)
         };
-      } else if (region == ROM_Region.EUROPE) {
+      } else if (this.Region == ROM_Region.EUROPE) {
         Globals.macro_preset_table = 0xBD590;
         Globals.special_preset_table = 0xBE100;
         // Globals.seg02_location = new[] { (uint)0xDE190, (uint)0xE49F0 };
         Globals.seg15_location = new[] {(uint) 0x28CEE0, (uint) 0x28D8F0};
-      } else if (region == ROM_Region.JAPAN) {
+      } else if (this.Region == ROM_Region.JAPAN) {
         Globals.macro_preset_table = 0xEB6D0;
         Globals.special_preset_table = 0xEC240;
         // Globals.seg02_location = new[] { (uint)0x1076D0, (uint)0x112B50 };
         Globals.seg15_location = new[] {(uint) 0x2AA240, (uint) 0x2AAC50};
-      } else if (region == ROM_Region.JAPAN_SHINDOU) {
+      } else if (this.Region == ROM_Region.JAPAN_SHINDOU) {
         Globals.macro_preset_table = 0xC8D60;
         Globals.special_preset_table = 0xC98D0;
         //Globals.seg02_location = new[] { (uint)0xE42F0, (uint)0xEF770 };
         Globals.seg15_location = new[] {(uint) 0x286AC0, (uint) 0x2874D0};
-      } else if (region == ROM_Region.CHINESE_IQUE) {
+      } else if (this.Region == ROM_Region.CHINESE_IQUE) {
         Globals.macro_preset_table = 0xCB220;
         Globals.special_preset_table = 0xCBD90;
         //Globals.seg02_location = new[] { (uint)0xE42F0, (uint)0xEF770 };
@@ -146,25 +115,25 @@ namespace Quad64 {
                         Globals.seg02_location[0].ToString("X8") +
                         " to 0x" + Globals.seg02_location[1].ToString("X8"));
 
-      if (bytes[Globals.seg15_location[0]] == 0x17)
-        type = ROM_Type.EXTENDED;
+      if (this.Bytes[Globals.seg15_location[0]] == 0x17)
+        this.Type = ROM_Type.EXTENDED;
       else
-        type = ROM_Type.VANILLA;
+        this.Type = ROM_Type.VANILLA;
 
       hasLookedAtLevelIDs = false;
 
-      Console.WriteLine("ROM = " + filepath);
-      Console.WriteLine("ROM Endian = " + endian);
-      Console.WriteLine("ROM Region = " + region);
-      Console.WriteLine("ROM Type = " + type);
+      Console.WriteLine("ROM = " + this.Filepath);
+      Console.WriteLine("ROM Endian = " + this.Endian);
+      Console.WriteLine("ROM Region = " + this.Region);
+      Console.WriteLine("ROM Type = " + this.Type);
       Console.WriteLine("-----------------------");
     }
 
     private void swapMixedBig() {
-      for (int i = 0; i < bytes.Length; i += 2) {
-        byte temp = bytes[i];
-        bytes[i] = bytes[i + 1];
-        bytes[i + 1] = temp;
+      for (int i = 0; i < this.Bytes.Length; i += 2) {
+        byte temp = this.Bytes[i];
+        this.Bytes[i] = this.Bytes[i + 1];
+        this.Bytes[i + 1] = temp;
 
         temp = writeMask[i];
         writeMask[i] = writeMask[i + 1];
@@ -174,15 +143,15 @@ namespace Quad64 {
 
     private void swapLittleBig() {
       byte[] temp = new byte[4];
-      for (int i = 0; i < bytes.Length; i += 4) {
-        temp[0] = bytes[i + 0];
-        temp[1] = bytes[i + 1];
-        temp[2] = bytes[i + 2];
-        temp[3] = bytes[i + 3];
-        bytes[i + 0] = temp[3];
-        bytes[i + 1] = temp[2];
-        bytes[i + 2] = temp[1];
-        bytes[i + 3] = temp[0];
+      for (int i = 0; i < this.Bytes.Length; i += 4) {
+        temp[0] = this.Bytes[i + 0];
+        temp[1] = this.Bytes[i + 1];
+        temp[2] = this.Bytes[i + 2];
+        temp[3] = this.Bytes[i + 3];
+        this.Bytes[i + 0] = temp[3];
+        this.Bytes[i + 1] = temp[2];
+        this.Bytes[i + 2] = temp[1];
+        this.Bytes[i + 3] = temp[0];
 
         temp[0] = writeMask[i + 0];
         temp[1] = writeMask[i + 1];
@@ -205,7 +174,7 @@ namespace Quad64 {
     }
 
     public string getROMFileName() {
-      string name = filepath.Replace("\\", "/");
+      string name = this.Filepath.Replace("\\", "/");
       if (name.Contains("/"))
         name = name.Substring(name.LastIndexOf("/") + 1);
 
@@ -248,23 +217,23 @@ namespace Quad64 {
     }
 
     public void WriteToFileEx() {
-      FileStream stream = File.OpenWrite(filepath);
-      for (int i = 0; i < bytes.Length; i++) {
+      FileStream stream = File.OpenWrite(this.Filepath);
+      for (int i = 0; i < this.Bytes.Length; i++) {
         if (writeMask[i] != 0) {
           writeMask[i] = 0;
           stream.Seek(i, SeekOrigin.Begin);
-          stream.WriteByte(bytes[i]);
+          stream.WriteByte(this.Bytes[i]);
         }
       }
       stream.Close();
     }
 
     public void readFile(string filename) {
-      filepath = filename;
-      bytes = File.ReadAllBytes(filename);
-      writeMask = new byte[bytes.Length];
+      this.Filepath = filename;
+      this.Bytes = File.ReadAllBytes(filename);
+      writeMask = new byte[this.Bytes.Length];
       checkROM();
-      Globals.pathToAutoLoadROM = filepath;
+      Globals.pathToAutoLoadROM = this.Filepath;
       Globals.needToSave = false;
       SettingsFile.SaveGlobalSettings("default");
     }
@@ -282,7 +251,7 @@ namespace Quad64 {
       {
         WriteToFileEx();
       }
-      Globals.pathToAutoLoadROM = filepath;
+      Globals.pathToAutoLoadROM = this.Filepath;
       Globals.needToSave = false;
       SettingsFile.SaveGlobalSettings("default");
     }
@@ -290,22 +259,22 @@ namespace Quad64 {
     public void saveFileAs(string filename, ROM_Endian saveType) {
       if (saveType == ROM_Endian.MIXED) {
         swapMixedBig();
-        File.WriteAllBytes(filename, bytes);
+        File.WriteAllBytes(filename, this.Bytes);
         swapMixedBig();
-        endian = ROM_Endian.MIXED;
+        this.Endian = ROM_Endian.MIXED;
       } else if (saveType == ROM_Endian.LITTLE) {
         swapLittleBig();
-        File.WriteAllBytes(filename, bytes);
+        File.WriteAllBytes(filename, this.Bytes);
         swapLittleBig();
-        endian = ROM_Endian.LITTLE;
+        this.Endian = ROM_Endian.LITTLE;
       } else // Save as big endian by default
       {
-        File.WriteAllBytes(filename, bytes);
-        endian = ROM_Endian.BIG;
+        File.WriteAllBytes(filename, this.Bytes);
+        this.Endian = ROM_Endian.BIG;
       }
       Globals.needToSave = false;
-      filepath = filename;
-      Globals.pathToAutoLoadROM = filepath;
+      this.Filepath = filename;
+      Globals.pathToAutoLoadROM = this.Filepath;
       SettingsFile.SaveGlobalSettings("default");
     }
 
@@ -336,7 +305,7 @@ namespace Quad64 {
         uint size = segmentEnd - segmentStart;
         seg.Data = new byte[size];
         for (uint i = 0; i < size; i++)
-          seg.Data[i] = bytes[segmentStart + i];
+          seg.Data[i] = this.Bytes[segmentStart + i];
       } else {
         if (fakeMIO0) {
           seg.SegStart = segmentStart + uncompressedOffset;
@@ -346,7 +315,7 @@ namespace Quad64 {
         }
         seg.Data =
             MIO0.mio0_decode(
-                getSubArray_safe(bytes, segmentStart,
+                getSubArray_safe(this.Bytes, segmentStart,
                                  segmentEnd - segmentStart));
       }
 
@@ -372,11 +341,11 @@ namespace Quad64 {
 
     public byte[] getROMSection(uint start, uint end) {
       byte[] data = new byte[end - start];
-      Array.Copy(bytes, start, data, 0, end - start);
+      Array.Copy(this.Bytes, start, data, 0, end - start);
       return data;
     }
 
-    public byte[] cloneSegment(byte segment, byte? areaID) {
+    public byte[]? cloneSegment(byte segment, byte? areaID) {
       SegBank seg = GetSegBank(segment, areaID);
       if (seg == null) return null;
 
@@ -385,26 +354,22 @@ namespace Quad64 {
       return copy;
     }
 
-    public byte[] getSegment(ushort seg, byte? areaID) {
-      return GetSegBank(seg, areaID)?.Data;
-    }
+    public byte[]? getSegment(ushort seg, byte? areaID)
+      => GetSegBank(seg, areaID)?.Data;
 
-    private SegBank GetSegBank(ushort seg, byte? areaID) {
+    private SegBank? GetSegBank(ushort seg, byte? areaID) {
       if (areaID != null && areaSegData.ContainsKey(areaID.Value) &&
           areaSegData[areaID.Value].ContainsKey((byte) (seg))) {
         return areaSegData[areaID.Value][(byte) seg];
-      } else if (segData.ContainsKey((byte) seg)) {
-        return segData[(byte) seg];
-      } else {
-        return null;
       }
+      if (this.segData.ContainsKey((byte) seg)) {
+        return this.segData[(byte) seg];
+      }
+      return null;
     }
 
-    public uint getSegmentStart(ushort seg, byte? areaID) {
-      SegBank segBank = GetSegBank(seg, areaID);
-      if (segBank != null) return segBank.SegStart;
-      else return 0;
-    }
+    public uint getSegmentStart(ushort seg, byte? areaID)
+      => GetSegBank(seg, areaID)?.SegStart ?? 0;
 
     public uint decodeSegmentAddress(uint segOffset, byte? areaID) {
       // Console.WriteLine("Decoding segment address: " + segOffset.ToString("X8"));
@@ -510,7 +475,7 @@ namespace Quad64 {
 
     public void printROMSection(int start, int end) {
       Console.WriteLine(BitConverter
-                        .ToString(bytes.Skip(start).Take(end - start).ToArray())
+                        .ToString(this.Bytes.Skip(start).Take(end - start).ToArray())
                         .Replace("-", " "));
     }
 
@@ -552,7 +517,7 @@ namespace Quad64 {
 
     public void writeByteArray(uint offset, byte[] arr) {
       addToWriteMask(offset, arr.Length);
-      Array.Copy(arr, 0, bytes, offset, arr.Length);
+      Array.Copy(arr, 0, this.Bytes, offset, arr.Length);
     }
 
     public void writeByteArray(uint offset,
@@ -560,7 +525,7 @@ namespace Quad64 {
                                int arr_offset,
                                int arr_length) {
       addToWriteMask(offset, arr.Length);
-      Array.Copy(arr, arr_offset, bytes, offset, arr_length);
+      Array.Copy(arr, arr_offset, this.Bytes, offset, arr_length);
     }
 
     public void
@@ -572,10 +537,10 @@ namespace Quad64 {
 
     public void writeWord(uint offset, int word) {
       addToWriteMask(offset, 4);
-      bytes[offset + 0] = (byte) (word >> 24);
-      bytes[offset + 1] = (byte) (word >> 16);
-      bytes[offset + 2] = (byte) (word >> 8);
-      bytes[offset + 3] = (byte) (word);
+      this.Bytes[offset + 0] = (byte) (word >> 24);
+      this.Bytes[offset + 1] = (byte) (word >> 16);
+      this.Bytes[offset + 2] = (byte) (word >> 8);
+      this.Bytes[offset + 3] = (byte) (word);
     }
 
     public void writeWord(uint offset, uint word) {
@@ -584,8 +549,8 @@ namespace Quad64 {
 
     public void writeHalfword(uint offset, short half) {
       addToWriteMask(offset, 2);
-      bytes[offset + 0] = (byte) (half >> 8);
-      bytes[offset + 1] = (byte) (half);
+      this.Bytes[offset + 0] = (byte) (half >> 8);
+      this.Bytes[offset + 1] = (byte) (half);
     }
 
     public void writeHalfword(uint offset, ushort word) {
@@ -594,15 +559,15 @@ namespace Quad64 {
 
     public void writeByte(uint offset, byte b) {
       addToWriteMask(offset, 1);
-      bytes[offset] = b;
+      this.Bytes[offset] = b;
     }
 
     public byte readByte(uint offset) {
-      return bytes[offset];
+      return this.Bytes[offset];
     }
 
     public short readHalfword(uint offset) {
-      return (short) (bytes[offset] << 8 | bytes[offset + 1]);
+      return (short) (this.Bytes[offset] << 8 | this.Bytes[offset + 1]);
     }
 
     public ushort readHalfwordUnsigned(uint offset) {
@@ -610,15 +575,15 @@ namespace Quad64 {
     }
 
     public int readWord(uint offset) {
-      return bytes[0 + offset] << 24 | bytes[1 + offset] << 16
-                                     | bytes[2 + offset] << 8 |
-                                     bytes[3 + offset];
+      return this.Bytes[0 + offset] << 24 | this.Bytes[1 + offset] << 16
+                                          | this.Bytes[2 + offset] << 8 |
+                                          this.Bytes[3 + offset];
     }
 
     public uint readWordUnsigned(uint offset) {
-      return (uint) (bytes[0 + offset] << 24 | bytes[1 + offset] << 16
-                                             | bytes[2 + offset] << 8 |
-                                             bytes[3 + offset]);
+      return (uint) (this.Bytes[0 + offset] << 24 | this.Bytes[1 + offset] << 16
+                                                  | this.Bytes[2 + offset] << 8 |
+                                                  this.Bytes[3 + offset]);
     }
 
     public bool isSegmentMIO0(byte seg, byte? areaID) {
@@ -642,7 +607,7 @@ namespace Quad64 {
       SegBank seg = new SegBank();
       uint seg02_init;
       uint RAMtoROM;
-      switch (region) {
+      switch (this.Region) {
         default:
         case ROM_Region.NORTH_AMERICA:
           seg02_init = Globals.seg02_init_NA;
@@ -672,13 +637,13 @@ namespace Quad64 {
           Globals.seg02_location = new[] {func_calls[i].a1, func_calls[i].a2};
           if (readWordUnsigned(func_calls[i].a1) == 0x4D494F30) {
             seg.IsMIO0 = true;
-            seg02_isFakeMIO0 = testIfMIO0IsFake(
+            this.Seg02_isFakeMIO0 = testIfMIO0IsFake(
                 func_calls[i].a1,
                 readWord(func_calls[i].a1 + 0x8),
                 readWord(func_calls[i].a1 + 0xC)
             );
             seg.SegStart = func_calls[i].a1;
-            seg02_uncompressedOffset = readWordUnsigned(func_calls[i].a1 + 0xC);
+            this.Seg02_uncompressedOffset = readWordUnsigned(func_calls[i].a1 + 0xC);
           }
         }
       }

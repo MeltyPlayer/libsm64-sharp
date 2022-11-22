@@ -3,8 +3,6 @@ using demo.mesh;
 
 using libsm64sharp;
 
-using OpenTK;
-
 using Quad64.src.LevelInfo;
 using Quad64;
 using Quad64.Scripts;
@@ -16,7 +14,6 @@ namespace demo {
     private readonly Quad64ObjectRenderer renderer_;
     private readonly ISm64DynamicCollisionMesh? dynamicCollisionMesh_;
     private readonly Object3D object_;
-    private readonly Vector3 originalPosition_;
 
     public Sm64Object(
         ISm64Context context,
@@ -58,9 +55,7 @@ namespace demo {
       }
       this.renderer_ =
           new Quad64ObjectRenderer(level, obj, camera, scale, billboard);
-
       this.object_ = obj;
-      this.originalPosition_ = new Vector3(obj.xPos, obj.yPos, obj.zPos);
     }
 
     ~Sm64Object() => this.ReleaseUnmanagedResources_();
