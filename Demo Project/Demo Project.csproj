@@ -13,6 +13,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="src\camera\sm64\**" />
+    <EmbeddedResource Remove="src\camera\sm64\**" />
+    <None Remove="src\camera\sm64\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="src\camera\Sm64Camera.cs" />
   </ItemGroup>
 
@@ -99,6 +105,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="resources\music_intro.ogg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\shadow.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="rom\sm64.z64">
