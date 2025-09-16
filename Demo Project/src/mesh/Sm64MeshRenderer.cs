@@ -8,33 +8,34 @@ using Quad64.src.LevelInfo;
 using PrimitiveType = OpenTK.Graphics.OpenGL.PrimitiveType;
 
 
-namespace demo.mesh {
-  public class Sm64MeshRenderer : IRenderable {
-    private readonly Area area_;
+namespace demo.mesh;
 
-    private GlShaderProgram? texturedShaderProgram_;
-    private int texture0Location_;
-    private int useLightingLocation_;
+public class Sm64MeshRenderer : IRenderable {
+  private readonly Area area_;
 
-    private readonly GlDisplayList glDisplayList_;
-    private Dictionary<Texture2D, GlTexture> glTextures_ = new();
+  private GlShaderProgram? texturedShaderProgram_;
+  private int texture0Location_;
+  private int useLightingLocation_;
 
-    public Sm64MeshRenderer(Area area) {
-      this.area_ = area;
-      this.glDisplayList_ = new GlDisplayList(this.RenderMesh_);
+  private readonly GlDisplayList glDisplayList_;
+  private Dictionary<Texture2D, GlTexture> glTextures_ = new();
+
+  public Sm64MeshRenderer(Area area) {
+    this.area_ = area;
+    this.glDisplayList_ = new GlDisplayList(this.RenderMesh_);
+  }
+
+  public void Render() {
+    this.InitShaderIfNull_();
+    this.glDisplayList_.CompileOrRender();
+  }
+
+  private void InitShaderIfNull_() {
+    if (this.texturedShaderProgram_ != null) {
+      return;
     }
 
-    public void Render() {
-      this.InitShaderIfNull_();
-      this.glDisplayList_.CompileOrRender();
-    }
-
-    private void InitShaderIfNull_() {
-      if (this.texturedShaderProgram_ != null) {
-        return;
-      }
-
-      var vertexShaderSrc = @"
+    var vertexShaderSrc = @"
 # version 120
 varying vec4 vertexColor;
 varying vec2 uv0;
@@ -44,9 +45,9 @@ void main() {
     uv0 = gl_MultiTexCoord0.st;
 }";
 
-      // With 3-point bilinear filtering copied shamelessly from:
-      // https://www.shadertoy.com/view/Ws2fWV
-      var fragmentShaderSrc = @$"
+    // With 3-point bilinear filtering copied shamelessly from:
+    // https://www.shadertoy.com/view/Ws2fWV
+    var fragmentShaderSrc = @$"
 # version 130 
 uniform sampler2D texture0;
 out vec4 fragColor;
@@ -180,74 +181,73 @@ void main() {{
     }}
 }}";
 
-      this.texturedShaderProgram_ =
-          GlShaderProgram.FromShaders(vertexShaderSrc, fragmentShaderSrc);
+    this.texturedShaderProgram_ =
+        GlShaderProgram.FromShaders(vertexShaderSrc, fragmentShaderSrc);
 
-      this.texture0Location_ =
-          this.texturedShaderProgram_.GetUniformLocation("texture0");
+    this.texture0Location_ =
+        this.texturedShaderProgram_.GetUniformLocation("texture0");
 
-      foreach (var mesh in this.area_.AreaModel.HighestLod.meshes) {
-        var texture = mesh.texture;
-        this.glTextures_[texture] = GlTexture.FromBitmap(
-            texture.Bmp,
-            Sm64MeshRenderer.ConvertFromGlWrap_(
-                (TextureWrapMode) texture.TextureParamS),
-            Sm64MeshRenderer.ConvertFromGlWrap_(
-                (TextureWrapMode) texture.TextureParamT)
-        );
-      }
+    foreach (var mesh in this.area_.AreaModel.HighestLod.meshes) {
+      var texture = mesh.texture;
+      this.glTextures_[texture] = GlTexture.FromBitmap(
+          texture.Bmp,
+          Sm64MeshRenderer.ConvertFromGlWrap_(
+              (TextureWrapMode) texture.TextureParamS),
+          Sm64MeshRenderer.ConvertFromGlWrap_(
+              (TextureWrapMode) texture.TextureParamT)
+      );
     }
+  }
 
-    private static WrapMode ConvertFromGlWrap_(
-        TextureWrapMode wrapMode) =>
-        wrapMode switch {
-            TextureWrapMode.ClampToEdge    => WrapMode.CLAMP,
-            TextureWrapMode.Repeat         => WrapMode.REPEAT,
-            TextureWrapMode.MirroredRepeat => WrapMode.MIRROR_REPEAT,
-            _ => throw new ArgumentOutOfRangeException(
-                     nameof(wrapMode), wrapMode, null)
-        };
+  private static WrapMode ConvertFromGlWrap_(
+      TextureWrapMode wrapMode) =>
+      wrapMode switch {
+          TextureWrapMode.ClampToEdge    => WrapMode.CLAMP,
+          TextureWrapMode.Repeat         => WrapMode.REPEAT,
+          TextureWrapMode.MirroredRepeat => WrapMode.MIRROR_REPEAT,
+          _ => throw new ArgumentOutOfRangeException(
+                   nameof(wrapMode), wrapMode, null)
+      };
 
-    private void RenderMesh_() {
-      this.texturedShaderProgram_!.Use();
-      GL.Uniform1(this.texture0Location_, 0f);
-      GL.Uniform1(this.useLightingLocation_, 1f);
+  private void RenderMesh_() {
+    this.texturedShaderProgram_!.Use();
+    GL.Uniform1(this.texture0Location_, 0f);
+    GL.Uniform1(this.useLightingLocation_, 1f);
 
-      var scale = 1; //Constants.LEVEL_SCALE;
+    var scale = 1; //Constants.LEVEL_SCALE;
 
-      GL.Color3(1f, 1f, 1f);
+    GL.Color3(1f, 1f, 1f);
 
-      var model = this.area_.AreaModel.HighestLod;
-      foreach (var mesh in model.meshes) {
-        var glTexture = this.glTextures_[mesh.texture];
+    var model = this.area_.AreaModel.HighestLod;
+    foreach (var mesh in model.meshes) {
+      var glTexture = this.glTextures_[mesh.texture];
 
-        glTexture.Bind();
-        GL.Begin(PrimitiveType.Triangles);
+      glTexture.Bind();
+      GL.Begin(PrimitiveType.Triangles);
 
-        var indices = mesh.indices;
-        var colors = mesh.colors;
-        var vertices = mesh.vertices;
-        var uvs = mesh.texCoord;
+      var indices = mesh.indices;
+      var colors = mesh.colors;
+      var vertices = mesh.vertices;
+      var uvs = mesh.texCoord;
 
-        var indexOrder = new[] {0, 2, 1};
-        for (var i = 0; i < indices.Length; i += indexOrder.Length) {
-          for (var ii = 0; ii < indexOrder.Length; ++ii) {
-            var vertexIndex = indices[i + ii];
+      var indexOrder = new[] {0, 2, 1};
+      for (var i = 0; i < indices.Length; i += indexOrder.Length) {
+        for (var ii = 0; ii < indexOrder.Length; ++ii) {
+          var vertexIndex = indices[i + ii];
 
-            var uv = uvs[vertexIndex];
-            GL.TexCoord2(uv.X, uv.Y);
+          var uv = uvs[vertexIndex];
+          GL.TexCoord2(uv.X, uv.Y);
 
-            var color = colors[vertexIndex];
-            GL.Color3(color.X, color.Y, color.Z);
+          var color = colors[vertexIndex];
+          GL.Color3(color.X, color.Y, color.Z);
 
-            var vertex = vertices[vertexIndex];
-            GL.Vertex3(vertex.X * scale, vertex.Y * scale, vertex.Z * scale);
-          }
+          var vertex = vertices[vertexIndex];
+          GL.Vertex3(vertex.X * scale, vertex.Y * scale, vertex.Z * scale);
         }
-
-        GL.End();
-        glTexture.Unbind();
       }
+
+      GL.End();
+      glTexture.Unbind();
     }
   }
 }

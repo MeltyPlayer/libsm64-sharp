@@ -1,16 +1,16 @@
 ﻿using OpenTK.Audio.OpenAL;
 
 
-namespace demo.common.audio.impl.al {
-  public partial class AlAudioManager {
-    public IAudioSource<short> CreateAudioSource() => new AlAudioSource(this);
+namespace demo.common.audio.impl.al;
 
-    private partial class AlAudioSource : IAudioSource<short> {
-      private readonly AlAudioManager manager_;
+public partial class AlAudioManager {
+  public IAudioSource<short> CreateAudioSource() => new AlAudioSource(this);
 
-      public AlAudioSource(AlAudioManager manager) {
-        this.manager_ = manager;
-      }
+  private partial class AlAudioSource : IAudioSource<short> {
+    private readonly AlAudioManager manager_;
+
+    public AlAudioSource(AlAudioManager manager) {
+      this.manager_ = manager;
     }
   }
 }

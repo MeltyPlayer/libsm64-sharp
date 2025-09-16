@@ -7,43 +7,44 @@ using OpenTK.Graphics.OpenGL;
 using PrimitiveType = OpenTK.Graphics.OpenGL.PrimitiveType;
 
 
-namespace demo.mesh {
-  public class StaticAssimpSceneRenderer : IRenderable {
-    private readonly Scene assimpScene_;
+namespace demo.mesh;
 
-    private GlShaderProgram? texturedShaderProgram_;
-    private int texture0Location_;
-    private int useLightingLocation_;
+public class StaticAssimpSceneRenderer : IRenderable {
+  private readonly Scene assimpScene_;
 
-    private readonly GlDisplayList glDisplayList_;
-    private readonly GlTexture[] glTextures_;
+  private GlShaderProgram? texturedShaderProgram_;
+  private int texture0Location_;
+  private int useLightingLocation_;
 
-    public StaticAssimpSceneRenderer(AssimpSceneData assimpSceneData) {
-      this.assimpScene_ = assimpSceneData.Scene;
-      this.glDisplayList_ = new GlDisplayList(this.RenderAssimpScene_);
-      this.glTextures_ =
-          this.assimpScene_.Materials.Select(assimpMaterial => {
-                var textureImage =
-                    assimpSceneData.TexturesByMaterial[assimpMaterial];
+  private readonly GlDisplayList glDisplayList_;
+  private readonly GlTexture[] glTextures_;
 
-                return textureImage != null
-                           ? GlTexture.FromImage(textureImage, WrapMode.REPEAT, WrapMode.REPEAT)
-                           : GlTexture.FromColor(Color.White);
-              })
-              .ToArray();
+  public StaticAssimpSceneRenderer(AssimpSceneData assimpSceneData) {
+    this.assimpScene_ = assimpSceneData.Scene;
+    this.glDisplayList_ = new GlDisplayList(this.RenderAssimpScene_);
+    this.glTextures_ =
+        this.assimpScene_.Materials.Select(assimpMaterial => {
+              var textureImage =
+                  assimpSceneData.TexturesByMaterial[assimpMaterial];
+
+              return textureImage != null
+                         ? GlTexture.FromImage(textureImage, WrapMode.REPEAT, WrapMode.REPEAT)
+                         : GlTexture.FromColor(Color.White);
+            })
+            .ToArray();
+  }
+
+  public void Render() {
+    this.InitShaderIfNull_();
+    this.glDisplayList_.CompileOrRender();
+  }
+
+  private void InitShaderIfNull_() {
+    if (this.texturedShaderProgram_ != null) {
+      return;
     }
 
-    public void Render() {
-      this.InitShaderIfNull_();
-      this.glDisplayList_.CompileOrRender();
-    }
-
-    private void InitShaderIfNull_() {
-      if (this.texturedShaderProgram_ != null) {
-        return;
-      }
-
-      var vertexShaderSrc = @"
+    var vertexShaderSrc = @"
 # version 120
 in vec2 in_uv0;
 varying vec4 vertexColor;
@@ -56,9 +57,9 @@ void main() {
     uv0 = gl_MultiTexCoord0.st;
 }";
 
-      // With 3-point bilinear filtering copied shamelessly from:
-      // https://www.shadertoy.com/view/Ws2fWV
-      var fragmentShaderSrc = @$"
+    // With 3-point bilinear filtering copied shamelessly from:
+    // https://www.shadertoy.com/view/Ws2fWV
+    var fragmentShaderSrc = @$"
 # version 130 
 uniform sampler2D texture0;
 uniform float useLighting;
@@ -200,52 +201,51 @@ void main() {{
     }}
 }}";
 
-      this.texturedShaderProgram_ =
-          GlShaderProgram.FromShaders(vertexShaderSrc, fragmentShaderSrc);
+    this.texturedShaderProgram_ =
+        GlShaderProgram.FromShaders(vertexShaderSrc, fragmentShaderSrc);
 
-      this.texture0Location_ =
-          this.texturedShaderProgram_.GetUniformLocation("texture0");
-      this.useLightingLocation_ =
-          this.texturedShaderProgram_.GetUniformLocation("useLighting");
-    }
+    this.texture0Location_ =
+        this.texturedShaderProgram_.GetUniformLocation("texture0");
+    this.useLightingLocation_ =
+        this.texturedShaderProgram_.GetUniformLocation("useLighting");
+  }
 
-    private void RenderAssimpScene_() {
-      this.texturedShaderProgram_!.Use();
-      GL.Uniform1(this.texture0Location_, 0f);
-      GL.Uniform1(this.useLightingLocation_, 1f);
+  private void RenderAssimpScene_() {
+    this.texturedShaderProgram_!.Use();
+    GL.Uniform1(this.texture0Location_, 0f);
+    GL.Uniform1(this.useLightingLocation_, 1f);
 
-      var scale = Constants.LEVEL_SCALE;
+    var scale = Constants.LEVEL_SCALE;
 
-      GL.Color3(1f, 1f, 1f);
+    GL.Color3(1f, 1f, 1f);
 
-      var indexOrder = new[] {0, 2, 1};
-      foreach (var mesh in this.assimpScene_.Meshes) {
-        var texture = this.glTextures_[mesh.MaterialIndex];
-        texture.Bind();
+    var indexOrder = new[] {0, 2, 1};
+    foreach (var mesh in this.assimpScene_.Meshes) {
+      var texture = this.glTextures_[mesh.MaterialIndex];
+      texture.Bind();
 
-        GL.Begin(PrimitiveType.Triangles);
+      GL.Begin(PrimitiveType.Triangles);
 
-        var uvs = mesh.TextureCoordinateChannels[0];
+      var uvs = mesh.TextureCoordinateChannels[0];
 
-        foreach (var face in mesh.Faces) {
-          foreach (var i in indexOrder) {
-            var vertexIndex = face.Indices[i];
+      foreach (var face in mesh.Faces) {
+        foreach (var i in indexOrder) {
+          var vertexIndex = face.Indices[i];
 
-            var normal = mesh.Normals[vertexIndex];
-            GL.Normal3(-normal.X, -normal.Y, -normal.Z);
+          var normal = mesh.Normals[vertexIndex];
+          GL.Normal3(-normal.X, -normal.Y, -normal.Z);
 
-            var uv = uvs[vertexIndex];
-            GL.TexCoord2(uv.X, 1 - uv.Y);
+          var uv = uvs[vertexIndex];
+          GL.TexCoord2(uv.X, 1 - uv.Y);
 
-            var vertex = mesh.Vertices[vertexIndex];
-            GL.Vertex3(vertex.X * scale, vertex.Y * scale, vertex.Z * scale);
-          }
+          var vertex = mesh.Vertices[vertexIndex];
+          GL.Vertex3(vertex.X * scale, vertex.Y * scale, vertex.Z * scale);
         }
-
-        GL.End();
-
-        texture.Unbind();
       }
+
+      GL.End();
+
+      texture.Unbind();
     }
   }
 }

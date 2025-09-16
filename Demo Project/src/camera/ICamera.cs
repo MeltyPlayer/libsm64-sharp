@@ -1,21 +1,21 @@
-﻿namespace demo.camera {
-  public interface ICamera {
-    float EyeX { get; }
-    float EyeY { get; }
-    float EyeZ { get; }
+﻿namespace demo.camera;
 
-    float FocusX { get; }
-    float FocusY { get; }
-    float FocusZ { get; }
+public interface ICamera {
+  float EyeX { get; }
+  float EyeY { get; }
+  float EyeZ { get; }
 
-    float UpX { get; }
-    float UpY { get; }
-    float UpZ { get; }
+  float FocusX { get; }
+  float FocusY { get; }
+  float FocusZ { get; }
 
-    float XNormal { get; }
-    float YNormal { get; }
-    float ZNormal { get; }
+  float UpX { get; }
+  float UpY { get; }
+  float UpZ { get; }
 
-    float FovY { get; }
-  }
+  float XNormal { get; }
+  float YNormal { get; }
+  float ZNormal { get; }
+
+  float FovY { get; }
 }

@@ -3,160 +3,160 @@
 using System.Runtime.InteropServices;
 
 
-namespace libsm64sharp {
-  public partial class Sm64Context {
-    private class Sm64CtlEntry : ISm64CtlEntry {
-      private LowLevelSm64CtlEntry lowLevelImpl_;
+namespace libsm64sharp;
 
-      public Sm64CtlEntry(LowLevelSm64CtlEntry lowLevelImpl) {
-        this.lowLevelImpl_ = lowLevelImpl;
+public partial class Sm64Context {
+  private class Sm64CtlEntry : ISm64CtlEntry {
+    private LowLevelSm64CtlEntry lowLevelImpl_;
 
-        {
-          var instruments = new List<ISm64Instrument>();
-          var lowLevelInstruments =
-              MarshalUtil.MarshalArrayOfRefs_<LowLevelSm64Instrument>(
-                  lowLevelImpl.instruments, lowLevelImpl.numInstruments);
-          foreach (var lowLevelInstrument in lowLevelInstruments) {
-            instruments.Add(new Sm64Instrument(lowLevelInstrument));
-          }
-          this.Instruments = instruments;
+    public Sm64CtlEntry(LowLevelSm64CtlEntry lowLevelImpl) {
+      this.lowLevelImpl_ = lowLevelImpl;
+
+      {
+        var instruments = new List<ISm64Instrument>();
+        var lowLevelInstruments =
+            MarshalUtil.MarshalArrayOfRefs_<LowLevelSm64Instrument>(
+                lowLevelImpl.instruments, lowLevelImpl.numInstruments);
+        foreach (var lowLevelInstrument in lowLevelInstruments) {
+          instruments.Add(new Sm64Instrument(lowLevelInstrument));
         }
+        this.Instruments = instruments;
+      }
 
-        {
-          var drums = new List<ISm64Drum>();
-          var lowLevelDrums =
-              MarshalUtil.MarshalArrayOfRefs_<LowLevelSm64Drum>(
-                  lowLevelImpl.drums, lowLevelImpl.numDrums);
-          foreach (var lowLevelDrum in lowLevelDrums) {
-            drums.Add(new Sm64Drum(lowLevelDrum));
-          }
-          this.Drums = drums;
+      {
+        var drums = new List<ISm64Drum>();
+        var lowLevelDrums =
+            MarshalUtil.MarshalArrayOfRefs_<LowLevelSm64Drum>(
+                lowLevelImpl.drums, lowLevelImpl.numDrums);
+        foreach (var lowLevelDrum in lowLevelDrums) {
+          drums.Add(new Sm64Drum(lowLevelDrum));
         }
+        this.Drums = drums;
       }
-
-      public IReadOnlyList<ISm64Instrument> Instruments { get; }
-      public IReadOnlyList<ISm64Drum> Drums { get; }
     }
 
-    private class Sm64Drum : ISm64Drum {
-      private LowLevelSm64Drum lowLevelImpl_;
+    public IReadOnlyList<ISm64Instrument> Instruments { get; }
+    public IReadOnlyList<ISm64Drum> Drums { get; }
+  }
 
-      public Sm64Drum(LowLevelSm64Drum lowLevelImpl) {
-        this.lowLevelImpl_ = lowLevelImpl;
-      }
+  private class Sm64Drum : ISm64Drum {
+    private LowLevelSm64Drum lowLevelImpl_;
 
-      public bool Loaded { get; }
-      public byte ReleaseRate { get; }
-      public byte Pan { get; }
-      public ISm64AudioBankSound Sound { get; }
+    public Sm64Drum(LowLevelSm64Drum lowLevelImpl) {
+      this.lowLevelImpl_ = lowLevelImpl;
     }
 
-    private class Sm64Instrument : ISm64Instrument {
-      private LowLevelSm64Instrument lowLevelImpl_;
+    public bool Loaded { get; }
+    public byte ReleaseRate { get; }
+    public byte Pan { get; }
+    public ISm64AudioBankSound Sound { get; }
+  }
 
-      public Sm64Instrument(LowLevelSm64Instrument lowLevelImpl) {
-        this.lowLevelImpl_ = lowLevelImpl;
-        this.Loaded = lowLevelImpl.loaded != 0;
-        this.ReleaseRate = lowLevelImpl.releaseRate;
+  private class Sm64Instrument : ISm64Instrument {
+    private LowLevelSm64Instrument lowLevelImpl_;
 
-        this.NormalRangeHi = lowLevelImpl.normalRangeHi;
-        this.NormalRangeLo = lowLevelImpl.normalRangeLo;
+    public Sm64Instrument(LowLevelSm64Instrument lowLevelImpl) {
+      this.lowLevelImpl_ = lowLevelImpl;
+      this.Loaded = lowLevelImpl.loaded != 0;
+      this.ReleaseRate = lowLevelImpl.releaseRate;
 
-        if (lowLevelImpl.normalNotesSound.sample.ToInt64() != 0) {
-          this.NormalNotesSound =
-              new Sm64AudioBankSound(lowLevelImpl.normalNotesSound);
-        }
-        if (lowLevelImpl.highNotesSound.sample.ToInt64() != 0) {
-          this.HighNotesSound =
-              new Sm64AudioBankSound(lowLevelImpl.highNotesSound);
-        }
-        if (lowLevelImpl.lowNotesSound.sample.ToInt64() != 0) {
-          this.LowNotesSound =
-              new Sm64AudioBankSound(lowLevelImpl.lowNotesSound);
-        }
+      this.NormalRangeHi = lowLevelImpl.normalRangeHi;
+      this.NormalRangeLo = lowLevelImpl.normalRangeLo;
+
+      if (lowLevelImpl.normalNotesSound.sample.ToInt64() != 0) {
+        this.NormalNotesSound =
+            new Sm64AudioBankSound(lowLevelImpl.normalNotesSound);
       }
-
-      public bool Loaded { get; }
-      public byte ReleaseRate { get; }
-      public byte NormalRangeLo { get; }
-      public byte NormalRangeHi { get; }
-      public ISm64AudioBankSound? LowNotesSound { get; }
-      public ISm64AudioBankSound NormalNotesSound { get; }
-      public ISm64AudioBankSound? HighNotesSound { get; }
+      if (lowLevelImpl.highNotesSound.sample.ToInt64() != 0) {
+        this.HighNotesSound =
+            new Sm64AudioBankSound(lowLevelImpl.highNotesSound);
+      }
+      if (lowLevelImpl.lowNotesSound.sample.ToInt64() != 0) {
+        this.LowNotesSound =
+            new Sm64AudioBankSound(lowLevelImpl.lowNotesSound);
+      }
     }
 
-    private class Sm64AudioBankSound : ISm64AudioBankSound {
-      private LowLevelSm64AudioBankSound lowLevelImpl_;
+    public bool Loaded { get; }
+    public byte ReleaseRate { get; }
+    public byte NormalRangeLo { get; }
+    public byte NormalRangeHi { get; }
+    public ISm64AudioBankSound? LowNotesSound { get; }
+    public ISm64AudioBankSound NormalNotesSound { get; }
+    public ISm64AudioBankSound? HighNotesSound { get; }
+  }
 
-      public Sm64AudioBankSound(LowLevelSm64AudioBankSound lowLevelImpl) {
-        this.lowLevelImpl_ = lowLevelImpl;
+  private class Sm64AudioBankSound : ISm64AudioBankSound {
+    private LowLevelSm64AudioBankSound lowLevelImpl_;
 
-        if (lowLevelImpl.sample.ToInt64() == 0) {
-          throw new ArgumentException("Sound pointer is null.");
-        }
+    public Sm64AudioBankSound(LowLevelSm64AudioBankSound lowLevelImpl) {
+      this.lowLevelImpl_ = lowLevelImpl;
 
-        this.Sample = new Sm64AudioBankSample(
-            MarshalUtil.MarshalRef<LowLevelSm64AudioBankSample>(
-                lowLevelImpl.sample));
-        this.Tuning = lowLevelImpl.tuning;
+      if (lowLevelImpl.sample.ToInt64() == 0) {
+        throw new ArgumentException("Sound pointer is null.");
       }
 
-      public ISm64AudioBankSample Sample { get; }
-      public float Tuning { get; }
+      this.Sample = new Sm64AudioBankSample(
+          MarshalUtil.MarshalRef<LowLevelSm64AudioBankSample>(
+              lowLevelImpl.sample));
+      this.Tuning = lowLevelImpl.tuning;
     }
 
-    private class Sm64AudioBankSample : ISm64AudioBankSample {
-      private LowLevelSm64AudioBankSample lowLevelImpl_;
+    public ISm64AudioBankSample Sample { get; }
+    public float Tuning { get; }
+  }
 
-      public Sm64AudioBankSample(LowLevelSm64AudioBankSample lowLevelImpl) {
-        this.lowLevelImpl_ = lowLevelImpl;
+  private class Sm64AudioBankSample : ISm64AudioBankSample {
+    private LowLevelSm64AudioBankSample lowLevelImpl_;
 
-        this.Loaded = lowLevelImpl.loaded != 0;
-        this.Loop =
-            new Sm64AdpcmLoop(
-                MarshalUtil
-                    .MarshalRef<LowLevelSm64AdpcmLoop>(lowLevelImpl.loop));
-        this.Book =
-            new Sm64AdpcmBook(
-                MarshalUtil
-                    .MarshalRef<LowLevelSm64AdpcmBook>(lowLevelImpl.book));
-        this.Samples =
-            MarshalUtil.MarshalArray<byte>(lowLevelImpl.sampleAddr,
-                                           (int) lowLevelImpl.sampleSize);
-      }
+    public Sm64AudioBankSample(LowLevelSm64AudioBankSample lowLevelImpl) {
+      this.lowLevelImpl_ = lowLevelImpl;
 
-      public bool Loaded { get; }
-      public byte[] Samples { get; }
-      public ISm64AdpcmLoop Loop { get; }
-      public ISm64AdpcmBook Book { get; }
+      this.Loaded = lowLevelImpl.loaded != 0;
+      this.Loop =
+          new Sm64AdpcmLoop(
+              MarshalUtil
+                  .MarshalRef<LowLevelSm64AdpcmLoop>(lowLevelImpl.loop));
+      this.Book =
+          new Sm64AdpcmBook(
+              MarshalUtil
+                  .MarshalRef<LowLevelSm64AdpcmBook>(lowLevelImpl.book));
+      this.Samples =
+          MarshalUtil.MarshalArray<byte>(lowLevelImpl.sampleAddr,
+                                         (int) lowLevelImpl.sampleSize);
     }
 
-    public class Sm64AdpcmLoop : ISm64AdpcmLoop {
-      public Sm64AdpcmLoop(LowLevelSm64AdpcmLoop lowLevelImpl) {
-        this.Start = lowLevelImpl.start;
-        this.End = lowLevelImpl.end;
-        this.Count = lowLevelImpl.count;
-        this.Pad = lowLevelImpl.pad;
-        this.State = lowLevelImpl.state;
-      }
+    public bool Loaded { get; }
+    public byte[] Samples { get; }
+    public ISm64AdpcmLoop Loop { get; }
+    public ISm64AdpcmBook Book { get; }
+  }
 
-      public uint Start { get; }
-      public uint End { get; }
-      public uint Count { get; }
-      public uint Pad { get; }
-      public short[] State { get; }
+  public class Sm64AdpcmLoop : ISm64AdpcmLoop {
+    public Sm64AdpcmLoop(LowLevelSm64AdpcmLoop lowLevelImpl) {
+      this.Start = lowLevelImpl.start;
+      this.End = lowLevelImpl.end;
+      this.Count = lowLevelImpl.count;
+      this.Pad = lowLevelImpl.pad;
+      this.State = lowLevelImpl.state;
     }
 
-    public class Sm64AdpcmBook : ISm64AdpcmBook {
-      public Sm64AdpcmBook(LowLevelSm64AdpcmBook lowLevelImpl) {
-        this.Order = lowLevelImpl.order;
-        this.NPredictors = lowLevelImpl.npredictors;
-        this.Predictors = lowLevelImpl.book;
-      }
+    public uint Start { get; }
+    public uint End { get; }
+    public uint Count { get; }
+    public uint Pad { get; }
+    public short[] State { get; }
+  }
 
-      public int Order { get; }
-      public int NPredictors { get; }
-      public short[] Predictors { get; }
+  public class Sm64AdpcmBook : ISm64AdpcmBook {
+    public Sm64AdpcmBook(LowLevelSm64AdpcmBook lowLevelImpl) {
+      this.Order = lowLevelImpl.order;
+      this.NPredictors = lowLevelImpl.npredictors;
+      this.Predictors = lowLevelImpl.book;
     }
+
+    public int Order { get; }
+    public int NPredictors { get; }
+    public short[] Predictors { get; }
   }
 }

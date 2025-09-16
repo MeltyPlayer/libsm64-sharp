@@ -8,33 +8,34 @@ using Quad64.src.Scripts;
 using PrimitiveType = OpenTK.Graphics.OpenGL.PrimitiveType;
 
 
-namespace demo.mesh {
-  public class Quad64ModelRenderer : IRenderable {
-    private readonly Model3D model_;
+namespace demo.mesh;
 
-    private GlShaderProgram? texturedShaderProgram_;
-    private int texture0Location_;
-    private int useLightingLocation_;
+public class Quad64ModelRenderer : IRenderable {
+  private readonly Model3D model_;
 
-    private readonly GlDisplayList glDisplayList_;
-    private Dictionary<Texture2D, GlTexture> glTextures_ = new();
+  private GlShaderProgram? texturedShaderProgram_;
+  private int texture0Location_;
+  private int useLightingLocation_;
 
-    public Quad64ModelRenderer(Model3D model) {
-      this.model_ = model;
-      this.glDisplayList_ = new GlDisplayList(this.RenderMesh_);
+  private readonly GlDisplayList glDisplayList_;
+  private Dictionary<Texture2D, GlTexture> glTextures_ = new();
+
+  public Quad64ModelRenderer(Model3D model) {
+    this.model_ = model;
+    this.glDisplayList_ = new GlDisplayList(this.RenderMesh_);
+  }
+
+  public void Render() {
+    this.InitShaderIfNull_();
+    this.glDisplayList_.CompileOrRender();
+  }
+
+  private void InitShaderIfNull_() {
+    if (this.texturedShaderProgram_ != null) {
+      return;
     }
 
-    public void Render() {
-      this.InitShaderIfNull_();
-      this.glDisplayList_.CompileOrRender();
-    }
-
-    private void InitShaderIfNull_() {
-      if (this.texturedShaderProgram_ != null) {
-        return;
-      }
-
-      var vertexShaderSrc = @"
+    var vertexShaderSrc = @"
 # version 120
 varying vec2 in_uv0;
 varying vec4 vertexColor;
@@ -45,9 +46,9 @@ void main() {
     uv0 = gl_MultiTexCoord0.st;
 }";
 
-      // With 3-point bilinear filtering copied shamelessly from:
-      // https://www.shadertoy.com/view/Ws2fWV
-      var fragmentShaderSrc = @$"
+    // With 3-point bilinear filtering copied shamelessly from:
+    // https://www.shadertoy.com/view/Ws2fWV
+    var fragmentShaderSrc = @$"
 # version 130 
 uniform sampler2D texture0;
 out vec4 fragColor;
@@ -181,97 +182,96 @@ void main() {{
     }}
 }}";
 
-      this.texturedShaderProgram_ =
-          GlShaderProgram.FromShaders(vertexShaderSrc, fragmentShaderSrc);
+    this.texturedShaderProgram_ =
+        GlShaderProgram.FromShaders(vertexShaderSrc, fragmentShaderSrc);
 
-      this.texture0Location_ =
-          this.texturedShaderProgram_.GetUniformLocation("texture0");
+    this.texture0Location_ =
+        this.texturedShaderProgram_.GetUniformLocation("texture0");
 
-      foreach (var mesh in this.model_.meshes) {
-        var texture = mesh.texture;
-        this.glTextures_[texture] = GlTexture.FromBitmap(
-            texture.Bmp,
-            Quad64ModelRenderer.ConvertFromGlWrap_(
-                (TextureWrapMode) texture.TextureParamS),
-            Quad64ModelRenderer.ConvertFromGlWrap_(
-                (TextureWrapMode) texture.TextureParamT)
-        );
-      }
+    foreach (var mesh in this.model_.meshes) {
+      var texture = mesh.texture;
+      this.glTextures_[texture] = GlTexture.FromBitmap(
+          texture.Bmp,
+          Quad64ModelRenderer.ConvertFromGlWrap_(
+              (TextureWrapMode) texture.TextureParamS),
+          Quad64ModelRenderer.ConvertFromGlWrap_(
+              (TextureWrapMode) texture.TextureParamT)
+      );
     }
+  }
 
-    private static WrapMode ConvertFromGlWrap_(
-        TextureWrapMode wrapMode) =>
-        wrapMode switch {
-            TextureWrapMode.ClampToEdge    => WrapMode.CLAMP,
-            TextureWrapMode.Repeat         => WrapMode.REPEAT,
-            TextureWrapMode.MirroredRepeat => WrapMode.MIRROR_REPEAT,
-            _ => throw new ArgumentOutOfRangeException(
-                     nameof(wrapMode), wrapMode, null)
-        };
+  private static WrapMode ConvertFromGlWrap_(
+      TextureWrapMode wrapMode) =>
+      wrapMode switch {
+          TextureWrapMode.ClampToEdge    => WrapMode.CLAMP,
+          TextureWrapMode.Repeat         => WrapMode.REPEAT,
+          TextureWrapMode.MirroredRepeat => WrapMode.MIRROR_REPEAT,
+          _ => throw new ArgumentOutOfRangeException(
+                   nameof(wrapMode), wrapMode, null)
+      };
 
-    private void RenderMesh_() {
-      this.texturedShaderProgram_!.Use();
-      GL.Uniform1(this.texture0Location_, 0f);
-      GL.Uniform1(this.useLightingLocation_, 1f);
+  private void RenderMesh_() {
+    this.texturedShaderProgram_!.Use();
+    GL.Uniform1(this.texture0Location_, 0f);
+    GL.Uniform1(this.useLightingLocation_, 1f);
 
-      var scale = 1; //Constants.LEVEL_SCALE;
+    var scale = 1; //Constants.LEVEL_SCALE;
 
-      GL.Color3(1f, 1f, 1f);
+    GL.Color3(1f, 1f, 1f);
 
-      var model = this.model_;
-      foreach (var mesh in model.meshes) {
-        var geometryMode = mesh.Material.GeometryMode;
+    var model = this.model_;
+    foreach (var mesh in model.meshes) {
+      var geometryMode = mesh.Material.GeometryMode;
 
-        var cullFront = geometryMode.HasFlag(RspGeometryMode.G_CULL_FRONT);
-        var cullBack = geometryMode.HasFlag(RspGeometryMode.G_CULL_BACK);
+      var cullFront = geometryMode.HasFlag(RspGeometryMode.G_CULL_FRONT);
+      var cullBack = geometryMode.HasFlag(RspGeometryMode.G_CULL_BACK);
 
-        if (!cullFront && !cullBack) {
-          GL.Disable(EnableCap.CullFace);
-        } else {
-          GL.Enable(EnableCap.CullFace);
-          GL.CullFace(cullFront switch {
-              false => cullBack switch {
-                  true => CullFaceMode.Back,
-              },
-              true => cullBack switch {
-                  false => CullFaceMode.Front,
-                  true  => CullFaceMode.FrontAndBack,
-              },
-          });
-        }
-
-        var glTexture = this.glTextures_[mesh.texture];
-
-        glTexture.Bind();
-        GL.Begin(PrimitiveType.Triangles);
-
-        var indices = mesh.indices;
-        var colors = mesh.colors;
-        var vertices = mesh.vertices;
-        var uvs = mesh.texCoord;
-
-        var indexOrder = new[] {0, 2, 1};
-        for (var i = 0; i < indices.Length; i += indexOrder.Length) {
-          for (var ii = 0; ii < indexOrder.Length; ++ii) {
-            var vertexIndex = indices[i + ii];
-
-            var uv = uvs[vertexIndex];
-            GL.TexCoord2(uv.X, uv.Y);
-
-            var color = colors[vertexIndex];
-            GL.Color4(color.X, color.Y, color.Z, color.W);
-
-            var vertex = vertices[vertexIndex];
-            GL.Vertex3(vertex.X * scale, vertex.Y * scale, vertex.Z * scale);
-          }
-        }
-
-        GL.End();
-        glTexture.Unbind();
+      if (!cullFront && !cullBack) {
+        GL.Disable(EnableCap.CullFace);
+      } else {
+        GL.Enable(EnableCap.CullFace);
+        GL.CullFace(cullFront switch {
+            false => cullBack switch {
+                true => CullFaceMode.Back,
+            },
+            true => cullBack switch {
+                false => CullFaceMode.Front,
+                true  => CullFaceMode.FrontAndBack,
+            },
+        });
       }
 
-      GL.Enable(EnableCap.CullFace);
-      GL.CullFace(CullFaceMode.Back);
+      var glTexture = this.glTextures_[mesh.texture];
+
+      glTexture.Bind();
+      GL.Begin(PrimitiveType.Triangles);
+
+      var indices = mesh.indices;
+      var colors = mesh.colors;
+      var vertices = mesh.vertices;
+      var uvs = mesh.texCoord;
+
+      var indexOrder = new[] {0, 2, 1};
+      for (var i = 0; i < indices.Length; i += indexOrder.Length) {
+        for (var ii = 0; ii < indexOrder.Length; ++ii) {
+          var vertexIndex = indices[i + ii];
+
+          var uv = uvs[vertexIndex];
+          GL.TexCoord2(uv.X, uv.Y);
+
+          var color = colors[vertexIndex];
+          GL.Color4(color.X, color.Y, color.Z, color.W);
+
+          var vertex = vertices[vertexIndex];
+          GL.Vertex3(vertex.X * scale, vertex.Y * scale, vertex.Z * scale);
+        }
+      }
+
+      GL.End();
+      glTexture.Unbind();
     }
+
+    GL.Enable(EnableCap.CullFace);
+    GL.CullFace(CullFaceMode.Back);
   }
 }

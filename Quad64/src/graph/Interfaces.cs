@@ -3,71 +3,71 @@
 using Quad64.f3d;
 
 
-namespace Quad64.graph {
-  public enum GraphReturnType {
-    UNDEFINED,
-    RETURN,
-    END,
-  }
+namespace Quad64.graph;
 
-  public interface IGraphNodeParser {
-    IGraphNode Parse(uint address,
-                     byte? areaId,
-                     out GraphReturnType graphReturnType);
-  }
+public enum GraphReturnType {
+  UNDEFINED,
+  RETURN,
+  END,
+}
 
-  public interface IGraphNode {
-    IGraphNode? Parent { get; }
+public interface IGraphNodeParser {
+  IGraphNode Parse(uint address,
+                   byte? areaId,
+                   out GraphReturnType graphReturnType);
+}
 
-    IGraphNode? FirstChild { get; }
-    IGraphNode? NextSibling { get; }
+public interface IGraphNode {
+  IGraphNode? Parent { get; }
 
-    void AddChildToEnd(IGraphNode node);
-    void InsertSiblingAfter(IGraphNode node);
-  }
+  IGraphNode? FirstChild { get; }
+  IGraphNode? NextSibling { get; }
 
-  public interface ILevelOfDetailGraphNode : IGraphNode {
-    short MinDistance { get; }
-    short MaxDistance { get; }
-  }
+  void AddChildToEnd(IGraphNode node);
+  void InsertSiblingAfter(IGraphNode node);
+}
 
-  public interface ISwitchCaseGraphNode : IGraphNode {
-    short NumCases { get; }
-    short SelectedCase { get; }
-  }
+public interface ILevelOfDetailGraphNode : IGraphNode {
+  short MinDistance { get; }
+  short MaxDistance { get; }
+}
 
-  public interface ITranslationRotationGraphNode : IGraphNode {
-    IF3dDisplayList DisplayList { get; }
-    IReadOnlySm64Vector3<short> Translation { get; }
-    IReadOnlySm64Vector3<short> Rotation { get; }
-  }
+public interface ISwitchCaseGraphNode : IGraphNode {
+  short NumCases { get; }
+  short SelectedCase { get; }
+}
 
-  public interface ITranslationGraphNode : IGraphNode {
-    IF3dDisplayList DisplayList { get; }
-    IReadOnlySm64Vector3<short> Translation { get; }
-  }
+public interface ITranslationRotationGraphNode : IGraphNode {
+  IF3dDisplayList DisplayList { get; }
+  IReadOnlySm64Vector3<short> Translation { get; }
+  IReadOnlySm64Vector3<short> Rotation { get; }
+}
 
-  public interface IRotationGraphNode : IGraphNode {
-    IF3dDisplayList DisplayList { get; }
-    IReadOnlySm64Vector3<short> Rotation { get; }
-  }
+public interface ITranslationGraphNode : IGraphNode {
+  IF3dDisplayList DisplayList { get; }
+  IReadOnlySm64Vector3<short> Translation { get; }
+}
 
-  public interface IAnimatedPartGraphNode : IGraphNode {
-    IF3dDisplayList DisplayList { get; }
-    IReadOnlySm64Vector3<short> Translation { get; }
-  }
+public interface IRotationGraphNode : IGraphNode {
+  IF3dDisplayList DisplayList { get; }
+  IReadOnlySm64Vector3<short> Rotation { get; }
+}
 
-  public interface IBillboardGraphNode : IGraphNode {
-    IF3dDisplayList DisplayList { get; }
-    IReadOnlySm64Vector3<short> Translation { get; }
-  }
+public interface IAnimatedPartGraphNode : IGraphNode {
+  IF3dDisplayList DisplayList { get; }
+  IReadOnlySm64Vector3<short> Translation { get; }
+}
 
-  public interface IDisplayListGraphNode : IGraphNode {
-    IF3dDisplayList DisplayList { get; }
-  }
+public interface IBillboardGraphNode : IGraphNode {
+  IF3dDisplayList DisplayList { get; }
+  IReadOnlySm64Vector3<short> Translation { get; }
+}
 
-  public interface IScaleGraphNode : IGraphNode {
-    IF3dDisplayList DisplayList { get; }
-    IReadOnlySm64Vector3<float> Scale { get; }
-  }
+public interface IDisplayListGraphNode : IGraphNode {
+  IF3dDisplayList DisplayList { get; }
+}
+
+public interface IScaleGraphNode : IGraphNode {
+  IF3dDisplayList DisplayList { get; }
+  IReadOnlySm64Vector3<float> Scale { get; }
 }

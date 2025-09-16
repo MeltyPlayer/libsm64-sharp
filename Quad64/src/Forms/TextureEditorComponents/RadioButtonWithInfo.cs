@@ -5,12 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Quad64.src.Forms.TextureEditorComponents
+namespace Quad64.src.Forms.TextureEditorComponents;
+
+class RadioButtonWithInfo : RadioButton
 {
-    class RadioButtonWithInfo : RadioButton
-    {
-        public Texture2D texture { get; set; }
-        public Bitmap BitmapImage { get; set; }
-        public uint Address { get; set; }
-    }
+  public Texture2D texture { get; set; }
+  public Bitmap BitmapImage { get; set; }
+  public uint Address { get; set; }
 }

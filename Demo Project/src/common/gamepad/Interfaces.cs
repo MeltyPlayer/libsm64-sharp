@@ -1,21 +1,21 @@
 ﻿using demo.common.math;
 
 
-namespace demo.common.gamepad {
-  public interface IGamepad {
-    IAnalogStick MovementAnalogStick { get; }
-    IAnalogStick CameraAnalogStick { get; }
+namespace demo.common.gamepad;
 
-    IButton JumpButton { get; }
-    IButton PunchButton { get; }
-    IButton CrouchButton { get; }
-  }
+public interface IGamepad {
+  IAnalogStick MovementAnalogStick { get; }
+  IAnalogStick CameraAnalogStick { get; }
 
-  public interface IAnalogStick {
-    IReadOnlyVector2<float> Axes { get; }
-  }
+  IButton JumpButton { get; }
+  IButton PunchButton { get; }
+  IButton CrouchButton { get; }
+}
 
-  public interface IButton {
-    bool IsDown { get; }
-  }
+public interface IAnalogStick {
+  IReadOnlyVector2<float> Axes { get; }
+}
+
+public interface IButton {
+  bool IsDown { get; }
 }

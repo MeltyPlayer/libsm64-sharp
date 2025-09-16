@@ -8,49 +8,49 @@ using SixLabors.ImageSharp.PixelFormats;
 using Image = SixLabors.ImageSharp.Image;
 
 
-namespace demo.mesh {
-  public class AssimpSceneData {
-    public static AssimpSceneData Load(string path) {
-      var basePath = Path.GetDirectoryName(path) ?? "";
+namespace demo.mesh;
 
-      var assimpContext = new AssimpContext();
-      var assimpScene = assimpContext.ImportFile(path);
+public class AssimpSceneData {
+  public static AssimpSceneData Load(string path) {
+    var basePath = Path.GetDirectoryName(path) ?? "";
 
-      var texturesByFilePath =
-          assimpScene
-              .Materials
-              .Select(
-                  assimpMaterial => {
-                    var filePath = assimpMaterial.TextureDiffuse.FilePath;
-                    if (filePath == null) {
-                      return (assimpMaterial, null);
-                    }
+    var assimpContext = new AssimpContext();
+    var assimpScene = assimpContext.ImportFile(path);
 
-                    var texturePath = Path.Join(basePath, filePath);
-                    var textureImage =
-                        (Image<Rgba32>?) Image.Load<Rgba32>(texturePath);
+    var texturesByFilePath =
+        assimpScene
+            .Materials
+            .Select(
+                assimpMaterial => {
+                  var filePath = assimpMaterial.TextureDiffuse.FilePath;
+                  if (filePath == null) {
+                    return (assimpMaterial, null);
+                  }
 
-                    return (assimpMaterial, textureImage);
-                  })
-              .ToDictionary(
-                  filePathAndImage => filePathAndImage.assimpMaterial,
-                  filePathAndImage => filePathAndImage.textureImage);
+                  var texturePath = Path.Join(basePath, filePath);
+                  var textureImage =
+                      (Image<Rgba32>?) Image.Load<Rgba32>(texturePath);
 
-      return new AssimpSceneData(assimpScene, texturesByFilePath);
-    }
+                  return (assimpMaterial, textureImage);
+                })
+            .ToDictionary(
+                filePathAndImage => filePathAndImage.assimpMaterial,
+                filePathAndImage => filePathAndImage.textureImage);
 
-    private AssimpSceneData(
-        Scene scene,
-        IDictionary<Material, Image<Rgba32>?> texturesByFilePath) {
-      this.Scene = scene;
-      this.TexturesByMaterial =
-          new ReadOnlyDictionary<Material, Image<Rgba32>?>(texturesByFilePath);
-    }
+    return new AssimpSceneData(assimpScene, texturesByFilePath);
+  }
 
-    public Scene Scene { get; }
+  private AssimpSceneData(
+      Scene scene,
+      IDictionary<Material, Image<Rgba32>?> texturesByFilePath) {
+    this.Scene = scene;
+    this.TexturesByMaterial =
+        new ReadOnlyDictionary<Material, Image<Rgba32>?>(texturesByFilePath);
+  }
 
-    public IReadOnlyDictionary<Material, Image<Rgba32>?> TexturesByMaterial {
-      get;
-    }
+  public Scene Scene { get; }
+
+  public IReadOnlyDictionary<Material, Image<Rgba32>?> TexturesByMaterial {
+    get;
   }
 }

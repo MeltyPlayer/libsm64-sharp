@@ -1,46 +1,46 @@
-﻿namespace Quad64.src.JSON {
-  public class PresetMacroEntry {
-    private ushort presetID;
-    private byte modelID;
-    private uint behavior;
-    private byte bp1, bp2;
+﻿namespace Quad64.src.JSON;
 
-    public ushort PresetID {
-      get { return presetID; }
-    }
+public class PresetMacroEntry {
+  private ushort presetID;
+  private byte modelID;
+  private uint behavior;
+  private byte bp1, bp2;
 
-    public byte ModelID {
-      get { return modelID; }
-    }
+  public ushort PresetID {
+    get { return presetID; }
+  }
 
-    public uint Behavior {
-      get { return behavior; }
-    }
+  public byte ModelID {
+    get { return modelID; }
+  }
 
-    public byte BehaviorParameter1 {
-      get { return bp1; }
-    }
+  public uint Behavior {
+    get { return behavior; }
+  }
 
-    public byte BehaviorParameter2 {
-      get { return bp2; }
-    }
+  public byte BehaviorParameter1 {
+    get { return bp1; }
+  }
 
-    public PresetMacroEntry(ushort presetID, byte modelID, uint behavior) {
-      this.presetID = presetID;
-      this.modelID = modelID;
-      this.behavior = behavior;
-    }
+  public byte BehaviorParameter2 {
+    get { return bp2; }
+  }
 
-    public PresetMacroEntry(ushort presetID,
-                            byte modelID,
-                            uint behavior,
-                            byte bp1,
-                            byte bp2) {
-      this.presetID = presetID;
-      this.modelID = modelID;
-      this.behavior = behavior;
-      this.bp1 = bp1;
-      this.bp2 = bp2;
-    }
+  public PresetMacroEntry(ushort presetID, byte modelID, uint behavior) {
+    this.presetID = presetID;
+    this.modelID = modelID;
+    this.behavior = behavior;
+  }
+
+  public PresetMacroEntry(ushort presetID,
+                          byte modelID,
+                          uint behavior,
+                          byte bp1,
+                          byte bp2) {
+    this.presetID = presetID;
+    this.modelID = modelID;
+    this.behavior = behavior;
+    this.bp1 = bp1;
+    this.bp2 = bp2;
   }
 }

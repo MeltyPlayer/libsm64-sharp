@@ -1,158 +1,158 @@
 ﻿using System.Numerics;
 
 
-namespace demo.common.audio {
-  public interface IAudioManager<TNumber> : IDisposable
-      where TNumber : INumber<TNumber> {
-    // TODO: Add method for creating mutable buffer
-    // TODO: Add method for creating mutable circular buffers
-    // TODO: Add support for looping a certain section of audio
+namespace demo.common.audio;
 
-    IMutableAudioBuffer<TNumber> CreateMutableBuffer();
+public interface IAudioManager<TNumber> : IDisposable
+    where TNumber : INumber<TNumber> {
+  // TODO: Add method for creating mutable buffer
+  // TODO: Add method for creating mutable circular buffers
+  // TODO: Add support for looping a certain section of audio
 
-    IBufferAudioStream<TNumber> CreateBufferAudioStream(
-        IAudioBuffer<TNumber> buffer);
+  IMutableAudioBuffer<TNumber> CreateMutableBuffer();
 
-    IAudioSource<TNumber> CreateAudioSource();
+  IBufferAudioStream<TNumber> CreateBufferAudioStream(
+      IAudioBuffer<TNumber> buffer);
 
-    ICircularQueueActiveSound<TNumber> CreateBufferedSound(
-        AudioChannelsType audioChannelsType,
-        int frequency,
-        int bufferCount);
-  }
+  IAudioSource<TNumber> CreateAudioSource();
 
-
-  public enum AudioChannelsType {
-    UNDEFINED,
-    MONO,
-    STEREO,
-  }
-
-  public enum AudioChannelType {
-    UNDEFINED,
-    MONO,
-    STEREO_LEFT,
-    STEREO_RIGHT,
-  }
+  ICircularQueueActiveSound<TNumber> CreateBufferedSound(
+      AudioChannelsType audioChannelsType,
+      int frequency,
+      int bufferCount);
+}
 
 
-  public interface IAudioFormat<out TNumber> where TNumber : INumber<TNumber> {
-    AudioChannelsType AudioChannelsType { get; }
-    int Frequency { get; }
-  }
+public enum AudioChannelsType {
+  UNDEFINED,
+  MONO,
+  STEREO,
+}
 
-  public interface IStaticAudioFormat<out TNumber>
-      : IAudioFormat<TNumber> where TNumber : INumber<TNumber> {
-    int SampleCount { get; }
-  }
-
-
-  public interface IAudioData<out TNumber> : IStaticAudioFormat<TNumber>
-      where TNumber : INumber<TNumber> {
-    TNumber GetPcm(AudioChannelType channelType, int sampleOffset);
-  }
+public enum AudioChannelType {
+  UNDEFINED,
+  MONO,
+  STEREO_LEFT,
+  STEREO_RIGHT,
+}
 
 
-  /// <summary>
-  ///   Type for storing static audio data, e.g. a loaded audio file.
-  /// </summary>
-  public interface IAudioBuffer<out TNumber> : IAudioData<TNumber>
-      where TNumber : INumber<TNumber> { }
+public interface IAudioFormat<out TNumber> where TNumber : INumber<TNumber> {
+  AudioChannelsType AudioChannelsType { get; }
+  int Frequency { get; }
+}
+
+public interface IStaticAudioFormat<out TNumber>
+    : IAudioFormat<TNumber> where TNumber : INumber<TNumber> {
+  int SampleCount { get; }
+}
 
 
-  public interface IMutableAudioBuffer<TNumber> : IAudioBuffer<TNumber>
-      where TNumber : INumber<TNumber> {
-    new int Frequency { get; set; }
-
-    void SetPcm(TNumber[][] channelSamples);
-
-    void SetMonoPcm(TNumber[] samples);
-
-    void SetStereoPcm(TNumber[] leftChannelSamples,
-                      TNumber[] rightChannelSamples);
-  }
+public interface IAudioData<out TNumber> : IStaticAudioFormat<TNumber>
+    where TNumber : INumber<TNumber> {
+  TNumber GetPcm(AudioChannelType channelType, int sampleOffset);
+}
 
 
-  /// <summary>
-  ///   Type that streams out audio data. Can be used as an input for other
-  ///   streams to apply effects, or played out to the speakers via an audio
-  ///   source.
-  /// </summary>
-  public interface IAudioStream<out TNumber>
-      : IAudioData<TNumber> where TNumber : INumber<TNumber> { }
-
-  public interface IBufferAudioStream<TNumber> : IAudioStream<TNumber>
-      where TNumber : INumber<TNumber> {
-    IAudioBuffer<TNumber> Buffer { get; }
-    bool Reversed { get; set; }
-  }
+/// <summary>
+///   Type for storing static audio data, e.g. a loaded audio file.
+/// </summary>
+public interface IAudioBuffer<out TNumber> : IAudioData<TNumber>
+    where TNumber : INumber<TNumber> { }
 
 
-  public interface IAudioSource<TNumber> where TNumber : INumber<TNumber> {
-    IActiveSound<TNumber> Create(IAudioBuffer<TNumber> buffer);
-    IActiveSound<TNumber> Create(IAudioStream<TNumber> stream);
+public interface IMutableAudioBuffer<TNumber> : IAudioBuffer<TNumber>
+    where TNumber : INumber<TNumber> {
+  new int Frequency { get; set; }
+
+  void SetPcm(TNumber[][] channelSamples);
+
+  void SetMonoPcm(TNumber[] samples);
+
+  void SetStereoPcm(TNumber[] leftChannelSamples,
+                    TNumber[] rightChannelSamples);
+}
 
 
-    IActiveMusic<TNumber> CreateMusic(IAudioBuffer<TNumber> introBuffer,
-                                      IAudioBuffer<TNumber> loopBuffer);
+/// <summary>
+///   Type that streams out audio data. Can be used as an input for other
+///   streams to apply effects, or played out to the speakers via an audio
+///   source.
+/// </summary>
+public interface IAudioStream<out TNumber>
+    : IAudioData<TNumber> where TNumber : INumber<TNumber> { }
 
-    IActiveMusic<TNumber> CreateMusic(IAudioStream<TNumber> introStream,
-                                      IAudioStream<TNumber> loopStream);
-  }
+public interface IBufferAudioStream<TNumber> : IAudioStream<TNumber>
+    where TNumber : INumber<TNumber> {
+  IAudioBuffer<TNumber> Buffer { get; }
+  bool Reversed { get; set; }
+}
 
-  public enum SoundState {
-    UNDEFINED,
-    STOPPED,
-    PLAYING,
-    PAUSED,
-    DISPOSED,
-  }
 
-  public interface IActiveSound<out TNumber>
-      : IStaticAudioFormat<TNumber>, IDisposable
-      where TNumber : INumber<TNumber> {
-    IAudioStream<TNumber> Stream { get; }
+public interface IAudioSource<TNumber> where TNumber : INumber<TNumber> {
+  IActiveSound<TNumber> Create(IAudioBuffer<TNumber> buffer);
+  IActiveSound<TNumber> Create(IAudioStream<TNumber> stream);
 
-    SoundState State { get; }
 
-    void Play();
-    void Stop();
-    void Pause();
+  IActiveMusic<TNumber> CreateMusic(IAudioBuffer<TNumber> introBuffer,
+                                    IAudioBuffer<TNumber> loopBuffer);
 
-    int SampleOffset { get; set; }
-    TNumber GetPcm(AudioChannelType channelType);
+  IActiveMusic<TNumber> CreateMusic(IAudioStream<TNumber> introStream,
+                                    IAudioStream<TNumber> loopStream);
+}
 
-    float Volume { get; set; }
-    bool Looping { get; set; }
-  }
+public enum SoundState {
+  UNDEFINED,
+  STOPPED,
+  PLAYING,
+  PAUSED,
+  DISPOSED,
+}
 
-  public interface IActiveMusic<out TNumber>
-      : IStaticAudioFormat<TNumber>, IDisposable
-      where TNumber : INumber<TNumber> {
-    IAudioStream<TNumber> IntroStream { get; }
-    IAudioStream<TNumber> LoopStream { get; }
+public interface IActiveSound<out TNumber>
+    : IStaticAudioFormat<TNumber>, IDisposable
+    where TNumber : INumber<TNumber> {
+  IAudioStream<TNumber> Stream { get; }
 
-    SoundState State { get; }
+  SoundState State { get; }
 
-    void Play();
-    void Pause();
+  void Play();
+  void Stop();
+  void Pause();
 
-    float Volume { get; set; }
-  }
+  int SampleOffset { get; set; }
+  TNumber GetPcm(AudioChannelType channelType);
 
-  public interface ICircularQueueActiveSound<TNumber>
-      : IAudioFormat<TNumber>, IDisposable where TNumber : INumber<TNumber> {
-    SoundState State { get; }
+  float Volume { get; set; }
+  bool Looping { get; set; }
+}
 
-    void Play();
-    void Stop();
-    void Pause();
+public interface IActiveMusic<out TNumber>
+    : IStaticAudioFormat<TNumber>, IDisposable
+    where TNumber : INumber<TNumber> {
+  IAudioStream<TNumber> IntroStream { get; }
+  IAudioStream<TNumber> LoopStream { get; }
 
-    float Volume { get; set; }
+  SoundState State { get; }
 
-    uint QueuedSamples { get; }
-    int BufferCount { get; }
+  void Play();
+  void Pause();
 
-    void PopulateNextBufferPcm(TNumber[] data);
-  }
+  float Volume { get; set; }
+}
+
+public interface ICircularQueueActiveSound<TNumber>
+    : IAudioFormat<TNumber>, IDisposable where TNumber : INumber<TNumber> {
+  SoundState State { get; }
+
+  void Play();
+  void Stop();
+  void Pause();
+
+  float Volume { get; set; }
+
+  uint QueuedSamples { get; }
+  int BufferCount { get; }
+
+  void PopulateNextBufferPcm(TNumber[] data);
 }

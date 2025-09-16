@@ -1,5 +1,5 @@
-﻿namespace demo {
-  public interface IRenderable {
-    void Render();
-  }
+﻿namespace demo;
+
+public interface IRenderable {
+  void Render();
 }
