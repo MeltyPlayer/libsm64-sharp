@@ -1,11 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <RootNamespace>libsm64sharp</RootNamespace>
-    <Platforms>x86;x64</Platforms>
     <Authors>MeltyPlayer</Authors>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>libsm64-sharp</Title>

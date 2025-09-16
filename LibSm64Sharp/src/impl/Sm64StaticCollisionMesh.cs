@@ -20,17 +20,18 @@ public partial class Sm64Context {
         (int x, int y, int z) vertex1,
         (int x, int y, int z) vertex2,
         (int x, int y, int z) vertex3) {
-      this.triangles_.Add(new Sm64Triangle {
-          SurfaceType = surfaceType,
-          TerrainType = terrainType,
-          Vertices = new[] {vertex1, vertex2, vertex3}.Select(
-                  xyz => new Sm64Vector3<int> {
+      this.triangles_.Add(
+          new Sm64Triangle(
+            surfaceType,
+            terrainType,
+            new[] { vertex1, vertex2, vertex3 }.Select(
+                    xyz => new Sm64Vector3i {
                       X = xyz.x,
                       Y = xyz.y,
                       Z = xyz.z,
-                  })
-              .ToArray(),
-      });
+                    })
+                .ToArray()
+        ));
       return this;
     }
 

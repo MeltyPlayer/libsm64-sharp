@@ -1,10 +1,5 @@
 ﻿using Quad64.src.JSON;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
-
 
 namespace Quad64.src.Forms;
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-
-
-namespace Quad64.src.Forms;
+﻿namespace Quad64.src.Forms;
 
 partial class ScriptDumps : Form {
   private void refreshObjectsTabFast3DList() {

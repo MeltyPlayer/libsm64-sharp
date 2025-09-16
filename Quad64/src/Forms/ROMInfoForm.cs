@@ -1,6 +1,5 @@
 ﻿using Quad64.src;
-using System;
-using System.Windows.Forms;
+
 
 namespace Quad64;
 

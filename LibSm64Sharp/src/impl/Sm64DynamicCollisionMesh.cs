@@ -13,8 +13,8 @@ public partial class Sm64Context {
   private class Sm64DynamicCollisionMeshBuilder
       : ISm64DynamicCollisionMeshBuilder {
     private readonly float scale_;
-    private Sm64Vector3<float> position_ = new();
-    private Sm64Vector3<float> eulerRotation_ = new();
+    private Sm64Vector3f position_ = new();
+    private Sm64Vector3f eulerRotation_ = new();
     private List<ISm64Triangle> triangles_ = new();
 
     public Sm64DynamicCollisionMeshBuilder(float scale) {
@@ -32,17 +32,16 @@ public partial class Sm64Context {
         (int x, int y, int z) vertex1,
         (int x, int y, int z) vertex2,
         (int x, int y, int z) vertex3) {
-      this.triangles_.Add(new Sm64Triangle {
-          SurfaceType = surfaceType,
-          TerrainType = terrainType,
-          Vertices = new[] {vertex1, vertex2, vertex3}.Select(
-                  xyz => new Sm64Vector3<int> {
+      this.triangles_.Add(new Sm64Triangle(
+          surfaceType,
+          terrainType,
+          new[] {vertex1, vertex2, vertex3}.Select(
+                  xyz => new Sm64Vector3i {
                       X = (int) (xyz.x * this.scale_),
                       Y = (int) (xyz.y * this.scale_),
                       Z = (int) (xyz.z * this.scale_),
                   })
-              .ToArray(),
-      });
+              .ToArray()));
       return this;
     }
 
@@ -89,12 +88,12 @@ public partial class Sm64Context {
 
   private class Sm64DynamicCollisionMesh : ISm64DynamicCollisionMesh {
     private readonly uint id_;
-    private readonly Sm64Vector3<float> position_;
-    private readonly Sm64Vector3<float> eulerRotation_;
+    private readonly Sm64Vector3f position_;
+    private readonly Sm64Vector3f eulerRotation_;
 
     public Sm64DynamicCollisionMesh(
-        Sm64Vector3<float> position,
-        Sm64Vector3<float> eulerRotation,
+        Sm64Vector3f position,
+        Sm64Vector3f eulerRotation,
         IReadOnlyList<ISm64Triangle> triangles) {
       this.position_ = position;
       this.eulerRotation_ = eulerRotation;
@@ -155,7 +154,7 @@ public partial class Sm64Context {
 
     public IReadOnlyList<ISm64Triangle> Triangles { get; }
 
-    public IReadOnlySm64Vector3<float> Position => this.position_;
+    public IReadOnlySm64Vector3f Position => this.position_;
 
     public ISm64DynamicCollisionMesh SetPosition(float x, float y, float z) {
       this.position_.X = x;
@@ -167,7 +166,7 @@ public partial class Sm64Context {
       return this;
     }
 
-    public IReadOnlySm64Vector3<float> EulerRotation => this.eulerRotation_;
+    public IReadOnlySm64Vector3f EulerRotation => this.eulerRotation_;
 
     public ISm64DynamicCollisionMesh SetEulerRotation(
         float xDegrees,

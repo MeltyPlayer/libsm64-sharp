@@ -12,12 +12,11 @@ public partial class Sm64Context {
 
     public Sm64MarioMesh(Image<Rgba32> texture) {
       this.Texture = texture;
-      this.triangleData_ = new Sm64MarioMeshTrianglesData {
-          Positions = this.PositionsBuffer,
-          Normals = this.NormalsBuffer,
-          Colors = this.ColorsBuffer,
-          Uvs = this.UvsBuffer,
-      };
+      this.triangleData_ = new Sm64MarioMeshTrianglesData(
+          this.PositionsBuffer,
+          this.NormalsBuffer,
+          this.ColorsBuffer,
+          this.UvsBuffer);
     }
 
     public Image<Rgba32> Texture { get; }
@@ -48,9 +47,20 @@ public partial class Sm64Context {
   private class Sm64MarioMeshTrianglesData : ISm64MarioMeshTrianglesData {
     public int TriangleCount { get; set; }
 
-    public IReadOnlyList<LowLevelSm64Vector3f> Positions { get; init; }
-    public IReadOnlyList<LowLevelSm64Vector3f> Normals { get; init; }
-    public IReadOnlyList<LowLevelSm64Vector3f> Colors { get; init; }
-    public IReadOnlyList<LowLevelSm64Vector2f> Uvs { get; init; }
+    public Sm64MarioMeshTrianglesData(
+        IReadOnlyList<LowLevelSm64Vector3f> positions,
+        IReadOnlyList<LowLevelSm64Vector3f> normals,
+        IReadOnlyList<LowLevelSm64Vector3f> colors,
+        IReadOnlyList<LowLevelSm64Vector2f> uvs) {
+      this.Positions = positions;
+      this.Normals = normals;
+      this.Colors = colors;
+      this.Uvs = uvs;
+    }
+
+    public IReadOnlyList<LowLevelSm64Vector3f> Positions { get; private set; }
+    public IReadOnlyList<LowLevelSm64Vector3f> Normals { get; private set; }
+    public IReadOnlyList<LowLevelSm64Vector3f> Colors { get; private set; }
+    public IReadOnlyList<LowLevelSm64Vector2f> Uvs { get; private set; }
   }
 }

@@ -399,3 +399,4 @@ FodyWeavers.xsd
 
 # ROMs
 *.z64
+*.cs

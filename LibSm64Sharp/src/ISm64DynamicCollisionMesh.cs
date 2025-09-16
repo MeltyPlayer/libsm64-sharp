@@ -23,6 +23,6 @@ public interface ISm64DynamicCollisionMesh
     : ISm64CollisionMesh,
         IMutablePositionAndRotation<ISm64DynamicCollisionMesh>,
         IDisposable {
-  IReadOnlySm64Vector3<float> Position { get; }
-  IReadOnlySm64Vector3<float> EulerRotation { get; }
+  IReadOnlySm64Vector3f Position { get; }
+  IReadOnlySm64Vector3f EulerRotation { get; }
 }

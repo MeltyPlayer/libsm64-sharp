@@ -55,7 +55,7 @@ public struct LowLevelSm64SurfaceObject {
 
 
 [StructLayout(LayoutKind.Sequential)]
-public readonly struct LowLevelSm64Vector2f : IReadOnlySm64Vector2<float> {
+public readonly struct LowLevelSm64Vector2f : IReadOnlySm64Vector2f {
   public float X { get; }
   public float Y { get; }
 
@@ -63,7 +63,7 @@ public readonly struct LowLevelSm64Vector2f : IReadOnlySm64Vector2<float> {
 }
 
 [StructLayout(LayoutKind.Sequential)]
-public readonly struct LowLevelSm64Vector3f : IReadOnlySm64Vector3<float> {
+public readonly struct LowLevelSm64Vector3f : IReadOnlySm64Vector3f {
   public float X { get; }
   public float Y { get; }
   public float Z { get; }
@@ -72,7 +72,7 @@ public readonly struct LowLevelSm64Vector3f : IReadOnlySm64Vector3<float> {
 }
 
 [StructLayout(LayoutKind.Sequential)]
-public readonly struct LowLevelSm64Vector3i : IReadOnlySm64Vector3<int> {
+public readonly struct LowLevelSm64Vector3i : IReadOnlySm64Vector3i {
   public int X { get; }
   public int Y { get; }
   public int Z { get; }

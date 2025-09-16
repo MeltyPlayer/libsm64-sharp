@@ -1,10 +1,6 @@
 ﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
-using System;
-using System.Drawing;
-using System.Windows.Forms;
-
 using Quad64.src.LevelInfo;
 using Quad64.Scripts;
 using Quad64.src.JSON;
@@ -12,12 +8,9 @@ using Quad64.src;
 using Quad64.src.TestROM;
 using Quad64.src.Forms;
 
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 using Quad64.src.Forms.ToolStripRenderer;
-
-using System.IO;
 
 using Newtonsoft.Json;
 

@@ -6,94 +6,94 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 
-namespace libsm64sharp {
-  public partial class Sm64Context {
-    public ISm64Mario CreateMario(float x, float y, float z)
-      => new Sm64Mario(this.marioTextureImage_, x, y, z);
+namespace libsm64sharp;
 
-    private class Sm64Mario : ISm64Mario {
-      private readonly int id_;
-      private LowLevelSm64MarioOutState outState_;
-      private readonly Sm64MarioMesh mesh_;
+public partial class Sm64Context {
+  public ISm64Mario CreateMario(float x, float y, float z)
+    => new Sm64Mario(this.marioTextureImage_, x, y, z);
 
-      public Sm64Mario(Image<Rgba32> marioTextureImage,
-                       float x,
-                       float y,
-                       float z) {
-        this.id_ = LibSm64Interop.sm64_mario_create(x, y, z);
-        if (this.id_ == -1) {
-          throw new NullReferenceException(
-              "Failed to create Mario. " +
-              "Have you created a floor for him to stand on yet?");
-        }
+  private class Sm64Mario : ISm64Mario {
+    private readonly int id_;
+    private LowLevelSm64MarioOutState outState_;
+    private readonly Sm64MarioMesh mesh_;
 
-        this.mesh_ = new Sm64MarioMesh(marioTextureImage);
+    public Sm64Mario(Image<Rgba32> marioTextureImage,
+                     float x,
+                     float y,
+                     float z) {
+      this.id_ = LibSm64Interop.sm64_mario_create(x, y, z);
+      if (this.id_ == -1) {
+        throw new NullReferenceException(
+            "Failed to create Mario. " +
+            "Have you created a floor for him to stand on yet?");
       }
 
-      ~Sm64Mario() {
-        this.ReleaseUnmanagedResources_();
-      }
+      this.mesh_ = new Sm64MarioMesh(marioTextureImage);
+    }
 
-      public void Dispose() {
-        this.ReleaseUnmanagedResources_();
-        GC.SuppressFinalize(this);
-      }
+    ~Sm64Mario() {
+      this.ReleaseUnmanagedResources_();
+    }
 
-      private void ReleaseUnmanagedResources_()
-        => LibSm64Interop.sm64_mario_delete(this.id_);
+    public void Dispose() {
+      this.ReleaseUnmanagedResources_();
+      GC.SuppressFinalize(this);
+    }
 
-      public ISm64Gamepad Gamepad { get; } = new Sm64Gamepad();
-      public ISm64MarioMesh Mesh => this.mesh_;
+    private void ReleaseUnmanagedResources_()
+      => LibSm64Interop.sm64_mario_delete(this.id_);
 
-      public IReadOnlySm64Vector3<float> Position => this.outState_.position;
-      public IReadOnlySm64Vector3<float> Velocity => this.outState_.velocity;
-      public float FaceAngle => this.outState_.faceAngle;
-      public short Health => this.outState_.health;
+    public ISm64Gamepad Gamepad { get; } = new Sm64Gamepad();
+    public ISm64MarioMesh Mesh => this.mesh_;
 
-      public void Tick() {
-        var inputs = new LowLevelSm64MarioInputs {
-            buttonA = (byte) (this.Gamepad.IsAButtonDown ? 1 : 0),
-            buttonB = (byte) (this.Gamepad.IsBButtonDown ? 1 : 0),
-            buttonZ = (byte) (this.Gamepad.IsZButtonDown ? 1 : 0),
-            stickX = this.Gamepad.AnalogStick.X,
-            stickY = this.Gamepad.AnalogStick.Y,
-            camLookX = this.Gamepad.CameraNormal.X,
-            camLookZ = this.Gamepad.CameraNormal.Y,
-        };
+    public IReadOnlySm64Vector3f Position => this.outState_.position;
+    public IReadOnlySm64Vector3f Velocity => this.outState_.velocity;
+    public float FaceAngle => this.outState_.faceAngle;
+    public short Health => this.outState_.health;
 
-        var outState = this.outState_;
+    public void Tick() {
+      var inputs = new LowLevelSm64MarioInputs {
+          buttonA = (byte) (this.Gamepad.IsAButtonDown ? 1 : 0),
+          buttonB = (byte) (this.Gamepad.IsBButtonDown ? 1 : 0),
+          buttonZ = (byte) (this.Gamepad.IsZButtonDown ? 1 : 0),
+          stickX = this.Gamepad.AnalogStick.X,
+          stickY = this.Gamepad.AnalogStick.Y,
+          camLookX = this.Gamepad.CameraNormal.X,
+          camLookZ = this.Gamepad.CameraNormal.Y,
+      };
 
-        var marioMesh = this.mesh_;
-        var posHandle =
-            GCHandle.Alloc(marioMesh.PositionsBuffer, GCHandleType.Pinned);
-        var normHandle =
-            GCHandle.Alloc(marioMesh.NormalsBuffer, GCHandleType.Pinned);
-        var colorHandle =
-            GCHandle.Alloc(marioMesh.ColorsBuffer, GCHandleType.Pinned);
-        var uvHandle = GCHandle.Alloc(marioMesh.UvsBuffer, GCHandleType.Pinned);
-        var outBuffers = new LowLevelSm64MarioGeometryBuffers() {
-            position = posHandle.AddrOfPinnedObject(),
-            normal = normHandle.AddrOfPinnedObject(),
-            color = colorHandle.AddrOfPinnedObject(),
-            uv = uvHandle.AddrOfPinnedObject()
-        };
+      var outState = this.outState_;
 
-        // TODO: Crashes here when sliding, need to investigate.
-        LibSm64Interop.sm64_mario_tick(this.id_,
-                                       ref inputs,
-                                       ref outState,
-                                       ref outBuffers);
+      var marioMesh = this.mesh_;
+      var posHandle =
+          GCHandle.Alloc(marioMesh.PositionsBuffer, GCHandleType.Pinned);
+      var normHandle =
+          GCHandle.Alloc(marioMesh.NormalsBuffer, GCHandleType.Pinned);
+      var colorHandle =
+          GCHandle.Alloc(marioMesh.ColorsBuffer, GCHandleType.Pinned);
+      var uvHandle = GCHandle.Alloc(marioMesh.UvsBuffer, GCHandleType.Pinned);
+      var outBuffers = new LowLevelSm64MarioGeometryBuffers() {
+          position = posHandle.AddrOfPinnedObject(),
+          normal = normHandle.AddrOfPinnedObject(),
+          color = colorHandle.AddrOfPinnedObject(),
+          uv = uvHandle.AddrOfPinnedObject()
+      };
 
-        this.outState_ = outState;
+      // TODO: Crashes here when sliding, need to investigate.
+      LibSm64Interop.sm64_mario_tick(this.id_,
+                                     ref inputs,
+                                     ref outState,
+                                     ref outBuffers);
 
-        this.mesh_.UpdateTriangleDataFromBuffers(
-            outBuffers.numTrianglesUsed);
+      this.outState_ = outState;
 
-        posHandle.Free();
-        normHandle.Free();
-        colorHandle.Free();
-        uvHandle.Free();
-      }
+      this.mesh_.UpdateTriangleDataFromBuffers(
+          outBuffers.numTrianglesUsed);
+
+      posHandle.Free();
+      normHandle.Free();
+      colorHandle.Free();
+      uvHandle.Free();
     }
   }
 }

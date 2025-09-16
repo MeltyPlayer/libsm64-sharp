@@ -39,28 +39,28 @@ public interface ISwitchCaseGraphNode : IGraphNode {
 
 public interface ITranslationRotationGraphNode : IGraphNode {
   IF3dDisplayList DisplayList { get; }
-  IReadOnlySm64Vector3<short> Translation { get; }
-  IReadOnlySm64Vector3<short> Rotation { get; }
+  IReadOnlySm64Vector3s Translation { get; }
+  IReadOnlySm64Vector3s Rotation { get; }
 }
 
 public interface ITranslationGraphNode : IGraphNode {
   IF3dDisplayList DisplayList { get; }
-  IReadOnlySm64Vector3<short> Translation { get; }
+  IReadOnlySm64Vector3s Translation { get; }
 }
 
 public interface IRotationGraphNode : IGraphNode {
   IF3dDisplayList DisplayList { get; }
-  IReadOnlySm64Vector3<short> Rotation { get; }
+  IReadOnlySm64Vector3s Rotation { get; }
 }
 
 public interface IAnimatedPartGraphNode : IGraphNode {
   IF3dDisplayList DisplayList { get; }
-  IReadOnlySm64Vector3<short> Translation { get; }
+  IReadOnlySm64Vector3s Translation { get; }
 }
 
 public interface IBillboardGraphNode : IGraphNode {
   IF3dDisplayList DisplayList { get; }
-  IReadOnlySm64Vector3<short> Translation { get; }
+  IReadOnlySm64Vector3s Translation { get; }
 }
 
 public interface IDisplayListGraphNode : IGraphNode {
@@ -69,5 +69,5 @@ public interface IDisplayListGraphNode : IGraphNode {
 
 public interface IScaleGraphNode : IGraphNode {
   IF3dDisplayList DisplayList { get; }
-  IReadOnlySm64Vector3<float> Scale { get; }
+  IReadOnlySm64Vector3s Scale { get; }
 }

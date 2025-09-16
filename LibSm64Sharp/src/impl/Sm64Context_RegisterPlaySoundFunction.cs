@@ -11,12 +11,26 @@ public partial class Sm64Context {
   private static lowlevel.PlaySoundFuncDelegate? playSoundFuncDelegate_;
 
   public class PlaySoundArgs {
-    public Sm64SoundId SoundId { get; init; }
-    public byte Priority { get; init; }
-    public byte SoundStatus { get; init; }
-    public byte BitFlags1 { get; init; }
-    public byte BitFlags2 { get; init; }
-    public IReadOnlySm64Vector3<float> Position { get; init; }
+    public PlaySoundArgs(Sm64SoundId soundId,
+                         byte priority,
+                         byte soundStatus,
+                         byte bitFlags1,
+                         byte bitFlags2,
+                         IReadOnlySm64Vector3f position) {
+      this.SoundId = soundId;
+      this.Priority = priority;
+      this.SoundStatus = soundStatus;
+      this.BitFlags1 = bitFlags1;
+      this.BitFlags2 = bitFlags2;
+      this.Position = position;
+    }
+
+    public Sm64SoundId SoundId { get; private set; }
+    public byte Priority { get; private set; }
+    public byte SoundStatus { get; private set; }
+    public byte BitFlags1 { get; private set; }
+    public byte BitFlags2 { get; private set; }
+    public IReadOnlySm64Vector3f Position { get; private set; }
   }
 
   public delegate void PlaySoundFuncDelegate(PlaySoundArgs args);
@@ -44,14 +58,10 @@ public partial class Sm64Context {
 
     var soundId = (Sm64SoundId) ((soundBank << 8) | soundIdInBank);
 
-    Sm64Context.playSoundHandler_(new PlaySoundArgs {
-        SoundId = soundId,
-        Priority = priority,
-        SoundStatus = soundStatus,
-        BitFlags1 = bitFlags1,
-        BitFlags2 = bitFlags2,
-        Position = position
-    });
+    Sm64Context.playSoundHandler_(
+        new PlaySoundArgs(soundId, priority, soundStatus, bitFlags1, bitFlags2,
+                          position
+        ));
   }
 
   public static void RegisterPlaySoundFunction(
@@ -62,7 +72,8 @@ public partial class Sm64Context {
       Sm64Context.hasInitPlaySoundHandler_ = true;
       Sm64Context.playSoundFuncDelegate_ = PlaySoundFuncDelegateWrapper_;
       LibSm64Interop.sm64_register_play_sound_function(
-          Marshal.GetFunctionPointerForDelegate(Sm64Context.playSoundFuncDelegate_));
+          Marshal.GetFunctionPointerForDelegate(
+              Sm64Context.playSoundFuncDelegate_));
     }
   }
 }

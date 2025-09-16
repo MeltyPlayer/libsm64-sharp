@@ -1,5 +1,4 @@
 ﻿using demo.camera;
-using demo.common.gl;
 
 using OpenTK.Graphics.OpenGL;
 

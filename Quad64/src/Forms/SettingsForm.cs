@@ -1,14 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using Quad64.src.JSON;
 using Quad64.src.TestROM;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
+
 
 namespace Quad64.src.Forms;
 

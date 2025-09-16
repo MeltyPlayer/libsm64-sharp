@@ -1,15 +1,12 @@
-﻿namespace libsm64sharp {
-  public partial class Sm64Context {
-    private class Sm64Gamepad : ISm64Gamepad {
-      public ISm64Vector2<float> AnalogStick { get; } =
-        new Sm64Vector2<float>();
+﻿namespace libsm64sharp;
 
-      public ISm64Vector2<float> CameraNormal { get; } =
-        new Sm64Vector2<float>();
+public partial class Sm64Context {
+  private class Sm64Gamepad : ISm64Gamepad {
+    public ISm64Vector2f AnalogStick { get; } = new Sm64Vector2f();
+    public ISm64Vector2f CameraNormal { get; } = new Sm64Vector2f();
 
-      public bool IsAButtonDown { get; set; }
-      public bool IsBButtonDown { get; set; }
-      public bool IsZButtonDown { get; set; }
-    }
+    public bool IsAButtonDown { get; set; }
+    public bool IsBButtonDown { get; set; }
+    public bool IsZButtonDown { get; set; }
   }
 }

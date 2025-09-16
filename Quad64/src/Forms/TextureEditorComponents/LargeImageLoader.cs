@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace Quad64.src.Forms.TextureEditorComponents;
+﻿namespace Quad64.src.Forms.TextureEditorComponents;
 
 class LargeImageLoader
 {

@@ -1,12 +1,8 @@
-﻿using System.Numerics;
-
-
-namespace libsm64sharp;
+﻿namespace libsm64sharp;
 
 public partial class Sm64Context {
-  private class Sm64Vector2<TNumber> : ISm64Vector2<TNumber>
-      where TNumber : INumber<TNumber> {
-    public TNumber X { get; set; }
-    public TNumber Y { get; set; }
+  private class Sm64Vector2f : ISm64Vector2f {
+    public float X { get; set; }
+    public float Y { get; set; }
   }
 }

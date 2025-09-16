@@ -2,15 +2,10 @@
 using Newtonsoft.Json.Linq;
 using Quad64.src.Forms.TextureEditorComponents;
 using Quad64.src.JSON;
-using Quad64.src.LevelInfo;
 using Quad64.src.Scripts;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
+
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
+
 
 namespace Quad64.src.Forms;
 

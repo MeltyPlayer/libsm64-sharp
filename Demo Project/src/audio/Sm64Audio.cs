@@ -1,10 +1,8 @@
 ﻿using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 using demo.common.audio;
 
 using libsm64sharp;
-using libsm64sharp.lowlevel;
 
 
 namespace demo.audio;

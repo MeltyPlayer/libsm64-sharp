@@ -1,6 +1,6 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using System.Drawing.Imaging;
 
-using System.Drawing.Imaging;
+using OpenTK.Graphics.OpenGL;
 
 
 namespace Quad64;

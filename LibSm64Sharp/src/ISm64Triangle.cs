@@ -4,7 +4,7 @@ public interface ISm64Triangle {
   Sm64SurfaceType SurfaceType { get; }
   Sm64TerrainType TerrainType { get; }
 
-  IReadOnlyList<IReadOnlySm64Vector3<int>> Vertices { get; }
+  IReadOnlyList<IReadOnlySm64Vector3i> Vertices { get; }
 }
 
 /// <summary>

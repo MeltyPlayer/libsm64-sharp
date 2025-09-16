@@ -178,7 +178,7 @@ void main() {{
     GL.LoadIdentity();
   }
 
-  void RotateTowardsNormal(IReadOnlySm64Vector3<float> normal) {
+  void RotateTowardsNormal(IReadOnlySm64Vector3f normal) {
     var v1 = new Vector3(0, 1, 0);
     var v2 = new Vector3(normal.X, normal.Y, normal.Z);
 

@@ -1,11 +1,7 @@
-﻿using Quad64.src.Forms.TextureEditorComponents;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Drawing.Imaging;
+
+using Quad64.src.Forms.TextureEditorComponents;
+
 
 namespace Quad64.src.Forms;
 

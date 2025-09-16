@@ -12,9 +12,9 @@ public interface ISm64Mario : IDisposable {
   ISm64Gamepad Gamepad { get; }
   ISm64MarioMesh Mesh { get; }
 
-  IReadOnlySm64Vector3<float> Position { get; }
+  IReadOnlySm64Vector3f Position { get; }
   float FaceAngle { get; }
-  IReadOnlySm64Vector3<float> Velocity { get; }
+  IReadOnlySm64Vector3f Velocity { get; }
   short Health { get; }
 
   void Tick();
