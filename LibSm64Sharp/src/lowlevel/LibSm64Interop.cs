@@ -38,20 +38,4 @@ public static partial class LibSm64Interop {
   public static extern void sm64_static_surfaces_load(
       LowLevelSm64Surface[] surfaces,
       ulong numSurfaces);
-
-  [DllImport(SM64_DLL)]
-  public static extern int sm64_mario_create(
-      float marioX,
-      float marioY,
-      float marioZ);
-
-  [DllImport(SM64_DLL)]
-  public static extern void sm64_mario_tick(
-      int marioId,
-      ref LowLevelSm64MarioInputs inputs,
-      ref LowLevelSm64MarioOutState outState,
-      ref LowLevelSm64MarioGeometryBuffers outBuffers);
-
-  [DllImport(SM64_DLL)]
-  public static extern void sm64_mario_delete(int marioId);
 }
