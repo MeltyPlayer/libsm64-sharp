@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Numerics;
+using System.Runtime.InteropServices;
 
 
 namespace libsm64sharp.lowlevel;
@@ -22,11 +23,14 @@ public struct LowLevelSm64MarioInputs {
 
 [StructLayout(LayoutKind.Sequential)]
 public struct LowLevelSm64MarioOutState {
-  public LowLevelSm64Vector3f position;
-  public LowLevelSm64Vector3f velocity;
+  public Vector3 position;
+  public Vector3 velocity;
   public float faceAngle;
-  public short health;
-  public uint action;
+  public float forwardVelocity;
+  public ushort health;
+  public MarioAction action;
+  public MarioAnimId animId;
+  public short animFrame;
   public uint flags;
   public uint particleFlags;
   public short invincibilityTimer;

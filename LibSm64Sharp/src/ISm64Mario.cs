@@ -1,4 +1,9 @@
-﻿namespace libsm64sharp;
+﻿using libsm64sharp.lowlevel;
+
+using System.Numerics;
+
+
+namespace libsm64sharp;
 
 // TODO: Fork libsm64 to expose more features:
 // TODO: - Mario's enum state
@@ -12,10 +17,14 @@ public interface ISm64Mario : IDisposable {
   ISm64Gamepad Gamepad { get; }
   ISm64MarioMesh Mesh { get; }
 
-  IReadOnlySm64Vector3f Position { get; }
-  float FaceAngle { get; }
-  IReadOnlySm64Vector3f Velocity { get; }
-  short Health { get; }
+  Vector3 Position { get; set; }
+  float FaceAngle { get; set; }
+  Vector3 Velocity { get; set; }
+  float ForwardVelocity { get; set; }
+  MarioAction Action { get; set; }
+  MarioAnimId AnimId { get; set; }
+  short AnimFrame { get; set; }
+  ushort Health { get; set; }
 
   void Tick();
 }

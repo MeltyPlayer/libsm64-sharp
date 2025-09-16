@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Numerics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 using libsm64sharp.lowlevel;
 
@@ -12,10 +14,18 @@ public partial class Sm64Context {
   public ISm64Mario CreateMario(float x, float y, float z)
     => new Sm64Mario(this.marioTextureImage_, x, y, z);
 
-  private class Sm64Mario : ISm64Mario {
+  private partial class Sm64Mario : ISm64Mario {
     private readonly int id_;
-    private LowLevelSm64MarioOutState outState_;
     private readonly Sm64MarioMesh mesh_;
+
+    private Vector3 position_;
+    private Vector3 velocity_;
+    private float faceAngle_;
+    private float forwardVelocity_;
+    private MarioAction action_;
+    private MarioAnimId animId_;
+    private short animFrame_;
+    private ushort health_;
 
     public Sm64Mario(Image<Rgba32> marioTextureImage,
                      float x,
@@ -46,10 +56,77 @@ public partial class Sm64Context {
     public ISm64Gamepad Gamepad { get; } = new Sm64Gamepad();
     public ISm64MarioMesh Mesh => this.mesh_;
 
-    public IReadOnlySm64Vector3f Position => this.outState_.position;
-    public IReadOnlySm64Vector3f Velocity => this.outState_.velocity;
-    public float FaceAngle => this.outState_.faceAngle;
-    public short Health => this.outState_.health;
+    public Vector3 Position {
+      get => this.position_;
+      set {
+        this.position_ = value;
+        LibSm64Interop.sm64_set_mario_position(
+            this.id_,
+            value.X,
+            value.Y,
+            value.Z);
+      }
+    }
+
+    public Vector3 Velocity {
+      get => this.velocity_;
+      set {
+        this.velocity_ = value;
+        LibSm64Interop.sm64_set_mario_velocity(
+            this.id_,
+            value.X,
+            value.Y,
+            value.Z);
+      }
+    }
+
+    public float FaceAngle {
+      get => this.faceAngle_;
+      set {
+        this.faceAngle_ = value;
+        LibSm64Interop.sm64_set_mario_faceangle(this.id_, value);
+      }
+    }
+
+    public float ForwardVelocity {
+      get => this.forwardVelocity_;
+      set {
+        this.forwardVelocity_ = value;
+        LibSm64Interop.sm64_set_mario_forward_velocity(this.id_, value);
+      }
+    }
+
+    public MarioAction Action {
+      get => this.action_;
+      set {
+        this.action_ = value;
+        LibSm64Interop.sm64_set_mario_action(this.id_, value);
+      }
+    }
+
+    public MarioAnimId AnimId {
+      get => this.animId_;
+      set {
+        this.animId_ = value;
+        LibSm64Interop.sm64_set_mario_animation(this.id_, value);
+      }
+    }
+
+    public short AnimFrame {
+      get => this.animFrame_;
+      set {
+        this.animFrame_ = value;
+        LibSm64Interop.sm64_set_mario_anim_frame(this.id_, value);
+      }
+    }
+
+    public ushort Health {
+      get => this.health_;
+      set {
+        this.health_ = value;
+        LibSm64Interop.sm64_set_mario_health(this.id_, value);
+      }
+    }
 
     public void Tick() {
       var inputs = new LowLevelSm64MarioInputs {
@@ -61,8 +138,6 @@ public partial class Sm64Context {
           camLookX = this.Gamepad.CameraNormal.X,
           camLookZ = this.Gamepad.CameraNormal.Y,
       };
-
-      var outState = this.outState_;
 
       var marioMesh = this.mesh_;
       var posHandle =
@@ -79,13 +154,20 @@ public partial class Sm64Context {
           uv = uvHandle.AddrOfPinnedObject()
       };
 
-      // TODO: Crashes here when sliding, need to investigate.
+      LowLevelSm64MarioOutState outState = default;
       LibSm64Interop.sm64_mario_tick(this.id_,
                                      ref inputs,
                                      ref outState,
                                      ref outBuffers);
 
-      this.outState_ = outState;
+      this.position_ = outState.position;
+      this.velocity_ = outState.velocity;
+      this.faceAngle_ = outState.faceAngle;
+      this.forwardVelocity_ = outState.forwardVelocity;
+      this.action_ = outState.action;
+      this.animId_ = outState.animId;
+      this.animFrame_ = outState.animFrame;
+      this.health_ = outState.health;
 
       this.mesh_.UpdateTriangleDataFromBuffers(
           outBuffers.numTrianglesUsed);
