@@ -10,7 +10,7 @@
     <PackageProjectUrl>https://github.com/MeltyPlayer/libsm64-sharp</PackageProjectUrl>
     <PackageId>libsm64-sharp</PackageId>
     <Description>C# bindings for libsm64.</Description>
-    <Version>1.0.4</Version>
+    <Version>1.0.6</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
@@ -29,19 +29,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="lib\sm64-x64.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="lib\sm64-x86.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <Content Include="lib\sm64-x64.dll">
+    <None Update="runtimes\**" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="runtimes\win-x64\native\sm64-x64.dll">
       <Pack>true</Pack>
-      <PackagePath>lib\$(TargetFramework)\lib</PackagePath>
+      <PackagePath>runtimes/win-x64/native/</PackagePath>
     </Content>
-    <Content Include="lib\sm64-x86.dll">
+    <Content Include="runtimes\win-x86\native\sm64-x86.dll">
       <Pack>true</Pack>
-      <PackagePath>lib\$(TargetFramework)\lib</PackagePath>
+      <PackagePath>runtimes/win-x86/native/</PackagePath>
     </Content>
   </ItemGroup>
 </Project>

@@ -5,9 +5,9 @@ namespace libsm64sharp.lowlevel;
 
 public static partial class LibSm64Interop {
 #if WIN64
-    private const string SM64_DLL = "lib\\sm64-x64.dll";
+    private const string SM64_DLL = "/runtimes/win-x64/native/sm64-x64.dll";
 #else
-  private const string SM64_DLL = "lib\\sm64-x86.dll";
+  private const string SM64_DLL = "/runtimes/win-x86/native/sm64-x86.dll";
 #endif
 
   [DllImport(SM64_DLL)]
