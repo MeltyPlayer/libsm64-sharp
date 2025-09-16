@@ -10,7 +10,7 @@
     <PackageProjectUrl>https://github.com/MeltyPlayer/libsm64-sharp</PackageProjectUrl>
     <PackageId>libsm64-sharp</PackageId>
     <Description>C# bindings for libsm64.</Description>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   
