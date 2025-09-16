@@ -26,6 +26,10 @@ public struct LowLevelSm64MarioOutState {
   public LowLevelSm64Vector3f velocity;
   public float faceAngle;
   public short health;
+  public uint action;
+  public uint flags;
+  public uint particleFlags;
+  public short invincibilityTimer;
 };
 
 [StructLayout(LayoutKind.Sequential)]
