@@ -4,11 +4,25 @@
 namespace libsm64sharp.lowlevel;
 
 public static partial class LibSm64Interop {
-#if WIN64
-    private const string SM64_DLL = "/runtimes/win-x64/native/sm64-x64.dll";
-#else
-  private const string SM64_DLL = "/runtimes/win-x86/native/sm64-x86.dll";
-#endif
+  /// <summary>
+  ///   Shamelessly stolen from:
+  ///   https://stackoverflow.com/a/30646096
+  /// </summary>
+  static LibSm64Interop() {
+    var myPath = new Uri(typeof(LibSm64Interop).Assembly.CodeBase).LocalPath;
+    var myFolder = Path.GetDirectoryName(myPath);
+
+    var is64 = IntPtr.Size == 8;
+    var subfolder = is64 ? "win-x64" : "win-x86";
+
+    LoadLibrary(Path.Combine(myFolder, "runtimes", subfolder, "native") +
+                "runtimes" + subfolder + "MyDll.dll");
+  }
+
+  [DllImport("kernel32.dll")]
+  private static extern IntPtr LoadLibrary(string dllToLoad);
+
+  private const string SM64_DLL = "sm64.dll";
 
   [DllImport(SM64_DLL)]
   public static extern void sm64_register_debug_print_function(

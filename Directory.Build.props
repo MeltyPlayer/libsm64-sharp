@@ -1,6 +1,5 @@
 <Project>
   <PropertyGroup>
-    <Platforms>x86;x64</Platforms>
     <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
   </PropertyGroup>
