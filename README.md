@@ -1,4 +1,4 @@
-# libsm64 - C# Bindings (WIP)
+# libsm64 - C# Bindings
 
 [![Nuget](https://img.shields.io/nuget/v/libsm64-sharp)](https://www.nuget.org/packages/libsm64-sharp)
 ![Nuget](https://img.shields.io/nuget/dt/libsm64-sharp)
