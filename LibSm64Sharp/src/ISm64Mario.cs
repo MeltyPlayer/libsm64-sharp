@@ -24,7 +24,11 @@ public interface ISm64Mario : IDisposable {
   MarioAction Action { get; set; }
   MarioAnimId AnimId { get; set; }
   short AnimFrame { get; set; }
+
   ushort Health { get; set; }
+  void Damage(uint damage, DamageType damageType, Vector3 position);
+  void Heal(byte healCounter);
+  void Kill();
 
   void Tick();
 }
