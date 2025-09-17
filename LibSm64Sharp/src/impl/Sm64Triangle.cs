@@ -10,8 +10,8 @@ public partial class Sm64Context {
       this.Vertices = vertices;
     }
 
-    public Sm64SurfaceType SurfaceType { get; private set; }
-    public Sm64TerrainType TerrainType { get; private set; }
-    public IReadOnlyList<IReadOnlySm64Vector3i> Vertices { get; private set; }
+    public Sm64SurfaceType SurfaceType { get; }
+    public Sm64TerrainType TerrainType { get; }
+    public IReadOnlyList<IReadOnlySm64Vector3i> Vertices { get; }
   }
 }

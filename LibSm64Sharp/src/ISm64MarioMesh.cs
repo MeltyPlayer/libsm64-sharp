@@ -1,4 +1,4 @@
-﻿using libsm64sharp.lowlevel;
+﻿using System.Numerics;
 
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp;
@@ -15,8 +15,8 @@ public interface ISm64MarioMesh {
 public interface ISm64MarioMeshTrianglesData {
   int TriangleCount { get; }
 
-  IReadOnlyList<LowLevelSm64Vector3f> Positions { get; }
-  IReadOnlyList<LowLevelSm64Vector3f> Normals { get; }
-  IReadOnlyList<LowLevelSm64Vector3f> Colors { get; }
-  IReadOnlyList<LowLevelSm64Vector2f> Uvs { get; }
+  IReadOnlyList<Vector3> Positions { get; }
+  IReadOnlyList<Vector3> Normals { get; }
+  IReadOnlyList<Vector3> Colors { get; }
+  IReadOnlyList<Vector2> Uvs { get; }
 }

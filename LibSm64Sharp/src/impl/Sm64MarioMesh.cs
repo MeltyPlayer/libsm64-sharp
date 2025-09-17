@@ -1,7 +1,7 @@
 ﻿using libsm64sharp.lowlevel;
-
-using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using System.Numerics;
 
 
 namespace libsm64sharp;
@@ -30,17 +30,17 @@ public partial class Sm64Context {
     private const int SM64_GEO_MAX_TRIANGLES_ = 1024;
     private const int SM64_GEO_MAX_VERTICES_ = 3 * SM64_GEO_MAX_TRIANGLES_;
 
-    public LowLevelSm64Vector3f[] PositionsBuffer { get; } =
-      new LowLevelSm64Vector3f[SM64_GEO_MAX_VERTICES_];
+    public Vector3[] PositionsBuffer { get; } =
+      new Vector3[SM64_GEO_MAX_VERTICES_];
 
-    public LowLevelSm64Vector3f[] NormalsBuffer { get; } =
-      new LowLevelSm64Vector3f[SM64_GEO_MAX_VERTICES_];
+    public Vector3[] NormalsBuffer { get; } =
+      new Vector3[SM64_GEO_MAX_VERTICES_];
 
-    public LowLevelSm64Vector3f[] ColorsBuffer { get; } =
-      new LowLevelSm64Vector3f[SM64_GEO_MAX_VERTICES_];
+    public Vector3[] ColorsBuffer { get; } =
+      new Vector3[SM64_GEO_MAX_VERTICES_];
 
-    public LowLevelSm64Vector2f[] UvsBuffer { get; } =
-      new LowLevelSm64Vector2f[SM64_GEO_MAX_VERTICES_];
+    public Vector2[] UvsBuffer { get; } =
+      new Vector2[SM64_GEO_MAX_VERTICES_];
   }
 
 
@@ -48,19 +48,19 @@ public partial class Sm64Context {
     public int TriangleCount { get; set; }
 
     public Sm64MarioMeshTrianglesData(
-        IReadOnlyList<LowLevelSm64Vector3f> positions,
-        IReadOnlyList<LowLevelSm64Vector3f> normals,
-        IReadOnlyList<LowLevelSm64Vector3f> colors,
-        IReadOnlyList<LowLevelSm64Vector2f> uvs) {
+        IReadOnlyList<Vector3> positions,
+        IReadOnlyList<Vector3> normals,
+        IReadOnlyList<Vector3> colors,
+        IReadOnlyList<Vector2> uvs) {
       this.Positions = positions;
       this.Normals = normals;
       this.Colors = colors;
       this.Uvs = uvs;
     }
 
-    public IReadOnlyList<LowLevelSm64Vector3f> Positions { get; private set; }
-    public IReadOnlyList<LowLevelSm64Vector3f> Normals { get; private set; }
-    public IReadOnlyList<LowLevelSm64Vector3f> Colors { get; private set; }
-    public IReadOnlyList<LowLevelSm64Vector2f> Uvs { get; private set; }
+    public IReadOnlyList<Vector3> Positions { get; }
+    public IReadOnlyList<Vector3> Normals { get; }
+    public IReadOnlyList<Vector3> Colors { get; }
+    public IReadOnlyList<Vector2> Uvs { get; }
   }
 }

@@ -63,14 +63,6 @@ public struct LowLevelSm64SurfaceObject {
 
 
 [StructLayout(LayoutKind.Sequential)]
-public readonly struct LowLevelSm64Vector2f : IReadOnlySm64Vector2f {
-  public float X { get; }
-  public float Y { get; }
-
-  public override string ToString() => $"({X}, {Y})";
-}
-
-[StructLayout(LayoutKind.Sequential)]
 public readonly struct LowLevelSm64Vector3f : IReadOnlySm64Vector3f {
   public float X { get; }
   public float Y { get; }
